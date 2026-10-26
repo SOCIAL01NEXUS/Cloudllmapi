@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0f1a">
+<title>AI Studio</title>
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="style.css">
+<link id="hljs-css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" onerror="this.remove()">
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <button class="icon-btn" data-act="drawer" aria-label="Chats">☰</button>
+    <div class="title" id="topTitle">AI Studio</div>
+    <button class="chip" data-act="goto" data-view="settings" id="modelChip" aria-label="Provider and model">Auto</button>
+  </header>
+  <div id="banner" class="banner" hidden></div>
+  <main id="main" tabindex="-1"></main>
+  <nav class="bottomnav" id="nav" aria-label="Main">
+    <button data-act="goto" data-view="chat"><span>💬</span>Chat</button>
+    <button data-act="goto" data-view="code"><span>👨‍💻</span>Code</button>
+    <button data-act="goto" data-view="files"><span>📁</span>Files</button>
+    <button data-act="goto" data-view="history"><span>🕘</span>History</button>
+    <button data-act="goto" data-view="settings"><span>⚙️</span>Settings</button>
+  </nav>
+</div>
+
+<aside id="drawer" class="drawer" hidden>
+  <div class="drawer-bg" data-act="drawer"></div>
+  <div class="drawer-panel">
+    <button class="btn primary block" data-act="newchat">＋ New chat</button>
+    <div id="drawerList" class="chatlist"></div>
+    <div class="drawer-sec">More sections</div>
+    <button class="btn block" data-act="goto" data-view="photo">🖼️ Photo Studio <small class="tag">next stage</small></button>
+    <button class="btn block" data-act="goto" data-view="projects">🗜️ Projects &amp; ZIP Analyzer <small class="tag">next stage</small></button>
+  </div>
+</aside>
+
+<div id="sheet" class="sheet" hidden>
+  <div class="sheet-bg" data-act="closesheet"></div>
+  <div class="sheet-panel" role="dialog" aria-modal="true"><div id="sheetBody"></div></div>
+</div>
+<div id="toast" class="toast" hidden></div>
+
+<script src="config.js"></script>
+<script src="lib.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" async onerror="void 0"></script>
+<script src="app.js"></script>
+</body>
+</html>
