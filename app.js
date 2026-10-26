@@ -25,6 +25,14 @@
     copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
     image: '<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.5"/><path d="m21 16-5-5-8 8"/>',
     archive: '<rect x="3" y="4" width="18" height="5" rx="1.5"/><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9M10 13h4"/>',
+    chevron: '<path d="m9 6 6 6-6 6"/>',
+    back: '<path d="m15 6-6 6 6 6"/>',
+    user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+    palette: '<path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.6-.9 1.3-1.8-.4-1 .3-2.2 1.5-2.2H17a4 4 0 0 0 4-4c0-5-4-10-9-10z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/>',
+    cpu: '<rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>',
+    plug: '<path d="M9 2v6M15 2v6M6 8h12v3a6 6 0 0 1-12 0zM12 17v5"/>',
+    shield: '<path d="M12 3 4 6v6c0 5 3.4 8.2 8 9 4.6-.8 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
     spark: '<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>'
   };
   const ic = (n, s) => '<svg class="ic" width="' + (s || 20) + '" height="' + (s || 20) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[n] + "</svg>";
@@ -87,6 +95,8 @@
     drafts: { chat: "", code: "" },
     pendingAtt: [],
     showFiles: false,
+    sp: null,             // settings sub-page
+    pp: null,             // open provider inside Providers page
     lastUsed: null,
   };
   if (S.settings.consent) S.byok = lsGet("byok", {});
@@ -445,40 +455,81 @@
     el.innerHTML = list.length ? list.map((c) => '<div class="row" style="margin:4px 0"><button class="ci grow' + (S.cur && S.cur.id === c.id ? " on" : "") + '" data-act="open" data-id="' + c.id + '">' + '<span class="ci-i">' + ic(c.mode === "code" ? "code" : "chat", 16) + "</span>" + esc(c.title) + "<small>" + new Date(c.updated).toLocaleString() + "</small></button><button class=\"btn small\" data-act=\"exportchat\" data-id=\"" + c.id + '" aria-label="Export">' + ic("download", 16) + '</button><button class="btn small danger" data-act="delchat" data-id="' + c.id + '" aria-label="Delete">' + ic("x", 16) + '</button></div>').join("") : '<div class="empty">' + (q ? "No matches." : "No chats yet.") + "</div>";
   }
 
+  /* ---- Settings: home list + sub-pages ---- */
+  const row = (page, icon, title, sub, extra) => '<button class="set-row" data-act="spage" data-p="' + page + '"><span class="set-ic">' + ic(icon, 20) + '</span><span class="set-tx"><b>' + title + '</b><small>' + sub + '</small></span>' + (extra || "") + '<span class="set-ch">' + ic("chevron", 18) + '</span></button>';
+  const sw = (id, label, on, extra) => '<label class="switch"><span class="sw-l">' + label + '</span><input type="checkbox" id="' + id + '"' + (on ? " checked" : "") + (extra || "") + '></label>';
+  function pageHead(title, backAct, backP, sub) {
+    return '<div class="page-head"><button class="icon-btn" data-act="' + backAct + '"' + (backP ? ' data-p="' + backP + '"' : "") + ' aria-label="Back">' + ic("back", 20) + '</button><div><h2>' + title + '</h2>' + (sub ? '<p class="muted">' + sub + '</p>' : "") + '</div></div>';
+  }
   function settingsView() {
-    const sOk = !!(BACKEND && S.session);
-    let h = "";
-    h += '<div class="card"><h3>Account &amp; backend</h3>' + (!BACKEND ? '<p class="warnt">Backend not configured. Fill <code>config.js</code> (see README). Until then only Demo mode works.</p>' :
-      S.session ? '<p class="ok">Signed in as ' + esc(S.session.email || "user") + '</p><button class="btn" data-act="signout">Sign out</button>' :
-        '<input type="email" id="em" placeholder="Email" autocomplete="email"><div style="height:6px"></div><input type="password" id="pw" placeholder="Password (min 6)" autocomplete="current-password"><div class="row" style="margin-top:8px"><button class="btn primary" data-act="signin">Sign in</button><button class="btn" data-act="signup">Create account</button></div>') + "</div>";
-    h += '<div class="card"><h3>Appearance &amp; mode</h3><div class="switch"><input type="checkbox" id="thm"' + (S.settings.theme === "light" ? " checked" : "") + '><label for="thm">Light theme</label></div>' +
-      '<div class="switch"><input type="checkbox" id="demo"' + (S.settings.demo ? " checked" : "") + '><label for="demo">Demo mode (mock replies, no AI is called)</label></div>' +
-      (window.showSaveFilePicker ? '<div class="switch"><input type="checkbox" id="askloc"' + (S.settings.askLocation ? " checked" : "") + '><label for="askloc">Ask where to save files (desktop browsers)</label></div>' : '<p class="muted">Downloads go to your browser\'s download folder. On Android, Chrome → Settings → Downloads → “Ask where to save files” lets you pick the location.</p>') + "</div>";
+    const sp = S.sp;
     const man = S.settings.routing === "manual";
-    const opts = PIDS.filter((p) => S.prov[p].models.length);
-    h += '<div class="card"><h3>Model routing</h3><div class="row"><button class="pill' + (!man ? " on" : "") + '" data-act="routing" data-v="auto">Auto</button><button class="pill' + (man ? " on" : "") + '" data-act="routing" data-v="manual">Manual</button></div>' +
-      '<p class="muted">' + (man ? "Your chosen model is used." : "Auto picks a suitable model from your configured providers and falls back to another provider on temporary errors.") + "</p>";
-    if (man) {
-      h += '<select id="selp"><option value="">Provider…</option>' + opts.map((p) => '<option value="' + p + '"' + (S.settings.selected.provider === p ? " selected" : "") + ">" + esc(L.PROVIDERS[p].name) + "</option>").join("") + "</select><div style='height:6px'></div>";
-      const sp = S.settings.selected.provider;
-      h += '<select id="selm"><option value="">Model…</option>' + (sp && S.prov[sp] ? S.prov[sp].models.map((m) => '<option value="' + esc(m.id) + '"' + (S.settings.selected.model === m.id ? " selected" : "") + ">" + esc(m.id) + (m.free ? " (free)" : "") + "</option>").join("") : "") + "</select>";
-      h += '<div class="switch"><input type="checkbox" id="fb"' + (S.settings.allowFallback ? " checked" : "") + '><label for="fb">If it fails, automatically try another provider</label></div>';
+    const readyN = PIDS.filter((p) => S.prov[p].configured).length;
+    const sOk = !!(BACKEND && S.session);
+    if (!sp) {
+      const who = !BACKEND ? "Backend not configured" : S.session ? esc(S.session.email || "Signed in") : "Not signed in";
+      let h = '<div class="set-hero"><span class="logo big">' + ic("spark", 24) + '</span><div><h2>AI Studio</h2><p class="muted">' + who + '</p></div></div>';
+      h += '<div class="set-group"><div class="set-gt">General</div>' +
+        row("account", "user", "Account", sOk ? "Signed in" : "Sign in or create account", '<span class="dot ' + (sOk ? "ok" : "off") + '"></span>') +
+        row("appearance", "palette", "Appearance &amp; mode", (S.settings.theme === "light" ? "Light" : "Dark") + " theme" + (S.settings.demo ? " · Demo on" : "")) + "</div>";
+      h += '<div class="set-group"><div class="set-gt">AI</div>' +
+        row("models", "cpu", "Model &amp; routing", man ? "Manual" + (S.settings.selected.model ? " · " + esc(S.settings.selected.model) : "") : "Auto with fallback") +
+        row("providers", "plug", "Providers &amp; API keys", readyN + " of " + PIDS.length + " ready") + "</div>";
+      h += '<div class="set-group"><div class="set-gt">Data</div>' +
+        row("data", "shield", "Privacy &amp; data", "Keys, export, delete") +
+        row("about", "info", "About", "Version and limits") + "</div>";
+      return h;
     }
-    h += "</div>";
-    h += '<div class="card"><h3>Providers</h3><p class="muted">Limits change often and are set by each provider; this app never guarantees free or unlimited tokens. Token counts below are marked as provider-reported or estimated.</p>' +
-      '<div class="row"><button class="btn small" data-act="refresh">' + ic("refresh", 14) + ' Refresh status &amp; models</button></div></div>';
-    for (const p of PIDS) {
-      const st = S.prov[p]; const u = S.usage[p] || { reported: 0, estimated: 0, requests: 0 };
-      h += '<div class="card"><h3>' + esc(L.PROVIDERS[p].name) + ' <small class="' + (st.configured ? "ok" : "muted") + '">' + (st.configured ? "● available (" + (st.keySource === "user" ? "your key" : "server key") + ")" : "○ no key") + "</small></h3>" +
-        '<p class="muted">' + esc(L.PROVIDERS[p].note) + "</p>" + (st.error ? '<p class="errtxt">' + esc(st.error) + "</p>" : "") +
-        '<div class="muted">Models loaded: ' + st.models.length + " · Requests: " + u.requests + " · Tokens: " + u.reported + " reported, ≈" + u.estimated + " estimated</div>" +
-        '<div class="switch"><input type="checkbox" data-act="penable" data-p="' + p + '"' + (S.settings.enabled[p] !== false ? " checked" : "") + '><label>Use this provider in Auto mode</label></div>' +
-        (st.models.length ? '<select data-act="ppref" data-p="' + p + '"><option value="">Preferred model (optional)</option>' + st.models.map((m) => '<option value="' + esc(m.id) + '"' + (S.settings.preferred[p] === m.id ? " selected" : "") + ">" + esc(m.id) + "</option>").join("") + "</select>" : "") +
-        '<div style="height:6px"></div><input type="password" data-key="' + p + '" placeholder="' + (S.byok[p] ? "Key saved on this device" : "Your own API key (optional)") + '" autocomplete="off"><div class="row" style="margin-top:6px"><button class="btn small primary" data-act="savekey" data-p="' + p + '">Save key</button>' + (S.byok[p] ? '<button class="btn small danger" data-act="rmkey" data-p="' + p + '">Remove key</button>' : "") + "</div></div>";
+    if (sp === "account") {
+      let h = pageHead("Account", "spage", "", "Needed to use the server keys through your proxy");
+      h += '<div class="card">' + (!BACKEND ? '<p class="warnt">Backend not configured. Fill <code>config.js</code> (see README). Until then only Demo mode works.</p>' :
+        S.session ? '<p class="ok">Signed in as ' + esc(S.session.email || "user") + '</p><button class="btn" data-act="signout">Sign out</button>' :
+          '<input type="email" id="em" placeholder="Email" autocomplete="email"><div style="height:8px"></div><input type="password" id="pw" placeholder="Password (min 6)" autocomplete="current-password"><div class="row" style="margin-top:10px"><button class="btn primary" data-act="signin">Sign in</button><button class="btn" data-act="signup">Create account</button></div>') + "</div>";
+      return h;
     }
-    h += '<div class="card"><h3>Your keys &amp; privacy</h3><p class="muted">If you add your own key it is stored only in this browser (not encrypted by the app) and is sent to the proxy with each request, which forwards it to that provider without storing or logging it. Use it only on a device you trust. Server keys never reach this app.</p><div class="switch"><input type="checkbox" id="consent"' + (S.settings.consent ? " checked" : "") + '><label for="consent">I agree to store my own API keys on this device</label></div><div class="row"><button class="btn" data-act="exportall">Export all data</button><button class="btn danger" data-act="wipe">Delete all data &amp; keys</button></div></div>';
-    h += '<div class="card"><h3>About</h3><p class="muted">AI Studio core stage: chat, coding workspace, saved files, history, provider routing. Photo Studio and ZIP project analyzer are planned next stages and not available yet. Generated code has not been run or tested by this app.</p></div>';
-    return h;
+    if (sp === "appearance") {
+      let h = pageHead("Appearance &amp; mode", "spage");
+      h += '<div class="card"><h3>Theme</h3><div class="seg"><button class="' + (S.settings.theme !== "light" ? "on" : "") + '" data-act="theme" data-v="dark">Dark</button><button class="' + (S.settings.theme === "light" ? "on" : "") + '" data-act="theme" data-v="light">Light</button></div></div>';
+      h += '<div class="card">' + sw("demo", "Demo mode <small>Mock replies, no AI is called</small>", S.settings.demo) +
+        (window.showSaveFilePicker ? sw("askloc", "Ask where to save files <small>Desktop browsers</small>", S.settings.askLocation) : '<p class="muted">Downloads go to your browser\'s download folder. On Android, Chrome → Settings → Downloads → “Ask where to save files” lets you pick the location.</p>') + "</div>";
+      return h;
+    }
+    if (sp === "models") {
+      const opts = PIDS.filter((p) => S.prov[p].models.length);
+      let h = pageHead("Model &amp; routing", "spage", "", "Choose how a model is picked for each message");
+      h += '<div class="card"><div class="seg"><button class="' + (!man ? "on" : "") + '" data-act="routing" data-v="auto">Auto</button><button class="' + (man ? "on" : "") + '" data-act="routing" data-v="manual">Manual</button></div>' +
+        '<p class="muted" style="margin-top:10px">' + (man ? "Your chosen model is used." : "Auto picks a suitable model from your configured providers and falls back to another provider on temporary errors.") + "</p></div>";
+      if (man) {
+        const sel = S.settings.selected.provider;
+        h += '<div class="card"><h3>Your model</h3><select id="selp"><option value="">Provider…</option>' + opts.map((p) => '<option value="' + p + '"' + (sel === p ? " selected" : "") + ">" + esc(L.PROVIDERS[p].name) + "</option>").join("") + "</select><div style='height:8px'></div>" +
+          '<select id="selm"><option value="">Model…</option>' + (sel && S.prov[sel] ? S.prov[sel].models.map((m) => '<option value="' + esc(m.id) + '"' + (S.settings.selected.model === m.id ? " selected" : "") + ">" + esc(m.id) + (m.free ? " (free)" : "") + "</option>").join("") : "") + "</select>" +
+          sw("fb", "Auto fallback <small>If it fails, try another provider</small>", S.settings.allowFallback) + "</div>";
+      }
+      return h;
+    }
+    if (sp === "providers") {
+      if (S.pp && L.PROVIDERS[S.pp]) {
+        const p = S.pp, st = S.prov[p], u = S.usage[p] || { reported: 0, estimated: 0, requests: 0 };
+        let h = pageHead(esc(L.PROVIDERS[p].name), "ppage", "", '<span class="' + (st.configured ? "ok" : "muted") + '">' + (st.configured ? "● available (" + (st.keySource === "user" ? "your key" : "server key") + ")" : "○ no key") + "</span>");
+        h += '<div class="card"><p class="muted">' + esc(L.PROVIDERS[p].note) + "</p>" + (st.error ? '<p class="errtxt">' + esc(st.error) + "</p>" : "") +
+          '<div class="stats"><div><b>' + st.models.length + '</b><small>Models</small></div><div><b>' + u.requests + '</b><small>Requests</small></div><div><b>' + u.reported + '</b><small>Tokens reported</small></div><div><b>≈' + u.estimated + '</b><small>Tokens est.</small></div></div></div>';
+        h += '<div class="card">' + sw("", "Use in Auto mode", S.settings.enabled[p] !== false, ' data-act="penable" data-p="' + p + '"') +
+          (st.models.length ? '<select data-act="ppref" data-p="' + p + '"><option value="">Preferred model (optional)</option>' + st.models.map((m) => '<option value="' + esc(m.id) + '"' + (S.settings.preferred[p] === m.id ? " selected" : "") + ">" + esc(m.id) + "</option>").join("") + "</select>" : "") + "</div>";
+        h += '<div class="card"><h3>Your own API key</h3><input type="password" data-key="' + p + '" placeholder="' + (S.byok[p] ? "Key saved on this device" : "Paste key (optional)") + '" autocomplete="off"><div class="row" style="margin-top:10px"><button class="btn small primary" data-act="savekey" data-p="' + p + '">Save key</button>' + (S.byok[p] ? '<button class="btn small danger" data-act="rmkey" data-p="' + p + '">Remove key</button>' : "") + '</div><p class="muted" style="margin-top:8px">Tick the consent box in Privacy &amp; data before saving a key.</p></div>';
+        return h;
+      }
+      let h = pageHead("Providers &amp; API keys", "spage", "", "Limits are set by each provider and change often");
+      h += '<div class="row" style="margin:0 0 6px"><button class="btn small" data-act="refresh">' + ic("refresh", 14) + " Refresh status &amp; models</button></div>";
+      h += '<div class="set-group">' + PIDS.map((p) => { const st = S.prov[p]; return '<button class="set-row" data-act="popen" data-p="' + p + '"><span class="set-ic av">' + esc(L.PROVIDERS[p].name.charAt(0)) + '</span><span class="set-tx"><b>' + esc(L.PROVIDERS[p].name) + "</b><small>" + (st.configured ? (st.keySource === "user" ? "Your key" : "Server key") + " · " + st.models.length + " models" : "No key") + '</small></span><span class="dot ' + (st.configured ? "ok" : "off") + '"></span><span class="set-ch">' + ic("chevron", 18) + "</span></button>"; }).join("") + "</div>";
+      return h;
+    }
+    if (sp === "data") {
+      let h = pageHead("Privacy &amp; data", "spage");
+      h += '<div class="card"><p class="muted">If you add your own key it is stored only in this browser (not encrypted by the app) and is sent to the proxy with each request, which forwards it to that provider without storing or logging it. Use it only on a device you trust. Server keys never reach this app.</p>' + sw("consent", "I agree to store my own API keys on this device", S.settings.consent) + "</div>";
+      h += '<div class="card"><h3>Your data</h3><p class="muted">Chats and files stay on this device.</p><div class="row"><button class="btn" data-act="exportall">Export all data</button><button class="btn danger" data-act="wipe">Delete all data &amp; keys</button></div></div>';
+      return h;
+    }
+    return pageHead("About", "spage") + '<div class="card"><p class="muted">AI Studio core stage: chat, coding workspace, saved files, history, provider routing. Photo Studio and ZIP project analyzer are planned next stages and not available yet. Generated code has not been run or tested by this app.</p></div>';
   }
 
   function placeholderView(kind) {
@@ -495,7 +546,7 @@
     S._lastView = S.view;
     $("#banner").hidden = !(S.settings.demo || !BACKEND);
     $("#banner").textContent = S.settings.demo ? "DEMO MODE: replies are mock text, no AI provider is called." : "Backend not configured yet — open Settings, or turn on Demo mode to try the interface.";
-    const titles = { chat: "AI Chat", code: "Coding Workspace", files: "Saved Files", history: "Chat History", settings: "API & Model Settings", photo: "Photo Studio", projects: "Projects & ZIP" };
+    const titles = { chat: "AI Chat", code: "Coding Workspace", files: "Saved Files", history: "Chat History", settings: "Settings", photo: "Photo Studio", projects: "Projects & ZIP" };
     $("#topTitle").textContent = (S.view === "chat" || S.view === "code") && S.cur ? S.cur.title : titles[S.view];
     if (S.view === "chat" || S.view === "code") main.innerHTML = chatView(S.view);
     else if (S.view === "files") { main.innerHTML = filesView(); fillFiles(); }
@@ -528,7 +579,11 @@
     try {
       switch (a) {
         case "drawer": $("#drawer").hidden = !$("#drawer").hidden; break;
-        case "goto": { closeDrawer(); const v = el.dataset.view; if ((v === "chat" || v === "code") && S.view !== v) { S.view = v; if (!S.cur || S.cur.mode !== v) { S.cur = null; S.msgs = []; S.draftMode = v; } } else S.view = v; render(); break; }
+        case "goto": { closeDrawer(); const v = el.dataset.view; if ((v === "chat" || v === "code") && S.view !== v) { S.view = v; if (!S.cur || S.cur.mode !== v) { S.cur = null; S.msgs = []; S.draftMode = v; } } else { S.view = v; if (v === "settings") { S.sp = el.id === "modelChip" ? "models" : null; S.pp = null; S._lastView = null; } } render(); break; }
+        case "spage": S.sp = el.dataset.p || null; S.pp = null; S._lastView = null; render(); break;
+        case "popen": S.pp = el.dataset.p; S._lastView = null; render(); break;
+        case "ppage": S.pp = null; S._lastView = null; render(); break;
+        case "theme": S.settings.theme = el.dataset.v; saveSettings(); render(); break;
         case "newchat": newChat(); break;
         case "open": await openChat(el.dataset.id); break;
         case "task": S.task = el.dataset.t; if (S.cur) { S.cur.task = S.task; DB.put("chats", S.cur); } render(); break;

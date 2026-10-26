@@ -151,3 +151,89 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--accent);
 [data-theme=light] .composer{background:linear-gradient(180deg,transparent,var(--bg) 28%)}
 [data-theme=light] .composer .row,[data-theme=light] .msg.user .bubble{box-shadow:0 6px 20px rgba(61,92,255,.15)}
 @media (min-width:760px){.msg.user .bubble{margin-left:25%}}
+
+/* ===== v3 look: typography, settings pages, switches, polish ===== */
+:root{--font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--font-head:"Plus Jakarta Sans","Inter",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;--line2:rgba(255,255,255,.08)}
+[data-theme=light]{--line2:rgba(20,26,43,.09)}
+html,body{font-family:var(--font);font-size:15.5px;line-height:1.6;letter-spacing:-.005em;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button,input,textarea,select{font-family:inherit}
+h1,h2,h3,.title,.brand .title,.hero h2,.set-gt{font-family:var(--font-head)}
+.brand .title{font-weight:700;font-size:16px;letter-spacing:-.01em}
+.card h3{font-family:var(--font-head);font-size:1.02em;font-weight:700;letter-spacing:-.01em;margin-bottom:8px}
+.hero h2{font-size:1.75em;font-weight:800;letter-spacing:-.025em}
+.hero p{font-size:15px;line-height:1.55}
+.cb-g,.cb pre,.cb-h .lang,code,.bubble code.inl{font-family:var(--mono)!important;font-size:12.5px}
+.bubble code.inl{font-size:.88em!important}
+.msg .bubble{line-height:1.65}
+.msg.user .bubble{font-weight:450}
+.btn,.pill,.chip{font-weight:500}
+.btn.primary,.send{font-weight:600}
+.bottomnav button{letter-spacing:.01em}
+.bottomnav button.on{font-weight:600}
+.drawer-sec{font-family:var(--font-head);font-weight:700;letter-spacing:.08em}
+.card{box-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 8px 28px rgba(0,0,0,.18)}
+[data-theme=light] .card{box-shadow:0 2px 14px rgba(20,26,43,.06)}
+input[type=text],input[type=search],input[type=password],input[type=email],select,textarea{font-size:15px}
+select{appearance:none;-webkit-appearance:none;padding-right:36px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2397a3c0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right 12px center}
+
+/* settings: home list */
+.set-hero{display:flex;align-items:center;gap:14px;padding:16px 6px 10px}
+.set-hero h2{margin:0;font-size:1.35em;font-weight:800;letter-spacing:-.02em}
+.set-hero p{margin:2px 0 0}
+.logo.big{width:52px;height:52px;border-radius:16px;display:grid;place-items:center}
+.set-group{margin:14px 0 18px}
+.set-gt{margin:0 8px 8px;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.set-group{background:transparent}
+.set-row{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:13px 14px;margin:0;border:1px solid var(--line2);border-top-width:0;background:var(--card);color:var(--text);cursor:pointer;font:inherit;transition:background .15s}
+.set-gt+.set-row{border-top-width:1px;border-radius:18px 18px 0 0}
+.set-row:last-child{border-radius:0 0 18px 18px}
+.set-gt+.set-row:last-child{border-radius:18px}
+.set-row:hover{background:rgba(108,140,255,.08)}
+.set-row:active{background:rgba(108,140,255,.14)}
+.set-group:not(:has(.set-gt)) .set-row:first-child{border-top-width:1px;border-radius:18px 18px 0 0}
+.set-group:not(:has(.set-gt)) .set-row:first-child:last-child{border-radius:18px}
+.set-ic{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:12px;color:var(--accent);background:rgba(108,140,255,.14)}
+.set-ic.av{font-family:var(--font-head);font-weight:800;font-size:16px}
+.set-tx{flex:1;min-width:0;display:flex;flex-direction:column}
+.set-tx b{font-weight:600;font-size:15px}
+.set-tx small{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.set-ch{color:var(--muted);display:inline-flex;flex:none}
+.dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--muted);opacity:.5}
+.dot.ok{background:var(--ok);opacity:1;box-shadow:0 0 0 4px rgba(56,211,159,.15)}
+
+/* settings: sub-page header */
+.page-head{display:flex;align-items:center;gap:12px;padding:4px 0 10px}
+.page-head h2{margin:0;font-size:1.3em;font-weight:800;letter-spacing:-.02em}
+.page-head p{margin:1px 0 0;font-size:13px}
+
+/* segmented control */
+.seg{display:flex;padding:4px;gap:4px;border-radius:14px;background:rgba(127,140,180,.12)}
+.seg button{flex:1;min-height:40px;border:0;border-radius:11px;background:transparent;color:var(--muted);font:inherit;font-weight:600;cursor:pointer;transition:background .2s,color .2s,box-shadow .2s}
+.seg button.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 16px rgba(108,140,255,.4)}
+
+/* switches */
+.switch{justify-content:space-between;gap:14px;padding:6px 0;cursor:pointer}
+.switch .sw-l{flex:1;display:flex;flex-direction:column;font-weight:500}
+.switch .sw-l small,.switch small{color:var(--muted);font-weight:400;font-size:13px}
+.switch input[type=checkbox]{appearance:none;-webkit-appearance:none;flex:none;width:46px;height:28px;border-radius:999px;background:rgba(127,140,180,.28);position:relative;cursor:pointer;transition:background .2s;border:0}
+.switch input[type=checkbox]::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.35);transition:transform .2s}
+.switch input[type=checkbox]:checked{background:linear-gradient(135deg,var(--accent),var(--accent2))}
+.switch input[type=checkbox]:checked::after{transform:translateX(18px)}
+.switch input[type=checkbox]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.card .switch+select,.card select+.switch{margin-top:8px}
+
+/* provider stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.stats div{padding:10px 6px;border-radius:12px;background:rgba(127,140,180,.1);text-align:center}
+.stats b{display:block;font-family:var(--font-head);font-size:1.1em}
+.stats small{color:var(--muted);font-size:11px}
+@media (max-width:400px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* chat polish */
+.topbar{padding-bottom:10px}
+.chip{font-weight:600;font-size:12.5px}
+.composer .row{border-radius:28px}
+.pill{font-size:13.5px}
+.msg.assistant .bubble{font-size:15.5px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.bottomnav .ni{display:flex!important;align-items:center;justify-content:center}
