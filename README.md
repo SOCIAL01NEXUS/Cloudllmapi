@@ -25,11 +25,11 @@ Provider keys stay on the server (Supabase Edge Function), never in the app.
 | Dark (default) / light theme, mobile-first | ✅ |
 | Streaming + Stop | ✅ |
 | Demo mode (clearly labeled mock replies) | ✅ |
+| **Photo Studio**: pick a photo, say what to change, download the result (safe edits only; see below) | ✅ UI tested in a real browser with a mock backend. The proxy's photo logic was tested with a mocked Gemini (16 checks), **not** against the real Gemini API. |
 
 ## Not built yet (honestly)
 
 - **ZIP Project Analyzer** (upload ZIP, index, modify, re-export) → Stage 2.
-- **Photo Studio** (AI image editing) → Stage 3. Text-only models cannot edit images; it will only be enabled for a provider/model that really supports it.
 - Installable app / offline mode (PWA) and native APK: intentionally left for later. For now it is a normal website; open it in Chrome (⋮ → Add to Home screen gives a plain shortcut).
 - Syntax highlighting loads highlight.js from cdnjs; offline or if blocked, code is shown without colors (everything else works).
 - Code is never executed or tested by the app; the AI is told it cannot run code.
@@ -84,6 +84,34 @@ Environment variables (all in `supabase/.env.example`): `GEMINI_API_KEY`, `GROQ_
 
 Local test: `cd pwa && python3 -m http.server 8000` → open `http://localhost:8000`, enable **Demo mode** to try the UI without a backend.
 
+
+## Photo Studio (safe photo edits)
+
+Open the drawer (☰) → **Photo Studio**. Photos stay in memory only; nothing is saved in the app.
+
+**Allowed:** background, colour, lighting, filter, style, quality.
+**Refused:** removing/thinning/see-through clothes, exposing skin, nude or sexual edits, and any body or clothing edit on a photo of a minor.
+
+The app only collects the photo and the instruction. The rules are enforced on the server, inside the same `ai-proxy` function (action `photo`, Gemini only, same sign-in, same Gemini key, same `ALLOWED_EMAILS`):
+
+1. blocked-word check on the prompt (code, not just a prompt rule)
+2. input check: the photo + request are classified first (fails closed)
+3. safe rules added to every prompt
+4. output check: the edited photo is compared with the original (fails closed)
+
+Prompt rules alone are guidance, not a guarantee. Layers 1, 2 and 4 are what actually block. No filter is perfect, so keep the account allowlist on and do not turn off the provider's own safety settings.
+
+### Deploy
+Photo Studio is part of `ai-proxy`, so there is no second function. Replace `supabase/functions/ai-proxy/index.ts` with the new one and redeploy:
+```bash
+supabase functions deploy ai-proxy            # keep JWT verification ON
+```
+It uses your existing `GEMINI_API_KEY`. Optional secrets (see `supabase/photo.env.example`): `PHOTO_GEMINI_MODEL`, `PHOTO_CHECK_MODEL`, `PHOTO_RATE_LIMIT_MAX`, `PHOTO_RATE_WINDOW_SECONDS`.
+
+Image model names change often. Set `PHOTO_GEMINI_MODEL` to a Gemini model your account lists for image **editing**, and `PHOTO_CHECK_MODEL` to a Gemini vision model for the safety checker; the defaults in the code are only a starting point. If the checker model name is wrong, edits are refused with a clear message (fail closed), not silently allowed.
+
+Gemini image models need billing enabled, and every edit costs money (plus 2 small safety-check calls), so keep `ALLOWED_EMAILS` and `PHOTO_RATE_LIMIT_MAX` set. The photo rate limiter is per function instance and best-effort, not a hard cap.
+
 ## Security notes
 - No provider key is in the app. The proxy needs a valid Supabase user token, validates every field, caps output tokens, limits request size and rate per user, and only talks to the six allow-listed provider hosts.
 - Optional "bring your own key": stored in this browser only after you tick consent, sent per request over HTTPS in a header to the proxy, used for that single call, never stored/logged server-side. Browser storage is not encrypted; use only on a device you trust. Remove keys any time in Settings.
@@ -99,4 +127,3 @@ The e2e tests use a mock proxy, so they prove the app logic, **not** that your r
 
 ## Next stages
 2. ZIP Project Analyzer (safe unzip with size/depth/ratio limits, file tree, search index, change proposals, revised ZIP).
-3. Photo Studio with a verified image-editing provider.

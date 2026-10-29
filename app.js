@@ -98,6 +98,7 @@
     sp: null,             // settings sub-page
     pp: null,             // open provider inside Providers page
     lastUsed: null,
+    photo: { img: null, prompt: "", result: null, meta: "", busy: false, error: "" }, // kept in memory only, never saved
   };
   if (S.settings.consent) S.byok = lsGet("byok", {});
   PIDS.forEach((p) => { S.prov[p] = { configured: false, keySource: "none", models: (lsGet("models_" + p, { list: [] }).list) || [], loadedAt: lsGet("models_" + p, { t: 0 }).t || 0, error: null }; });
@@ -529,13 +530,68 @@
       h += '<div class="card"><h3>Your data</h3><p class="muted">Chats and files stay on this device.</p><div class="row"><button class="btn" data-act="exportall">Export all data</button><button class="btn danger" data-act="wipe">Delete all data &amp; keys</button></div></div>';
       return h;
     }
-    return pageHead("About", "spage") + '<div class="card"><p class="muted">AI Studio core stage: chat, coding workspace, saved files, history, provider routing. Photo Studio and ZIP project analyzer are planned next stages and not available yet. Generated code has not been run or tested by this app.</p></div>';
+    return pageHead("About", "spage") + '<div class="card"><p class="muted">AI Studio core stage: chat, coding workspace, saved files, history, provider routing. Photo Studio (safe photo edits through the ai-proxy Edge Function, Gemini only) is included; the ZIP project analyzer is a planned next stage and not available yet. Generated code has not been run or tested by this app.</p></div>';
   }
 
-  function placeholderView(kind) {
-    const t = kind === "photo" ? [ic("image", 34), "Photo Studio", "Planned for stage 3. It needs an image-editing API (for example an image model through your provider); text-only models cannot edit images, so this will only be enabled for providers that really support it."] :
-      [ic("archive", 34), "Projects & ZIP Analyzer", "Planned for stage 2: safe ZIP upload (path-traversal and zip-bomb limits), file tree, project index, change proposals and a revised ZIP download. For now you can attach single text files in Chat/Code and download multi-file answers as a ZIP."];
+  function placeholderView() {
+    const t = [ic("archive", 34), "Projects & ZIP Analyzer", "Planned for stage 2: safe ZIP upload (path-traversal and zip-bomb limits), file tree, project index, change proposals and a revised ZIP download. For now you can attach single text files in Chat/Code and download multi-file answers as a ZIP."];
     return '<div class="empty"><div class="orb">' + t[0] + "</div><h3>" + t[1] + '</h3><p>' + t[2] + '</p><span class="tag">not available yet</span></div>';
+  }
+
+  /* ---------------- Photo Studio (stage 3) ----------------
+     Safe edits only (background, colour, lighting, filter, style, quality). The server (Edge Function `ai-proxy`, action "photo")
+     enforces the safety rules; the app only collects the photo and the instruction. Photos live in memory only. */
+  const PHOTO_PRESETS = ["Make the background blue", "Blur the background", "Brighten the photo", "Black and white filter", "Cartoon style", "Vintage look", "Make the photo sharper and cleaner", "Make the sky a sunset"];
+  function dataUrlToBlob(u) {
+    const m = /^data:([^;]+);base64,(.*)$/.exec(u || ""); if (!m) return null;
+    const bin = atob(m[2]); const bytes = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new Blob([bytes], { type: m[1] });
+  }
+  /* Shrink to max 1280px (keeps upload small and fast); createImageBitmap applies the camera rotation. */
+  async function prepPhoto(file, max) {
+    max = max || 1280;
+    let bmp;
+    try { bmp = await createImageBitmap(file, { imageOrientation: "from-image" }); }
+    catch (e) {
+      bmp = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error("Could not read this image")); im.src = URL.createObjectURL(file); });
+    }
+    const w = bmp.width || bmp.naturalWidth, h = bmp.height || bmp.naturalHeight;
+    const s = Math.min(1, max / Math.max(w, h));
+    const c = document.createElement("canvas"); c.width = Math.max(1, Math.round(w * s)); c.height = Math.max(1, Math.round(h * s));
+    c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+    return c.toDataURL("image/jpeg", 0.9);
+  }
+  function photoView() {
+    const P = S.photo;
+    let h = '<div class="card"><h3>Photo Studio</h3><p class="muted">Pick a photo and say what to change. Safe edits only: background, colour, lighting, filter, style, quality. Requests to change or remove clothes, expose skin, or edit a child\'s body are refused. Photos are sent to the image provider you set up on the server and are not saved in this app.</p>';
+    h += P.img ? '<img class="ph-img" src="' + P.img + '" alt="Your photo"><div class="row" style="margin-top:8px"><button class="btn small" data-act="photopick">Change photo</button><button class="btn small danger" data-act="photoclear">Remove</button></div>'
+      : '<button class="ph-pick" data-act="photopick">' + ic("image", 28) + "<span>Choose a photo</span><small>JPG, PNG or WEBP</small></button>";
+    h += '<input type="file" id="photoIn" accept="image/png,image/jpeg,image/webp" hidden></div>';
+    h += '<div class="card"><h3>What should change?</h3><div class="chips">' + PHOTO_PRESETS.map((t, i) => '<button class="pill" data-act="photopreset" data-i="' + i + '">' + esc(t) + "</button>").join("") + "</div>" +
+      '<textarea id="photoPrompt" rows="3" maxlength="400" placeholder="e.g. Make the background a beach at sunset">' + esc(P.prompt) + "</textarea>" +
+      '<div class="row" style="margin-top:10px"><button class="btn primary" data-act="photoedit"' + (P.busy ? " disabled" : "") + ">" + ic("spark", 16) + (P.busy ? " Editing… (up to a minute)" : " Edit photo") + "</button></div>" +
+      (P.error ? '<p class="errtxt" style="margin-top:10px">' + esc(P.error) + "</p>" : "") + "</div>";
+    if (P.result) {
+      h += '<div class="card"><h3>Result</h3><img class="ph-img" src="' + P.result + '" alt="Edited photo"><p class="muted">AI edits can change small details (hands, text, faces). Check it before sharing.' + (P.meta ? " · " + esc(P.meta) : "") + '</p><div class="row"><button class="btn primary small" data-act="photodl">' + ic("download", 16) + ' Download</button><button class="btn small" data-act="photoagain">' + ic("refresh", 14) + ' Try again</button><button class="btn small" data-act="photouse">Edit this result</button></div></div>';
+    }
+    return h;
+  }
+  async function runPhoto() {
+    const P = S.photo; if (P.busy) return;
+    P.prompt = (($("#photoPrompt") || {}).value || P.prompt || "").trim();
+    if (!P.img) { toast("Choose a photo first", true); return; }
+    if (!P.prompt) { toast("Say what you want to change", true); return; }
+    if (S.settings.demo) { toast("Demo mode has no image editing. Turn it off and sign in.", true); return; }
+    if (!BACKEND || !S.session) { toast(BACKEND ? "Sign in first (Settings)" : "Backend not configured. See README.", true); return; }
+    P.busy = true; P.error = ""; render();
+    try {
+      // Same proxy as chat (same sign-in, same Gemini key, same limits): action "photo", provider "gemini".
+      const r = await proxy("gemini", "photo", { image: P.img, prompt: P.prompt }, null, S.byok.gemini);
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || j.error) throw new Error((j.error && (j.error.message || j.error)) || "Server error " + r.status);
+      P.result = j.image; P.meta = [j.provider, j.model].filter(Boolean).join(" / ");
+    } catch (e) { P.error = (e && e.message) || "Photo edit failed"; }
+    finally { P.busy = false; render(); const res = document.querySelector(".ph-img:last-of-type"); if (P.result && res) res.scrollIntoView({ block: "nearest" }); }
   }
 
   function render() {
@@ -552,7 +608,8 @@
     else if (S.view === "files") { main.innerHTML = filesView(); fillFiles(); }
     else if (S.view === "history") { main.innerHTML = historyView(); fillHistory(""); }
     else if (S.view === "settings") main.innerHTML = settingsView();
-    else main.innerHTML = placeholderView(S.view);
+    else if (S.view === "photo") main.innerHTML = photoView();
+    else main.innerHTML = placeholderView();
     if (S.view !== "chat" && S.view !== "code") main.scrollTop = prevScroll;
     drawerList();
     if (S.view === "chat" || S.view === "code") { const ta = $("#input"); if (ta) { autosize(ta); if (keep) ta.focus(); } main.scrollTop = prevScroll; }
@@ -628,6 +685,12 @@
             const j = a === "signin" ? await authCall("token?grant_type=password", { email: em, password: pw }) : await authCall("signup", { email: em, password: pw });
             if (j.access_token) { setSession(j); toast("Signed in"); await refreshStatus(); await loadAllModels(); render(); } else toast("Account created. Check your email to confirm, then sign in.");
           } catch (e) { toast(e.message, true); } break; }
+        case "photopick": { const pi = $("#photoIn"); if (pi) pi.click(); break; }
+        case "photoclear": Object.assign(S.photo, { img: null, result: null, meta: "", error: "" }); render(); break;
+        case "photopreset": { S.photo.prompt = PHOTO_PRESETS[Number(el.dataset.i)] || ""; render(); break; }
+        case "photoedit": case "photoagain": await runPhoto(); break;
+        case "photouse": if (S.photo.result) { S.photo.img = S.photo.result; S.photo.result = null; S.photo.meta = ""; S.photo.prompt = ""; render(); toast("Result is now your photo. Say what to change next."); } break;
+        case "photodl": { const b = dataUrlToBlob(S.photo.result); if (b) saveBlob("edited-photo." + (b.type === "image/jpeg" ? "jpg" : b.type === "image/webp" ? "webp" : "png"), b, b.type); break; }
         case "signout": setSession(null); PIDS.forEach((p) => { S.prov[p].configured = false; }); render(); break;
       }
     } catch (e) { toast((e && e.message) || "Action failed", true); }
@@ -644,6 +707,13 @@
     else if (t.id === "selm") { S.settings.selected.model = t.value; saveSettings(); updateChip(); }
     else if (t.dataset && t.dataset.act === "penable") { S.settings.enabled[t.dataset.p] = t.checked; saveSettings(); }
     else if (t.dataset && t.dataset.act === "ppref") { S.settings.preferred[t.dataset.p] = t.value || null; saveSettings(); }
+    else if (t.id === "photoIn" && t.files && t.files[0]) {
+      const f = t.files[0]; t.value = "";
+      if (!/^image\/(png|jpeg|webp)$/.test(f.type)) { toast("Use a JPG, PNG or WEBP photo", true); return; }
+      if (f.size > 25 * 1024 * 1024) { toast("Photo too large (max 25 MB)", true); return; }
+      try { S.photo.img = await prepPhoto(f); S.photo.result = null; S.photo.meta = ""; S.photo.error = ""; render(); }
+      catch (e) { toast((e && e.message) || "Could not read this photo", true); }
+    }
     else if (t.id === "fileIn" && t.files && t.files[0]) {
       const f = t.files[0]; t.value = "";
       if (f.size > MAX_ATTACH) { toast("File too large (max " + L.fmtSize(MAX_ATTACH) + ")", true); return; }
@@ -657,6 +727,7 @@
   document.addEventListener("input", (ev) => {
     const t = ev.target;
     if (t.id === "input") { S.drafts[S.view === "code" ? "code" : "chat"] = t.value; autosize(t); }
+    else if (t.id === "photoPrompt") { S.photo.prompt = t.value; }
     else if (t.id === "hq") { clearTimeout(hqT); hqT = setTimeout(() => fillHistory(t.value), 200); }
   });
   document.addEventListener("keydown", (ev) => {
