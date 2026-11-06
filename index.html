@@ -1,55 +1,146 @@
-<!doctype html>
-<html lang="en" data-theme="dark">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0b0f1a">
-<title>AI Studio</title>
-<link rel="icon" href="icon-192.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" onerror="this.remove()">
-<link rel="stylesheet" href="style.css">
-<link id="hljs-css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" onerror="this.remove()">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- CSP: own files + Supabase JS CDN + Supabase endpoints only -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self'; connect-src https://*.supabase.co wss://*.supabase.co; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="Concise Class 11 physics revision notes with formulas, key points and practice questions.">
+  <title>StudyDesk – Class 11 Physics Revision</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="app">
-  <header class="topbar">
-    <button class="icon-btn" data-act="drawer" aria-label="Chats"><span data-ic="menu"></span></button>
-    <div class="brand"><span class="logo" data-ic="spark" data-s="16"></span><div class="title" id="topTitle">AI Studio</div></div>
-    <button class="chip" data-act="goto" data-view="settings" id="modelChip" aria-label="Provider and model">Auto</button>
+  <a class="skip" href="#notes">Skip to notes</a>
+
+  <header class="top">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">Φ</span>
+      <h1 id="logo">StudyDesk</h1>
+    </div>
+    <label class="search-wrap">
+      <span class="sr">Search chapters</span>
+      <input id="search" type="search" placeholder="Search chapters" autocomplete="off">
+    </label>
   </header>
-  <div id="banner" class="banner" hidden></div>
-  <main id="main" tabindex="-1"></main>
-  <nav class="bottomnav" id="nav" aria-label="Main">
-    <button data-act="goto" data-view="chat"><span class="ni" data-ic="chat"></span>Chat</button>
-    <button data-act="goto" data-view="code"><span class="ni" data-ic="code"></span>Code</button>
-    <button data-act="goto" data-view="files"><span class="ni" data-ic="folder"></span>Files</button>
-    <button data-act="goto" data-view="history"><span class="ni" data-ic="history"></span>History</button>
-    <button data-act="goto" data-view="settings"><span class="ni" data-ic="settings"></span>Settings</button>
-  </nav>
-</div>
 
-<aside id="drawer" class="drawer" hidden>
-  <div class="drawer-bg" data-act="drawer"></div>
-  <div class="drawer-panel">
-    <button class="btn primary block newchat" data-act="newchat"><span data-ic="plus" data-s="18"></span> New chat</button>
-    <div id="drawerList" class="chatlist"></div>
-    <div class="drawer-sec">More sections</div>
-    <button class="btn block" data-act="goto" data-view="photo"><span data-ic="image" data-s="18"></span> Photo Studio</button>
-    <button class="btn block" data-act="goto" data-view="projects"><span data-ic="archive" data-s="18"></span> Projects &amp; ZIP Analyzer <small class="tag">next stage</small></button>
+  <div class="layout">
+    <nav class="side" aria-label="Chapters">
+      <h2>Class 11 Physics</h2>
+      <ul id="chapterList">
+        <li data-ch="ch1" class="active" tabindex="0"><b>Chapter 1</b><span>Motion in a Straight Line</span></li>
+        <li data-ch="ch2" tabindex="0"><b>Chapter 2</b><span>Laws of Motion</span></li>
+        <li data-ch="ch3" tabindex="0"><b>Chapter 3</b><span>Work, Energy &amp; Gravitation</span></li>
+      </ul>
+    </nav>
+
+    <main class="notes" id="notes">
+      <!-- ================= CHAPTER 1 ================= -->
+      <section class="chapter" id="ch1">
+        <h2>Motion in a Straight Line</h2>
+        <p class="meta">5 minute read. Tap any underlined term for a quick recap.</p>
+        <div class="react" data-ch="ch1"></div>
+
+        <h3>Key definitions</h3>
+        <p><b>Displacement</b> is the shortest vector from the initial to the final position. <b>Velocity</b> is the rate of change of displacement, and <b>acceleration</b> is the rate of change of velocity.</p>
+
+        <h3>Equations of uniformly accelerated motion</h3>
+        <pre>v = u + at
+s = ut + ½at²
+v² = u² + 2as</pre>
+
+        <h3>Points to remember</h3>
+        <ul>
+          <li>The slope of an x–t graph gives velocity.</li>
+          <li>The slope of a v–t graph gives acceleration.</li>
+          <li>The area under a v–t graph gives displacement.</li>
+          <li>For a projectile, the range is greatest at 45° to the horizon.</li>
+        </ul>
+
+        <h3>Practice question</h3>
+        <p>A ball is thrown upward at 20 m/s. Find the maximum height reached (g = 10 m/s²).</p>
+        <details><summary>Show answer</summary>H = u²/2g = 400/20 = <b>20 m</b></details>
+      </section>
+
+      <!-- ================= CHAPTER 2 ================= -->
+      <section class="chapter" id="ch2" hidden>
+        <h2>Laws of Motion</h2>
+        <p class="meta">6 minute read.</p>
+        <div class="react" data-ch="ch2"></div>
+
+        <h3>Newton's laws</h3>
+        <p>The first law introduces <b>inertia</b>: a body stays at rest or in uniform motion unless a net force acts on it. The second law links force to the rate of change of <b>momentum</b>, F = dp/dt. The third law pairs every action with an equal and opposite reaction.</p>
+
+        <h3>Friction</h3>
+        <p>Static <b>friction</b> adjusts itself up to a limiting value μₛN. Once sliding starts, kinetic friction μₖN acts, and it is usually smaller.</p>
+
+        <h3>Equilibrium</h3>
+        <p>A body is in <b>equilibrium</b> when the vector sum of all forces on it is zero. Draw the free-body diagram, then resolve the forces along two perpendicular axes.</p>
+
+        <h3>Practice question</h3>
+        <p>A 2 kg block rests on a rough surface with μₛ = 0.5. What is the maximum horizontal force before it slides? (g = 10 m/s²)</p>
+        <details><summary>Show answer</summary>F = μₛmg = 0.5 × 2 × 10 = <b>10 N</b></details>
+      </section>
+
+      <!-- ================= CHAPTER 3 ================= -->
+      <section class="chapter" id="ch3" hidden>
+        <h2>Work, Energy &amp; Gravitation</h2>
+        <p class="meta">7 minute read.</p>
+        <div class="react" data-ch="ch3"></div>
+
+        <h3>Work–energy theorem</h3>
+        <p>The net work done on a body equals the change in its kinetic <b>energy</b>. When only conservative forces act, total mechanical energy stays constant.</p>
+
+        <h3>Simple pendulum</h3>
+        <p>A <b>pendulum</b> converts potential energy into kinetic energy and back. For small angles the time period is T = 2π√(L/g), independent of mass. When the driving frequency matches the natural frequency, <b>resonance</b> occurs and the amplitude grows.</p>
+
+        <h3>Gravitation</h3>
+        <p>Newton's law of <b>gravity</b> states F = Gm₁m₂/r². A satellite in a circular <b>orbit</b> moves at v = √(GM/r), and the escape velocity from Earth is about 11.2 km/s.</p>
+
+        <h3>Practice question</h3>
+        <p>Find the time period of a pendulum of length 1 m (g = π² m/s²).</p>
+        <details><summary>Show answer</summary>T = 2π√(1/π²) = <b>2 s</b></details>
+      </section>
+    </main>
   </div>
-</aside>
 
-<div id="sheet" class="sheet" hidden>
-  <div class="sheet-bg" data-act="closesheet"></div>
-  <div class="sheet-panel" role="dialog" aria-modal="true"><div id="sheetBody"></div></div>
-</div>
-<div id="toast" class="toast" hidden></div>
+  <!-- ================= DOUBTS & DISCUSSION ================= -->
+  <section id="doubts" class="doubts" aria-label="Doubts and discussion">
+    <div class="doubts-head">
+      <h2>Doubts &amp; Discussion</h2>
+      <p>Ask a question or compare answers with your study partner.</p>
+    </div>
 
-<script src="config.js"></script>
-<script src="lib.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" async onerror="void 0"></script>
-<script src="app.js"></script>
+    <div id="join">
+      <div class="row">
+        <label class="field"><span>Your name</span>
+          <input id="nick" maxlength="20" autocomplete="off" placeholder="e.g. Aman">
+        </label>
+        <label class="field grow"><span>Group code</span>
+          <input id="phrase" type="password" autocomplete="off" placeholder="At least 8 characters">
+        </label>
+        <button id="joinBtn" type="button">Join group</button>
+      </div>
+      <p id="joinErr" class="err" role="alert"></p>
+    </div>
+
+    <div id="chat" hidden>
+      <div class="tools">
+        <label class="check"><input type="checkbox" id="blurToggle" checked> Blur messages until tapped</label>
+        <button id="clearBtn" type="button" class="ghost">Clear all</button>
+      </div>
+      <div id="log" aria-live="polite"></div>
+      <form id="form" autocomplete="off">
+        <input id="msg" maxlength="500" placeholder="Type your doubt or answer" autocomplete="off" aria-label="Message">
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </section>
+
+  <footer class="foot">StudyDesk · Class 11 Physics revision notes</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

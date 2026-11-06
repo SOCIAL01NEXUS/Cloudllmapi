@@ -1,0 +1,57 @@
+# StudyDesk v2 – Setup Guide
+
+## What changed
+- It is now a plain study portal. No hidden panel anymore.
+- **Glow terms**: tap a dotted-underline term in the notes and it glows on the other person's screen (the page jumps to that term so they see it).
+- **Reactions**: each chapter has ✓ Got it / ? Doubt / ★ Important / ↻ Revise. The other person sees your reaction as a chip (it glows briefly).
+- **Doubts & Discussion**: a normal chat at the bottom of the page.
+- Same safety as before, plus: privacy blur, auto-vanish after 10 min, Clear button, and auto-panic after 3 minutes idle.
+
+## 1. Supabase (very simple now)
+1. Create a project at https://supabase.com.
+2. **Project Settings → API**: copy *Project URL* and *anon public* key into `CONFIG` at the top of `script.js`.
+3. That's all. It uses Realtime **Broadcast**, so there are **no tables or policies to create** and nothing is stored on the server. (`schema.sql` from v1 is no longer needed; ignore or delete it.) Never use the `service_role` key here.
+
+## 2. How you two use it
+- Both open the site, enter a name and the **same Group code** (long and random, min 8 chars) under *Doubts & Discussion*, then press Join.
+- Until you join, tapping terms or reactions does nothing.
+- Your private signals:
+  - Tap a term → it glows for the other person.
+  - Choose a reaction on a chapter → shows as a chip for them.
+  - Decide privately what each word/reaction means. Nothing about the meaning is stored anywhere in the code.
+
+## 3. Choosing your own secret words
+1. In `script.js`, edit `CONFIG.GLOW_WORDS` (lowercase).
+2. Make sure each word appears in the notes text in `index.html`. Words found there are automatically turned into tappable terms. Words not in the text are simply ignored.
+3. Tip: use ordinary study words so nothing looks odd, and write a sentence around each so the notes read naturally.
+4. Reactions can be renamed in `CONFIG.REACTIONS`.
+
+## 4. Safety features and settings (top of `script.js`)
+| Setting | Meaning |
+|---|---|
+| `PANIC_ON_BLUR` / `PANIC_ON_HIDDEN` | Wipe + redirect to pw.live when focus is lost / tab hidden / minimised |
+| `IDLE_MS` | No activity this long → panic (default 3 min) |
+| `VANISH_MS` | Doubts vanish after this time (default 10 min) |
+| Privacy blur (checkbox) | Messages are blurred until you tap or hover them |
+| Ctrl+Shift+X | Manual panic |
+
+Panic only arms after you join the group, so just reading notes never redirects you.
+
+## 5. Push to GitHub and deploy
+```bash
+cd studydesk
+git init
+git add .
+git commit -m "StudyDesk v2"
+git branch -M main
+git remote add origin https://github.com/<your-username>/studydesk.git
+git push -u origin main
+```
+Then repo **Settings → Pages → Deploy from a branch → main → / (root)**. Live at `https://<your-username>.github.io/studydesk/`.
+
+## 6. Honest limitations
+- Glow and reaction signals are encrypted too, but anyone who knows the Group code can send and see them. Keep the code private and change it from time to time.
+- `location.replace` overwrites only the current history entry. The site's address may remain in older history, autocomplete and network logs. A private window helps.
+- Blur also fires when you click the address bar or open DevTools. Set `PANIC_ON_BLUR: false` if it is too sensitive.
+- If the other person is offline or the tab is closed, they miss the signal (nothing is stored).
+- Supabase library loads from jsDelivr. For tighter security, host `supabase.js` in your repo and change the script tag and CSP to `'self'`.
