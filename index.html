@@ -6,8 +6,8 @@
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'none'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self'; connect-src https://*.supabase.co wss://*.supabase.co; img-src 'self' data:; base-uri 'none'; form-action 'none'">
   <meta name="referrer" content="no-referrer">
-  <meta name="description" content="Class 11 revision notes for Physics, Chemistry and Maths with formulas, key points and practice questions.">
-  <title>StudyDesk – Class 11 Revision Notes</title>
+  <meta name="description" content="NEET UG preparation notes for Physics, Chemistry and Biology with key points, formulas, practice questions and a NEET-style mock quiz.">
+  <title>StudyDesk – NEET UG Preparation</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,14 +15,15 @@
 
   <header class="top">
     <button class="brand" id="logo" type="button" data-v="home" aria-label="StudyDesk home">
-      <span class="mark" aria-hidden="true">Φ</span><span class="brand-name">StudyDesk</span>
+      <span class="mark" aria-hidden="true">SD</span>
+      <span class="brand-text"><span class="brand-name">StudyDesk</span><span class="brand-sub">NEET UG preparation</span></span>
     </button>
     <nav class="mainnav" id="mainNav" aria-label="Main">
       <button type="button" data-v="home" class="active">Home</button>
       <button type="button" data-v="physics">Physics</button>
       <button type="button" data-v="chemistry">Chemistry</button>
-      <button type="button" data-v="maths">Maths</button>
-      <button type="button" data-v="practice">Practice</button>
+      <button type="button" data-v="biology">Biology</button>
+      <button type="button" data-v="practice">Mock quiz</button>
       <button type="button" data-v="doubts">Doubts</button>
       <button type="button" data-v="about">About</button>
     </nav>
@@ -37,40 +38,92 @@
     <!-- ================= HOME ================= -->
     <section class="view" data-view="home">
       <div class="home">
+
         <div class="hero">
-          <h2>Class 11 revision, one chapter at a time</h2>
-          <p>Short notes, key formulas and a practice question for every chapter. Pick a subject to start.</p>
+          <div class="hero-copy">
+            <h2>Prepare for NEET UG, one chapter at a time</h2>
+            <p>Concise NCERT-based notes, key formulas and a practice question for every chapter, plus a mock quiz with real NEET marking.</p>
+            <div class="hero-actions">
+              <button type="button" class="btn primary" data-v="biology">Start with Biology</button>
+              <button type="button" class="btn light" data-v="practice">Take the mock quiz</button>
+            </div>
+          </div>
+          <div class="count" aria-live="off">
+            <span class="count-num" id="countNum">–</span>
+            <span class="count-label" id="countLabel">days to your target date</span>
+          </div>
         </div>
+
+        <ul class="stats" aria-label="NEET UG at a glance">
+          <li><b>180</b><span>questions</span></li>
+          <li><b>720</b><span>total marks</span></li>
+          <li><b>+4 / −1</b><span>marking scheme</span></li>
+          <li><b>200 min</b><span>exam duration</span></li>
+        </ul>
+
+        <h3 class="section-title">Subjects</h3>
         <div class="cards">
-          <button type="button" class="subj" data-v="physics"><b>Physics</b><span>Motion, forces, energy and gravitation</span><i>3 chapters</i></button>
-          <button type="button" class="subj" data-v="chemistry"><b>Chemistry</b><span>Mole concept and atomic structure</span><i>2 chapters</i></button>
-          <button type="button" class="subj" data-v="maths"><b>Maths</b><span>Sets, relations and trigonometry</span><i>2 chapters</i></button>
+          <button type="button" class="subj phy" data-v="physics">
+            <b>Physics</b><span class="sub">45 questions · 180 marks</span>
+            <em>Kinematics, Laws of Motion, Work and Energy, Current Electricity</em>
+            <i>4 chapters</i>
+          </button>
+          <button type="button" class="subj chem" data-v="chemistry">
+            <b>Chemistry</b><span class="sub">45 questions · 180 marks</span>
+            <em>Mole concept, Atomic structure, Chemical bonding</em>
+            <i>3 chapters</i>
+          </button>
+          <button type="button" class="subj bio" data-v="biology">
+            <b>Biology</b><span class="sub">90 questions · 360 marks</span>
+            <em>Cell, Photosynthesis, Principles of Inheritance</em>
+            <i>3 chapters</i>
+          </button>
         </div>
-        <div class="ad" role="complementary" aria-label="Advertisement">
-          <span class="ad-tag">Ad</span>
-          <div class="ad-body"><b>BrightPath Test Series</b><span>Weekly chapter tests with step-by-step solutions. First two tests free.</span></div>
-          <span class="ad-btn">Learn more</span>
+
+        <h3 class="section-title">Useful resources</h3>
+        <div class="adrow">
+          <a class="ad" href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener noreferrer">
+            <span class="ad-tag">Ad</span>
+            <b>NCERT textbooks, free PDFs</b>
+            <span>Read the official Class 11 and 12 books online. NEET questions are built on them.</span>
+            <span class="ad-btn">Open site</span>
+          </a>
+          <a class="ad" href="https://neet.nta.nic.in/" target="_blank" rel="noopener noreferrer">
+            <span class="ad-tag">Ad</span>
+            <b>NEET UG official updates</b>
+            <span>Syllabus, information bulletin and notices from the National Testing Agency.</span>
+            <span class="ad-btn">Open site</span>
+          </a>
+          <a class="ad" href="https://mcc.nic.in/" target="_blank" rel="noopener noreferrer">
+            <span class="ad-tag">Ad</span>
+            <b>Counselling and seat matrix</b>
+            <span>Know how MBBS counselling works before results arrive.</span>
+            <span class="ad-btn">Open site</span>
+          </a>
         </div>
+
         <div class="tip">
           <h3>Revision tip</h3>
-          <p>After reading a chapter, close the page and write the three key formulas from memory. Check, then fix only what you missed.</p>
+          <p>NEET rewards NCERT lines. After each chapter, close the page and write five facts from memory, then check what you missed.</p>
         </div>
       </div>
     </section>
 
-    <!-- ================= STUDY (physics / chemistry / maths) ================= -->
+    <!-- ================= STUDY (physics / chemistry / biology) ================= -->
     <section class="view" data-view="study" hidden>
       <div class="layout">
         <nav class="side" aria-label="Chapters">
-          <h2 id="sideTitle">Class 11 Physics</h2>
+          <h2 id="sideTitle">Physics</h2>
           <ul id="chapterList"></ul>
-          <div class="ad small" role="complementary" aria-label="Advertisement">
+          <a class="ad small" href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener noreferrer">
             <span class="ad-tag">Ad</span>
-            <div class="ad-body"><b>NoteNest</b><span>Printable chapter summaries for quick revision.</span></div>
-          </div>
+            <b>Free NCERT books</b>
+            <span>Official textbooks, read online.</span>
+          </a>
         </nav>
 
         <main class="notes" id="notes">
+          <p class="crumb" id="crumb"></p>
 
           <!-- ======== PHYSICS ======== -->
           <section class="chapter" id="ph1" data-subj="physics" hidden>
@@ -111,7 +164,7 @@ v² = u² + 2as</pre>
           </section>
 
           <section class="chapter" id="ph3" data-subj="physics" hidden>
-            <h2>Work, Energy &amp; Gravitation</h2>
+            <h2>Work, Energy and Gravitation</h2>
             <p class="meta">7 minute read.</p>
             <div class="react" data-ch="ph3"></div>
             <h3>Work–energy theorem</h3>
@@ -125,16 +178,38 @@ v² = u² + 2as</pre>
             <details><summary>Show answer</summary>T = 2π√(1/π²) = <b>2 s</b></details>
           </section>
 
+          <section class="chapter" id="ph4" data-subj="physics" hidden>
+            <h2>Current Electricity</h2>
+            <p class="meta">6 minute read.</p>
+            <div class="react" data-ch="ph4"></div>
+            <h3>Ohm's law and resistivity</h3>
+            <pre>V = IR
+R = ρL / A
+P = VI = I²R = V²/R</pre>
+            <p>Resistance rises with length and falls with cross-sectional area. For metals, resistivity increases with temperature.</p>
+            <h3>Combinations of resistors</h3>
+            <pre>Series:    R = R₁ + R₂ + …        (same current)
+Parallel:  1/R = 1/R₁ + 1/R₂ + …  (same voltage)</pre>
+            <h3>Kirchhoff's rules</h3>
+            <ul>
+              <li>Junction rule: the sum of currents entering a junction equals the sum leaving it (charge conservation).</li>
+              <li>Loop rule: the algebraic sum of potential changes around a closed loop is zero (energy conservation).</li>
+            </ul>
+            <h3>Practice question</h3>
+            <p>Resistors of 6 Ω and 3 Ω are connected in parallel across a 6 V battery. Find the total current drawn.</p>
+            <details><summary>Show answer</summary>R = (6 × 3)/(6 + 3) = 2 Ω, so I = 6/2 = <b>3 A</b></details>
+          </section>
+
           <!-- ======== CHEMISTRY ======== -->
-          <section class="chapter" id="ch1" data-subj="chemistry" hidden>
+          <section class="chapter" id="cm1" data-subj="chemistry" hidden>
             <h2>Some Basic Concepts of Chemistry</h2>
             <p class="meta">6 minute read.</p>
-            <div class="react" data-ch="ch1"></div>
+            <div class="react" data-ch="cm1"></div>
             <h3>The mole</h3>
             <p>One mole contains 6.022 × 10²³ particles. The molar mass in grams per mole equals the atomic or molecular mass in u. The number of moles is mass divided by molar mass.</p>
             <h3>Concentration terms</h3>
-            <pre>Molarity   M = moles of solute / litres of solution
-Molality   m = moles of solute / kg of solvent
+            <pre>Molarity       M = moles of solute / litres of solution
+Molality       m = moles of solute / kg of solvent
 Mole fraction  x = moles of component / total moles</pre>
             <h3>Limiting reagent</h3>
             <p>The reactant that is used up first decides how much product forms. Convert every reactant to moles, divide by its coefficient, and the smallest value is the limiting reagent.</p>
@@ -143,10 +218,10 @@ Mole fraction  x = moles of component / total moles</pre>
             <details><summary>Show answer</summary>n = 36 / 18 = <b>2 mol</b></details>
           </section>
 
-          <section class="chapter" id="ch2" data-subj="chemistry" hidden>
+          <section class="chapter" id="cm2" data-subj="chemistry" hidden>
             <h2>Structure of Atom</h2>
             <p class="meta">7 minute read.</p>
-            <div class="react" data-ch="ch2"></div>
+            <div class="react" data-ch="cm2"></div>
             <h3>Quantum numbers</h3>
             <ul>
               <li>Principal (n) gives the shell and its size.</li>
@@ -164,62 +239,108 @@ Eₙ = −13.6 eV × Z² / n²</pre>
             <details><summary>Show answer</summary>2n² = 2 × 9 = <b>18</b></details>
           </section>
 
-          <!-- ======== MATHS ======== -->
-          <section class="chapter" id="ma1" data-subj="maths" hidden>
-            <h2>Sets and Relations</h2>
-            <p class="meta">5 minute read.</p>
-            <div class="react" data-ch="ma1"></div>
-            <h3>Set operations</h3>
-            <p>The union A ∪ B holds elements in either set, and the intersection A ∩ B holds elements in both. The complement A′ holds everything in the universal set that is not in A.</p>
-            <h3>Useful results</h3>
-            <pre>n(A ∪ B) = n(A) + n(B) − n(A ∩ B)
-n(P(A)) = 2ⁿ   for a set with n elements
-(A ∪ B)′ = A′ ∩ B′</pre>
-            <h3>Relations</h3>
-            <p>A relation from A to B is any subset of A × B. It is a function when every element of A has exactly one image in B.</p>
+          <section class="chapter" id="cm3" data-subj="chemistry" hidden>
+            <h2>Chemical Bonding</h2>
+            <p class="meta">7 minute read.</p>
+            <div class="react" data-ch="cm3"></div>
+            <h3>Types of bonds</h3>
+            <p>An ionic bond forms by transfer of electrons, a covalent bond by sharing of electrons, and a coordinate bond when one atom donates both electrons of the shared pair.</p>
+            <h3>Hybridisation and shape</h3>
+            <pre>sp   linear            180°      e.g. BeCl₂, CO₂
+sp²  trigonal planar   120°      e.g. BF₃
+sp³  tetrahedral       109.5°    e.g. CH₄</pre>
+            <p>Lone pairs squeeze bond angles, so NH₃ (about 107°) and H₂O (about 104.5°) are smaller than 109.5°.</p>
+            <h3>Bond order (molecular orbital theory)</h3>
+            <pre>Bond order = (Nb − Na) / 2</pre>
+            <p>A higher bond order means a shorter, stronger bond. A bond order of zero means the molecule does not exist.</p>
             <h3>Practice question</h3>
-            <p>If n(A) = 20, n(B) = 15 and n(A ∩ B) = 8, find n(A ∪ B).</p>
-            <details><summary>Show answer</summary>20 + 15 − 8 = <b>27</b></details>
+            <p>N₂ has 10 electrons in bonding orbitals and 4 in antibonding orbitals. Find its bond order.</p>
+            <details><summary>Show answer</summary>(10 − 4) / 2 = <b>3</b></details>
           </section>
 
-          <section class="chapter" id="ma2" data-subj="maths" hidden>
-            <h2>Trigonometric Functions</h2>
-            <p class="meta">6 minute read.</p>
-            <div class="react" data-ch="ma2"></div>
-            <h3>Core identities</h3>
-            <pre>sin²x + cos²x = 1
-1 + tan²x = sec²x
-sin(A + B) = sinA cosB + cosA sinB
-cos(A + B) = cosA cosB − sinA sinB</pre>
-            <h3>Quick values</h3>
-            <p>sin 30° = ½, sin 45° = 1/√2, sin 60° = √3/2. The cosine values run in the reverse order.</p>
-            <h3>Radian measure</h3>
-            <p>π radians equal 180°. An arc of length l on a circle of radius r subtends an angle l/r radians.</p>
+          <!-- ======== BIOLOGY ======== -->
+          <section class="chapter" id="bi1" data-subj="biology" hidden>
+            <h2>Cell: The Unit of Life</h2>
+            <p class="meta">7 minute read.</p>
+            <div class="react" data-ch="bi1"></div>
+            <h3>Cell theory</h3>
+            <p>Schleiden and Schwann proposed that all organisms are made of cells. Virchow added that new cells arise only from pre-existing cells (<i>omnis cellula e cellula</i>).</p>
+            <h3>Prokaryotic and eukaryotic cells</h3>
+            <ul>
+              <li>Prokaryotes have no membrane-bound nucleus or organelles, and their <b>ribosomes</b> are 70S.</li>
+              <li>Eukaryotes have a true nucleus and organelles, and their cytoplasmic ribosomes are 80S.</li>
+              <li>The cell wall of bacteria contains peptidoglycan, that of plants contains cellulose, and that of fungi contains chitin.</li>
+            </ul>
+            <h3>Key organelles</h3>
+            <p><b>Mitochondria</b> have a double membrane, their own circular DNA and 70S ribosomes, and they are the site of aerobic respiration. The Golgi apparatus packages and modifies proteins, and lysosomes hold hydrolytic enzymes.</p>
             <h3>Practice question</h3>
-            <p>Find sin 75° using the sum formula.</p>
-            <details><summary>Show answer</summary>sin(45° + 30°) = (1/√2)(√3/2) + (1/√2)(½) = <b>(√3 + 1)/(2√2)</b></details>
+            <p>Which type of ribosomes is found inside mitochondria?</p>
+            <details><summary>Show answer</summary><b>70S</b> ribosomes, similar to those of prokaryotes.</details>
+          </section>
+
+          <section class="chapter" id="bi2" data-subj="biology" hidden>
+            <h2>Photosynthesis in Higher Plants</h2>
+            <p class="meta">8 minute read.</p>
+            <div class="react" data-ch="bi2"></div>
+            <h3>Where it happens</h3>
+            <p>The light reactions occur in the thylakoid membranes of the grana, where <b>chlorophyll</b> a is the main pigment. The Calvin cycle occurs in the stroma.</p>
+            <h3>Calvin cycle (C3 pathway)</h3>
+            <p>The <b>enzyme</b> RuBisCO fixes CO₂ onto RuBP, a 5-carbon sugar, to form two molecules of 3-phosphoglyceric acid (PGA). PGA is reduced using ATP and NADPH, and RuBP is regenerated.</p>
+            <pre>For one glucose (6 CO₂ fixed):
+18 ATP and 12 NADPH are used</pre>
+            <h3>C4 plants</h3>
+            <ul>
+              <li>The first stable product is oxaloacetic acid (a 4-carbon compound), made by PEP carboxylase in mesophyll cells.</li>
+              <li>Kranz anatomy places the Calvin cycle in the bundle sheath cells.</li>
+              <li>Photorespiration is negligible, so C4 plants are efficient at high temperature and light.</li>
+            </ul>
+            <h3>Practice question</h3>
+            <p>How many ATP molecules does the Calvin cycle use to make one glucose molecule?</p>
+            <details><summary>Show answer</summary><b>18 ATP</b> (3 ATP per CO₂ fixed, for 6 CO₂).</details>
+          </section>
+
+          <section class="chapter" id="bi3" data-subj="biology" hidden>
+            <h2>Principles of Inheritance and Variation</h2>
+            <p class="meta">8 minute read.</p>
+            <div class="react" data-ch="bi3"></div>
+            <h3>Mendel's laws</h3>
+            <ul>
+              <li>Dominance: in a heterozygote, one allele (the dominant one) masks the other.</li>
+              <li>Segregation: the two alleles of a gene separate during gamete formation.</li>
+              <li>Independent assortment: genes on different <b>chromosomes</b> assort independently.</li>
+            </ul>
+            <h3>Standard ratios</h3>
+            <pre>Monohybrid cross   phenotype 3 : 1,  genotype 1 : 2 : 1
+Dihybrid cross     phenotype 9 : 3 : 3 : 1
+Test cross (Aa × aa)           1 : 1
+Dihybrid test cross            1 : 1 : 1 : 1</pre>
+            <p>The <b>genotype</b> is the genetic makeup, while the phenotype is the observable trait. Incomplete dominance gives a 1 : 2 : 1 phenotypic ratio, and codominance is seen in the AB blood group.</p>
+            <h3>Practice question</h3>
+            <p>In a cross Tt × Tt, what is the probability of a homozygous recessive offspring?</p>
+            <details><summary>Show answer</summary>TT : Tt : tt = 1 : 2 : 1, so tt = <b>1/4</b>.</details>
           </section>
 
         </main>
       </div>
     </section>
 
-    <!-- ================= PRACTICE ================= -->
+    <!-- ================= MOCK QUIZ ================= -->
     <section class="view" data-view="practice" hidden>
       <div class="page">
-        <h2>Practice quiz</h2>
-        <p class="lead">Five quick questions from the chapters. Choose an answer for each, then check your score.</p>
+        <h2>NEET-style mock quiz</h2>
+        <p class="lead">Ten questions across all three subjects. Marking follows NEET: +4 for a correct answer, −1 for a wrong one, 0 if you skip.</p>
         <form id="quiz"></form>
         <div class="quiz-actions">
-          <button type="button" id="quizCheck">Check answers</button>
-          <button type="button" id="quizReset" class="ghost">Reset</button>
-          <span id="quizScore" role="status"></span>
+          <button type="button" id="quizCheck" class="btn primary">Check answers</button>
+          <button type="button" id="quizReset" class="btn ghost">Reset</button>
         </div>
-        <div class="ad" role="complementary" aria-label="Advertisement">
+        <div id="quizResult" class="result" role="status" hidden></div>
+        <a class="ad" href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener noreferrer">
           <span class="ad-tag">Ad</span>
-          <div class="ad-body"><b>BrightPath Test Series</b><span>Full-length mock tests with rank analysis.</span></div>
-          <span class="ad-btn">Try free</span>
-        </div>
+          <b>Revise from the source</b>
+          <span>Most NEET questions come straight from NCERT lines. Read the textbooks for free.</span>
+          <span class="ad-btn">Open site</span>
+        </a>
       </div>
     </section>
 
@@ -238,19 +359,19 @@ cos(A + B) = cosA cosB − sinA sinB</pre>
             <label class="field grow"><span>Group code</span>
               <input id="phrase" type="password" autocomplete="off" placeholder="At least 8 characters">
             </label>
-            <button id="joinBtn" type="button">Join group</button>
+            <button id="joinBtn" type="button" class="btn primary">Join group</button>
           </div>
           <p id="joinErr" class="err" role="alert"></p>
         </div>
         <div id="chat" hidden>
           <div class="tools">
             <label class="check"><input type="checkbox" id="blurToggle" checked> Blur messages until tapped</label>
-            <button id="clearBtn" type="button" class="ghost">Clear all</button>
+            <button id="clearBtn" type="button" class="btn ghost small">Clear all</button>
           </div>
           <div id="log" aria-live="polite"></div>
           <form id="form" autocomplete="off">
             <input id="msg" maxlength="500" placeholder="Type your doubt or answer" autocomplete="off" aria-label="Message">
-            <button type="submit">Send</button>
+            <button type="submit" class="btn primary">Send</button>
           </form>
         </div>
       </section>
@@ -260,22 +381,22 @@ cos(A + B) = cosA cosB − sinA sinB</pre>
     <section class="view" data-view="about" hidden>
       <div class="page">
         <h2>About StudyDesk</h2>
-        <p class="lead">StudyDesk is a small revision site for Class 11 students.</p>
-        <p>Every chapter has a short summary, the formulas you need, and one practice question with a worked answer. Notes are kept brief so a chapter can be revised in a single sitting.</p>
+        <p class="lead">StudyDesk is a revision site for students preparing for NEET UG.</p>
+        <p>Every chapter has a short summary, the facts and formulas that matter, and one practice question with a worked answer. Notes are kept brief so a chapter can be revised in a single sitting.</p>
         <h3>How to use it</h3>
         <ul>
-          <li>Pick a subject from the top bar and read one chapter.</li>
+          <li>Pick a subject from the top bar and read one chapter at a time.</li>
           <li>Use the reaction buttons under a chapter title to mark how it went.</li>
-          <li>Take the practice quiz to test yourself.</li>
+          <li>Take the mock quiz to practise with NEET marking.</li>
           <li>Use Doubts to discuss a question with your study group.</li>
         </ul>
-        <p class="meta">Notes follow the NCERT Class 11 syllabus and are meant for quick revision, not as a replacement for the textbook.</p>
+        <p class="meta">Notes follow the NCERT syllabus and are meant for quick revision, not as a replacement for the textbooks or the official NTA syllabus.</p>
       </div>
     </section>
 
   </div>
 
-  <footer class="foot">StudyDesk · Class 11 revision notes</footer>
+  <footer class="foot">StudyDesk · NEET UG preparation notes</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="script.js"></script>

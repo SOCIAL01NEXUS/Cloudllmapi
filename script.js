@@ -33,7 +33,12 @@
     GLOW_WORDS: [
       'velocity', 'acceleration', 'inertia', 'momentum', 'friction',
       'equilibrium', 'energy', 'pendulum', 'resonance', 'gravity', 'orbit', 'horizon',
+      'mitochondria', 'ribosomes', 'chlorophyll', 'enzyme', 'genotype', 'chromosomes',
     ],
+
+    // Countdown on the home page. Set YOUR exam date (YYYY-MM-DD). Check the
+    // official NTA notice for the real NEET UG date and update this line.
+    TARGET_DATE: '2027-05-02',
 
     // Reactions shown under each chapter title (id is sent, label is shown)
     REACTIONS: [
@@ -137,7 +142,7 @@
   /* ------------------ STUDY UI: pages, chapters, search ------------------ */
   // "Pages" are views inside this ONE document, so the Supabase socket and the
   // RAM-only state survive navigation, and the URL / history never changes.
-  const SUBJECTS = { physics: 'Class 11 Physics', chemistry: 'Class 11 Chemistry', maths: 'Class 11 Maths' };
+  const SUBJECTS = { physics: 'Physics', chemistry: 'Chemistry', biology: 'Biology' };
   let curView = 'home';
 
   function setView(v) {
@@ -145,7 +150,10 @@
     const target = SUBJECTS[v] ? 'study' : v;
     document.querySelectorAll('.view').forEach((s) => { s.hidden = s.dataset.view !== target; });
     document.querySelectorAll('#mainNav button').forEach((b) => b.classList.toggle('active', b.dataset.v === v));
-    if (SUBJECTS[v]) buildSide(v);
+    if (SUBJECTS[v]) {
+      document.querySelector('.view[data-view="study"]').dataset.subj = v;   // drives the subject colour
+      buildSide(v);
+    }
   }
 
   function buildSide(subj) {
@@ -170,7 +178,10 @@
     if (!el) return;
     if (curView !== el.dataset.subj) setView(el.dataset.subj);
     document.querySelectorAll('.chapter').forEach((s) => { s.hidden = s.id !== id; });
-    document.querySelectorAll('#chapterList li').forEach((li) => li.classList.toggle('active', li.dataset.ch === id));
+    const items = [...document.querySelectorAll('#chapterList li')];
+    items.forEach((li) => li.classList.toggle('active', li.dataset.ch === id));
+    const idx = items.findIndex((li) => li.dataset.ch === id) + 1;
+    $('crumb').textContent = SUBJECTS[el.dataset.subj] + ' · Chapter ' + idx + ' of ' + items.length;
   }
 
   function showView(v) {
@@ -179,12 +190,11 @@
     window.scrollTo(0, 0);
   }
 
-  // top nav, logo, home cards (anything with data-v)
+  // top nav, logo, home cards and buttons (anything with data-v)
   document.addEventListener('click', (e) => {
     const t = e.target.closest('[data-v]');
     if (t) showView(t.dataset.v);
   });
-  // sidebar chapters
   $('chapterList').addEventListener('click', (e) => {
     const li = e.target.closest('li');
     if (li) showChapter(li.dataset.ch);
@@ -208,17 +218,47 @@
     if (hit) { showChapter(hit.id); window.scrollTo(0, 0); }
   });
 
-  // ads are decorative placeholders: clicking does nothing
-  document.querySelectorAll('.ad').forEach((a) => a.addEventListener('click', (e) => e.preventDefault()));
+  /* ------------------------- Countdown ------------------------- */
+  function updateCountdown() {
+    const target = new Date(CONFIG.TARGET_DATE + 'T00:00:00');
+    const days = Math.ceil((target - new Date()) / 86400000);
+    if (isNaN(days)) { $('countNum').textContent = '–'; return; }
+    if (days > 0) {
+      $('countNum').textContent = String(days);
+      $('countLabel').textContent = (days === 1 ? 'day' : 'days') + ' to your target date';
+    } else if (days === 0) {
+      $('countNum').textContent = '0';
+      $('countLabel').textContent = 'Today is the day';
+    } else {
+      $('countNum').textContent = '–';
+      $('countLabel').textContent = 'Set a new target date';
+    }
+  }
 
-  /* ------------------------- Practice quiz ------------------------- */
+  /* ------------------- Mock quiz (NEET marking: +4 / -1 / 0) ------------------- */
   const QUIZ = [
-    { q: 'A ball is thrown upward at 20 m/s (g = 10 m/s²). Maximum height?', o: ['10 m', '20 m', '40 m', '5 m'], a: 1 },
-    { q: 'Maximum horizontal force on a 2 kg block with μₛ = 0.5 before it slides (g = 10)?', o: ['5 N', '10 N', '20 N', '1 N'], a: 1 },
-    { q: 'How many moles are in 36 g of water?', o: ['1 mol', '3 mol', '2 mol', '0.5 mol'], a: 2 },
-    { q: 'Maximum electrons in the n = 3 shell?', o: ['8', '18', '32', '9'], a: 1 },
-    { q: 'If n(A) = 20, n(B) = 15, n(A ∩ B) = 8, then n(A ∪ B) is?', o: ['27', '35', '43', '12'], a: 0 },
+    { s: 'physics', q: 'A ball is thrown upward at 20 m/s (g = 10 m/s²). Its maximum height is:', o: ['10 m', '20 m', '40 m', '5 m'], a: 1,
+      e: 'H = u²/2g = 400/20 = 20 m.' },
+    { s: 'physics', q: 'The length of a simple pendulum is made four times. Its time period becomes:', o: ['Half', 'Double', 'Four times', 'Unchanged'], a: 1,
+      e: 'T = 2π√(L/g) so T ∝ √L. Four times L gives two times T.' },
+    { s: 'physics', q: 'Resistors of 6 Ω and 3 Ω are in parallel across 6 V. The total current is:', o: ['1 A', '2 A', '3 A', '9 A'], a: 2,
+      e: 'R = 6×3/9 = 2 Ω, so I = 6/2 = 3 A.' },
+    { s: 'chemistry', q: 'The number of moles in 36 g of water is:', o: ['1', '3', '2', '0.5'], a: 2,
+      e: 'Molar mass of water is 18 g/mol, so 36/18 = 2 mol.' },
+    { s: 'chemistry', q: 'The maximum number of electrons in the n = 3 shell is:', o: ['8', '18', '32', '9'], a: 1,
+      e: '2n² = 2 × 9 = 18.' },
+    { s: 'chemistry', q: 'The bond order of the O₂ molecule is:', o: ['1', '2', '3', '2.5'], a: 1,
+      e: 'O₂ has 10 bonding and 6 antibonding electrons: (10 − 6)/2 = 2.' },
+    { s: 'biology', q: 'Krebs cycle enzymes are located in the:', o: ['Outer mitochondrial membrane', 'Inner mitochondrial membrane', 'Mitochondrial matrix', 'Intermembrane space'], a: 2,
+      e: 'The Krebs cycle runs in the mitochondrial matrix. The electron transport chain is on the inner membrane.' },
+    { s: 'biology', q: 'The primary CO₂ acceptor in C3 plants is:', o: ['PEP', 'RuBP', 'OAA', 'PGA'], a: 1,
+      e: 'RuBisCO attaches CO₂ to RuBP (ribulose-1,5-bisphosphate).' },
+    { s: 'biology', q: 'The phenotypic ratio of a dihybrid test cross (AaBb × aabb) is:', o: ['9:3:3:1', '1:1:1:1', '3:1', '1:2:1'], a: 1,
+      e: 'The tester produces only ab gametes, so offspring mirror the four gamete types of AaBb in equal numbers.' },
+    { s: 'biology', q: 'Semi-conservative replication of DNA was shown by:', o: ['Hershey and Chase', 'Meselson and Stahl', 'Griffith', 'Avery and MacLeod'], a: 1,
+      e: 'Meselson and Stahl used heavy nitrogen (¹⁵N) in E. coli.' },
   ];
+
   function buildQuiz() {
     const f = $('quiz');
     f.textContent = '';
@@ -226,7 +266,10 @@
       const box = document.createElement('fieldset');
       box.className = 'qbox';
       const lg = document.createElement('legend');
-      lg.textContent = (i + 1) + '. ' + item.q;
+      const tag = document.createElement('span');
+      tag.className = 'qtag ' + item.s;
+      tag.textContent = SUBJECTS[item.s];
+      lg.append(tag, document.createTextNode((i + 1) + '. ' + item.q));
       box.append(lg);
       item.o.forEach((opt, j) => {
         const lab = document.createElement('label');
@@ -238,20 +281,38 @@
       });
       f.append(box);
     });
-    $('quizScore').textContent = '';
+    $('quizResult').hidden = true;
   }
+
   $('quizCheck').addEventListener('click', () => {
-    let score = 0;
+    let total = 0, right = 0, wrong = 0, skipped = 0;
+    const per = { physics: 0, chemistry: 0, biology: 0 };
     QUIZ.forEach((item, i) => {
       const box = $('quiz').children[i];
       const sel = box.querySelector('input:checked');
-      box.classList.remove('right', 'wrong');
-      if (sel && Number(sel.value) === item.a) { score += 1; box.classList.add('right'); }
-      else box.classList.add('wrong');
+      box.classList.remove('right', 'wrong', 'skipped');
+      const old = box.querySelector('.expl'); if (old) old.remove();
+      let pts = 0;
+      if (!sel) { skipped += 1; box.classList.add('skipped'); }
+      else if (Number(sel.value) === item.a) { right += 1; pts = 4; box.classList.add('right'); }
+      else { wrong += 1; pts = -1; box.classList.add('wrong'); }
+      total += pts; per[item.s] += pts;
+      const ex = document.createElement('p');
+      ex.className = 'expl';
+      ex.textContent = 'Answer: ' + item.o[item.a] + '. ' + item.e;
+      box.append(ex);
     });
-    $('quizScore').textContent = 'Score: ' + score + ' / ' + QUIZ.length;
+    const r = $('quizResult');
+    r.textContent = '';
+    const big = document.createElement('b');
+    big.textContent = total + ' / ' + (QUIZ.length * 4);
+    const p = document.createElement('p');
+    p.textContent = right + ' correct, ' + wrong + ' wrong, ' + skipped + ' skipped. Physics ' + per.physics +
+      ', Chemistry ' + per.chemistry + ', Biology ' + per.biology + '.';
+    r.append(big, p);
+    r.hidden = false;
   });
-  $('quizReset').addEventListener('click', buildQuiz);
+  $('quizReset').addEventListener('click', () => { buildQuiz(); window.scrollTo(0, 0); });
 
   /* ------------- Glossary terms: wrap words in the notes ------------- */
   function wrapTerms() {
@@ -431,5 +492,6 @@
   buildReactions();
   wrapTerms();
   buildQuiz();
+  updateCountdown();
   setView('home');
 })();

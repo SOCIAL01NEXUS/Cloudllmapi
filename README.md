@@ -1,3 +1,3 @@
 # StudyDesk
 
-Class 11 physics revision notes site. See SETUP.md for setup and deployment.
+NEET UG preparation notes for Physics, Chemistry and Biology. See SETUP.md for setup and deployment.

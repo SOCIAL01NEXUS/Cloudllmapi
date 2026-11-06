@@ -1,7 +1,14 @@
-# StudyDesk v3 – Setup Guide
+# StudyDesk v4 (NEET) – Setup Guide
 
-## What changed in v3
-- 7 pages in one file: Home, Physics (3 chapters), Chemistry (2), Maths (2), Practice quiz, Doubts, About.
+## What changed in v4 (NEET edition)
+- Subjects are now Physics (4 chapters), Chemistry (3) and Biology (3), with a NEET-style home page and a mock quiz that uses real NEET marking (+4 / -1 / 0).
+- Countdown on the home page: change `TARGET_DATE` at the top of `script.js` to your exam date (check the official NTA notice for the actual NEET UG date).
+- Ads are real links. Tapping one opens a site in a new tab. To change where an ad goes, edit the `href` of the `<a class="ad">` tags in `index.html`. Defaults: NCERT textbooks, NTA NEET UG, MCC counselling.
+- IMPORTANT: opening a new tab hides this tab. After you have joined the Doubts group, that triggers the panic redirect (as designed), so the chat is wiped. Before joining, ads open normally and nothing happens to this tab.
+- More private words: `GLOW_WORDS` now also has biology terms (mitochondria, ribosomes, chlorophyll, enzyme, genotype, chromosomes).
+
+## Earlier: v3
+- 7 pages in one file: Home, Physics, Chemistry, Biology, Mock quiz, Doubts, About.
 - Pages switch inside the same document, so the chat connection stays alive and the URL/history never changes. Do NOT split these into separate .html files, or the RAM-only chat would disconnect on every page change.
 - Decorative "Ad" banners with made-up brand names. They are not links and track nothing.
 - No `.nojekyll` file is needed for this project.
