@@ -38,7 +38,7 @@ input, button { font: inherit; }
 
 /* ---------- layout ---------- */
 .layout { display: grid; grid-template-columns: 264px minmax(0, 1fr); gap: 0; max-width: 1080px; margin: 0 auto; padding: 28px 24px 0; align-items: start; }
-.side { position: sticky; top: 84px; padding-right: 24px; }
+.side { position: sticky; top: 76px; padding-right: 24px; }
 .side h2 { margin: 0 0 12px; font-size: .95rem; font-weight: 650; color: var(--ink); }
 .side ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
 .side li { display: grid; gap: 1px; padding: 10px 12px; border-radius: 8px; cursor: pointer; border: 1px solid transparent; }
@@ -135,4 +135,72 @@ button.ghost:hover { background: var(--bg); color: var(--ink); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   * { transition: none !important; }
+}
+
+/* =====================================================================
+   v3: multi-page navigation, home, ads, quiz, about
+   ===================================================================== */
+.top { gap: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 0; background: transparent; color: var(--ink); border: 0; cursor: pointer; font-weight: 650; }
+.brand:hover { background: transparent; }
+.brand-name { font-size: 1.1rem; letter-spacing: -.01em; }
+.mainnav { display: flex; gap: 2px; flex: 1; justify-content: center; overflow-x: auto; scrollbar-width: none; }
+.mainnav::-webkit-scrollbar { display: none; }
+.mainnav button { padding: 8px 12px; background: transparent; color: var(--muted); font-weight: 550; font-size: .92rem; border-radius: 8px; white-space: nowrap; }
+.mainnav button:hover { background: #e9eef3; color: var(--ink); }
+.mainnav button.active { color: var(--brand); background: var(--brand-soft); }
+#search { width: min(220px, 24vw); }
+
+/* home */
+.home, .page { max-width: 1032px; margin: 0 auto; padding: 32px 24px 0; }
+.hero { padding: 8px 0 24px; max-width: 60ch; }
+.hero h2 { margin: 0 0 8px; font-size: 2rem; line-height: 1.2; letter-spacing: -.02em; }
+.hero p { margin: 0; color: var(--muted); font-size: 1.05rem; }
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+.subj { display: grid; gap: 6px; text-align: left; padding: 22px; background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; font-weight: 400; }
+.subj:hover { background: var(--card); border-color: var(--brand); }
+.subj b { font-size: 1.15rem; color: var(--brand-dark); }
+.subj span { color: var(--muted); font-size: .92rem; }
+.subj i { font-style: normal; font-size: .8rem; color: var(--brand); font-weight: 600; margin-top: 6px; }
+.tip { margin: 24px 0 0; padding: 18px 22px; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--brand); border-radius: 8px; max-width: 68ch; }
+.tip h3 { margin: 0 0 4px; font-size: 1rem; }
+.tip p { margin: 0; color: var(--muted); }
+
+/* generic page + about */
+.page h2 { margin: 0 0 6px; font-size: 1.7rem; letter-spacing: -.02em; }
+.page h3 { margin: 1.6em 0 .4em; font-size: 1.05rem; color: var(--brand-dark); }
+.page p, .page li { max-width: 68ch; line-height: 1.7; }
+.lead { color: var(--muted); font-size: 1.05rem; margin: 0 0 1.2em; }
+
+/* ads (decorative placeholders) */
+.ad { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: #fffbea; border: 1px solid #f0e2a8; border-radius: 10px; cursor: pointer; margin: 8px 0; }
+.ad-tag { align-self: flex-start; padding: 1px 7px; border: 1px solid #d9c870; border-radius: 4px; color: #7a6a1e; font-size: .68rem; font-weight: 600; }
+.ad-body { display: grid; gap: 2px; flex: 1; font-size: .9rem; }
+.ad-body b { color: var(--ink); }
+.ad-body span { color: var(--muted); }
+.ad-btn { padding: 7px 14px; background: var(--brand); color: #fff; border-radius: 8px; font-size: .85rem; font-weight: 600; white-space: nowrap; }
+.ad.small { flex-direction: column; align-items: flex-start; gap: 6px; margin-top: 20px; cursor: default; }
+
+/* quiz */
+.qbox { margin: 0 0 14px; padding: 14px 18px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+.qbox legend { padding: 0 6px; font-weight: 600; max-width: 60ch; }
+.qbox.right { border-color: #5aa27a; background: #f1f9f4; }
+.qbox.wrong { border-color: #d4a29c; background: #fdf5f4; }
+.opt { display: block; padding: 5px 0; cursor: pointer; }
+.quiz-actions { display: flex; align-items: center; gap: 12px; margin: 8px 0 20px; }
+#quizScore { font-weight: 650; color: var(--brand-dark); }
+
+/* doubts page needs top margin now that it is a view */
+.view[data-view="doubts"] .doubts { margin-top: 32px; }
+
+@media (max-width: 820px) {
+  .top { flex-wrap: wrap; height: auto; padding: 10px 16px; }
+  .mainnav { order: 3; flex: 0 0 100%; justify-content: flex-start; }
+  #search { width: min(220px, 46vw); }
+  .brand { margin-right: auto; }
+  .cards { grid-template-columns: minmax(0, 1fr); }
+  .home, .page { padding: 20px 16px 0; }
+  .hero h2 { font-size: 1.5rem; }
+  .side .ad.small { display: none; }
+  .ad { flex-wrap: wrap; }
 }

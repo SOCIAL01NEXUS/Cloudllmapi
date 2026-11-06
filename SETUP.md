@@ -1,6 +1,12 @@
-# StudyDesk v2 – Setup Guide
+# StudyDesk v3 – Setup Guide
 
-## What changed
+## What changed in v3
+- 7 pages in one file: Home, Physics (3 chapters), Chemistry (2), Maths (2), Practice quiz, Doubts, About.
+- Pages switch inside the same document, so the chat connection stays alive and the URL/history never changes. Do NOT split these into separate .html files, or the RAM-only chat would disconnect on every page change.
+- Decorative "Ad" banners with made-up brand names. They are not links and track nothing.
+- No `.nojekyll` file is needed for this project.
+
+## Earlier changes (v2)
 - It is now a plain study portal. No hidden panel anymore.
 - **Glow terms**: tap a dotted-underline term in the notes and it glows on the other person's screen (the page jumps to that term so they see it).
 - **Reactions**: each chapter has ✓ Got it / ? Doubt / ★ Important / ↻ Revise. The other person sees your reaction as a chip (it glows briefly).

@@ -21,8 +21,8 @@
 (() => {
   /* ------------------------- CONFIG ------------------------- */
   const CONFIG = {
-    SUPABASE_URL: 'https://zptvnqfhmhrvbnxpbnja.supabase.co',   // <-- replace
-    SUPABASE_ANON_KEY: 'sb_publishable_mjXOt1dvv--mW70w9MMSRQ_TQsSAJP4',          // <-- replace (anon key is public by design)
+    SUPABASE_URL: 'https://YOUR-PROJECT.supabase.co',   // <-- replace
+    SUPABASE_ANON_KEY: 'YOUR-ANON-PUBLIC-KEY',          // <-- replace (anon key is public by design)
     PANIC_URL: 'https://www.pw.live/',
     PANIC_ON_BLUR: true,
     PANIC_ON_HIDDEN: true,
@@ -134,25 +134,124 @@
     } catch (_) { return null; }
   }
 
-  /* ------------------ STUDY UI: chapters, search ------------------ */
+  /* ------------------ STUDY UI: pages, chapters, search ------------------ */
+  // "Pages" are views inside this ONE document, so the Supabase socket and the
+  // RAM-only state survive navigation, and the URL / history never changes.
+  const SUBJECTS = { physics: 'Class 11 Physics', chemistry: 'Class 11 Chemistry', maths: 'Class 11 Maths' };
+  let curView = 'home';
+
+  function setView(v) {
+    curView = v;
+    const target = SUBJECTS[v] ? 'study' : v;
+    document.querySelectorAll('.view').forEach((s) => { s.hidden = s.dataset.view !== target; });
+    document.querySelectorAll('#mainNav button').forEach((b) => b.classList.toggle('active', b.dataset.v === v));
+    if (SUBJECTS[v]) buildSide(v);
+  }
+
+  function buildSide(subj) {
+    $('sideTitle').textContent = SUBJECTS[subj];
+    const ul = $('chapterList');
+    ul.textContent = '';
+    let n = 0;
+    document.querySelectorAll('.chapter[data-subj="' + subj + '"]').forEach((c) => {
+      n += 1;
+      const li = document.createElement('li');
+      li.dataset.ch = c.id;
+      li.tabIndex = 0;
+      const b = document.createElement('b'); b.textContent = 'Chapter ' + n;
+      const sp = document.createElement('span'); sp.textContent = c.querySelector('h2').textContent;
+      li.append(b, sp);
+      ul.append(li);
+    });
+  }
+
   function showChapter(id) {
+    const el = $(id);
+    if (!el) return;
+    if (curView !== el.dataset.subj) setView(el.dataset.subj);
     document.querySelectorAll('.chapter').forEach((s) => { s.hidden = s.id !== id; });
     document.querySelectorAll('#chapterList li').forEach((li) => li.classList.toggle('active', li.dataset.ch === id));
   }
+
+  function showView(v) {
+    if (SUBJECTS[v]) showChapter(document.querySelector('.chapter[data-subj="' + v + '"]').id);
+    else setView(v);
+    window.scrollTo(0, 0);
+  }
+
+  // top nav, logo, home cards (anything with data-v)
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-v]');
+    if (t) showView(t.dataset.v);
+  });
+  // sidebar chapters
   $('chapterList').addEventListener('click', (e) => {
     const li = e.target.closest('li');
     if (li) showChapter(li.dataset.ch);
   });
-  $('chapterList').addEventListener('keydown', (e) => {   // keyboard access
+  $('chapterList').addEventListener('keydown', (e) => {
     const li = e.target.closest('li');
     if (li && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); showChapter(li.dataset.ch); }
   });
+  // search: filters the sidebar; Enter opens the first matching chapter in any subject
   $('search').addEventListener('input', (e) => {
     const q = e.target.value.trim().toLowerCase();
     document.querySelectorAll('#chapterList li').forEach((li) => {
       li.style.display = !q || li.textContent.toLowerCase().includes(q) ? '' : 'none';
     });
   });
+  $('search').addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    const q = e.target.value.trim().toLowerCase();
+    if (!q) return;
+    const hit = [...document.querySelectorAll('.chapter')].find((c) => c.querySelector('h2').textContent.toLowerCase().includes(q));
+    if (hit) { showChapter(hit.id); window.scrollTo(0, 0); }
+  });
+
+  // ads are decorative placeholders: clicking does nothing
+  document.querySelectorAll('.ad').forEach((a) => a.addEventListener('click', (e) => e.preventDefault()));
+
+  /* ------------------------- Practice quiz ------------------------- */
+  const QUIZ = [
+    { q: 'A ball is thrown upward at 20 m/s (g = 10 m/s²). Maximum height?', o: ['10 m', '20 m', '40 m', '5 m'], a: 1 },
+    { q: 'Maximum horizontal force on a 2 kg block with μₛ = 0.5 before it slides (g = 10)?', o: ['5 N', '10 N', '20 N', '1 N'], a: 1 },
+    { q: 'How many moles are in 36 g of water?', o: ['1 mol', '3 mol', '2 mol', '0.5 mol'], a: 2 },
+    { q: 'Maximum electrons in the n = 3 shell?', o: ['8', '18', '32', '9'], a: 1 },
+    { q: 'If n(A) = 20, n(B) = 15, n(A ∩ B) = 8, then n(A ∪ B) is?', o: ['27', '35', '43', '12'], a: 0 },
+  ];
+  function buildQuiz() {
+    const f = $('quiz');
+    f.textContent = '';
+    QUIZ.forEach((item, i) => {
+      const box = document.createElement('fieldset');
+      box.className = 'qbox';
+      const lg = document.createElement('legend');
+      lg.textContent = (i + 1) + '. ' + item.q;
+      box.append(lg);
+      item.o.forEach((opt, j) => {
+        const lab = document.createElement('label');
+        lab.className = 'opt';
+        const r = document.createElement('input');
+        r.type = 'radio'; r.name = 'q' + i; r.value = String(j);
+        lab.append(r, document.createTextNode(' ' + opt));
+        box.append(lab);
+      });
+      f.append(box);
+    });
+    $('quizScore').textContent = '';
+  }
+  $('quizCheck').addEventListener('click', () => {
+    let score = 0;
+    QUIZ.forEach((item, i) => {
+      const box = $('quiz').children[i];
+      const sel = box.querySelector('input:checked');
+      box.classList.remove('right', 'wrong');
+      if (sel && Number(sel.value) === item.a) { score += 1; box.classList.add('right'); }
+      else box.classList.add('wrong');
+    });
+    $('quizScore').textContent = 'Score: ' + score + ' / ' + QUIZ.length;
+  });
+  $('quizReset').addEventListener('click', buildQuiz);
 
   /* ------------- Glossary terms: wrap words in the notes ------------- */
   function wrapTerms() {
@@ -199,7 +298,7 @@
     if (!spans.length) return;
     // jump to the chapter that contains it so the glow is actually visible
     const chap = spans[0].closest('.chapter');
-    if (chap && chap.hidden) showChapter(chap.id);
+    if (chap) showChapter(chap.id);
     spans[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
     document.documentElement.style.setProperty('--glow-ms', CONFIG.GLOW_MS + 'ms');
     spans.forEach((s) => {
@@ -331,4 +430,6 @@
 
   buildReactions();
   wrapTerms();
+  buildQuiz();
+  setView('home');
 })();

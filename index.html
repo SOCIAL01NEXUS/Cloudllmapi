@@ -3,142 +3,279 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- CSP: own files + Supabase JS CDN + Supabase endpoints only -->
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'none'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self'; connect-src https://*.supabase.co wss://*.supabase.co; img-src 'self' data:; base-uri 'none'; form-action 'none'">
   <meta name="referrer" content="no-referrer">
-  <meta name="description" content="Concise Class 11 physics revision notes with formulas, key points and practice questions.">
-  <title>StudyDesk – Class 11 Physics Revision</title>
+  <meta name="description" content="Class 11 revision notes for Physics, Chemistry and Maths with formulas, key points and practice questions.">
+  <title>StudyDesk – Class 11 Revision Notes</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <a class="skip" href="#notes">Skip to notes</a>
+  <a class="skip" href="#app">Skip to content</a>
 
   <header class="top">
-    <div class="brand">
-      <span class="mark" aria-hidden="true">Φ</span>
-      <h1 id="logo">StudyDesk</h1>
-    </div>
+    <button class="brand" id="logo" type="button" data-v="home" aria-label="StudyDesk home">
+      <span class="mark" aria-hidden="true">Φ</span><span class="brand-name">StudyDesk</span>
+    </button>
+    <nav class="mainnav" id="mainNav" aria-label="Main">
+      <button type="button" data-v="home" class="active">Home</button>
+      <button type="button" data-v="physics">Physics</button>
+      <button type="button" data-v="chemistry">Chemistry</button>
+      <button type="button" data-v="maths">Maths</button>
+      <button type="button" data-v="practice">Practice</button>
+      <button type="button" data-v="doubts">Doubts</button>
+      <button type="button" data-v="about">About</button>
+    </nav>
     <label class="search-wrap">
       <span class="sr">Search chapters</span>
       <input id="search" type="search" placeholder="Search chapters" autocomplete="off">
     </label>
   </header>
 
-  <div class="layout">
-    <nav class="side" aria-label="Chapters">
-      <h2>Class 11 Physics</h2>
-      <ul id="chapterList">
-        <li data-ch="ch1" class="active" tabindex="0"><b>Chapter 1</b><span>Motion in a Straight Line</span></li>
-        <li data-ch="ch2" tabindex="0"><b>Chapter 2</b><span>Laws of Motion</span></li>
-        <li data-ch="ch3" tabindex="0"><b>Chapter 3</b><span>Work, Energy &amp; Gravitation</span></li>
-      </ul>
-    </nav>
+  <div id="app">
 
-    <main class="notes" id="notes">
-      <!-- ================= CHAPTER 1 ================= -->
-      <section class="chapter" id="ch1">
-        <h2>Motion in a Straight Line</h2>
-        <p class="meta">5 minute read. Tap any underlined term for a quick recap.</p>
-        <div class="react" data-ch="ch1"></div>
+    <!-- ================= HOME ================= -->
+    <section class="view" data-view="home">
+      <div class="home">
+        <div class="hero">
+          <h2>Class 11 revision, one chapter at a time</h2>
+          <p>Short notes, key formulas and a practice question for every chapter. Pick a subject to start.</p>
+        </div>
+        <div class="cards">
+          <button type="button" class="subj" data-v="physics"><b>Physics</b><span>Motion, forces, energy and gravitation</span><i>3 chapters</i></button>
+          <button type="button" class="subj" data-v="chemistry"><b>Chemistry</b><span>Mole concept and atomic structure</span><i>2 chapters</i></button>
+          <button type="button" class="subj" data-v="maths"><b>Maths</b><span>Sets, relations and trigonometry</span><i>2 chapters</i></button>
+        </div>
+        <div class="ad" role="complementary" aria-label="Advertisement">
+          <span class="ad-tag">Ad</span>
+          <div class="ad-body"><b>BrightPath Test Series</b><span>Weekly chapter tests with step-by-step solutions. First two tests free.</span></div>
+          <span class="ad-btn">Learn more</span>
+        </div>
+        <div class="tip">
+          <h3>Revision tip</h3>
+          <p>After reading a chapter, close the page and write the three key formulas from memory. Check, then fix only what you missed.</p>
+        </div>
+      </div>
+    </section>
 
-        <h3>Key definitions</h3>
-        <p><b>Displacement</b> is the shortest vector from the initial to the final position. <b>Velocity</b> is the rate of change of displacement, and <b>acceleration</b> is the rate of change of velocity.</p>
+    <!-- ================= STUDY (physics / chemistry / maths) ================= -->
+    <section class="view" data-view="study" hidden>
+      <div class="layout">
+        <nav class="side" aria-label="Chapters">
+          <h2 id="sideTitle">Class 11 Physics</h2>
+          <ul id="chapterList"></ul>
+          <div class="ad small" role="complementary" aria-label="Advertisement">
+            <span class="ad-tag">Ad</span>
+            <div class="ad-body"><b>NoteNest</b><span>Printable chapter summaries for quick revision.</span></div>
+          </div>
+        </nav>
 
-        <h3>Equations of uniformly accelerated motion</h3>
-        <pre>v = u + at
+        <main class="notes" id="notes">
+
+          <!-- ======== PHYSICS ======== -->
+          <section class="chapter" id="ph1" data-subj="physics" hidden>
+            <h2>Motion in a Straight Line</h2>
+            <p class="meta">5 minute read. Tap any underlined term for a quick recap.</p>
+            <div class="react" data-ch="ph1"></div>
+            <h3>Key definitions</h3>
+            <p><b>Displacement</b> is the shortest vector from the initial to the final position. <b>Velocity</b> is the rate of change of displacement, and <b>acceleration</b> is the rate of change of velocity.</p>
+            <h3>Equations of uniformly accelerated motion</h3>
+            <pre>v = u + at
 s = ut + ½at²
 v² = u² + 2as</pre>
+            <h3>Points to remember</h3>
+            <ul>
+              <li>The slope of an x–t graph gives velocity.</li>
+              <li>The slope of a v–t graph gives acceleration.</li>
+              <li>The area under a v–t graph gives displacement.</li>
+              <li>For a projectile, the range is greatest at 45° to the horizon.</li>
+            </ul>
+            <h3>Practice question</h3>
+            <p>A ball is thrown upward at 20 m/s. Find the maximum height reached (g = 10 m/s²).</p>
+            <details><summary>Show answer</summary>H = u²/2g = 400/20 = <b>20 m</b></details>
+          </section>
 
-        <h3>Points to remember</h3>
+          <section class="chapter" id="ph2" data-subj="physics" hidden>
+            <h2>Laws of Motion</h2>
+            <p class="meta">6 minute read.</p>
+            <div class="react" data-ch="ph2"></div>
+            <h3>Newton's laws</h3>
+            <p>The first law introduces <b>inertia</b>: a body stays at rest or in uniform motion unless a net force acts on it. The second law links force to the rate of change of <b>momentum</b>, F = dp/dt. The third law pairs every action with an equal and opposite reaction.</p>
+            <h3>Friction</h3>
+            <p>Static <b>friction</b> adjusts itself up to a limiting value μₛN. Once sliding starts, kinetic friction μₖN acts, and it is usually smaller.</p>
+            <h3>Equilibrium</h3>
+            <p>A body is in <b>equilibrium</b> when the vector sum of all forces on it is zero. Draw the free-body diagram, then resolve the forces along two perpendicular axes.</p>
+            <h3>Practice question</h3>
+            <p>A 2 kg block rests on a rough surface with μₛ = 0.5. What is the maximum horizontal force before it slides? (g = 10 m/s²)</p>
+            <details><summary>Show answer</summary>F = μₛmg = 0.5 × 2 × 10 = <b>10 N</b></details>
+          </section>
+
+          <section class="chapter" id="ph3" data-subj="physics" hidden>
+            <h2>Work, Energy &amp; Gravitation</h2>
+            <p class="meta">7 minute read.</p>
+            <div class="react" data-ch="ph3"></div>
+            <h3>Work–energy theorem</h3>
+            <p>The net work done on a body equals the change in its kinetic <b>energy</b>. When only conservative forces act, total mechanical energy stays constant.</p>
+            <h3>Simple pendulum</h3>
+            <p>A <b>pendulum</b> converts potential energy into kinetic energy and back. For small angles the time period is T = 2π√(L/g), independent of mass. When the driving frequency matches the natural frequency, <b>resonance</b> occurs and the amplitude grows.</p>
+            <h3>Gravitation</h3>
+            <p>Newton's law of <b>gravity</b> states F = Gm₁m₂/r². A satellite in a circular <b>orbit</b> moves at v = √(GM/r), and the escape velocity from Earth is about 11.2 km/s.</p>
+            <h3>Practice question</h3>
+            <p>Find the time period of a pendulum of length 1 m (g = π² m/s²).</p>
+            <details><summary>Show answer</summary>T = 2π√(1/π²) = <b>2 s</b></details>
+          </section>
+
+          <!-- ======== CHEMISTRY ======== -->
+          <section class="chapter" id="ch1" data-subj="chemistry" hidden>
+            <h2>Some Basic Concepts of Chemistry</h2>
+            <p class="meta">6 minute read.</p>
+            <div class="react" data-ch="ch1"></div>
+            <h3>The mole</h3>
+            <p>One mole contains 6.022 × 10²³ particles. The molar mass in grams per mole equals the atomic or molecular mass in u. The number of moles is mass divided by molar mass.</p>
+            <h3>Concentration terms</h3>
+            <pre>Molarity   M = moles of solute / litres of solution
+Molality   m = moles of solute / kg of solvent
+Mole fraction  x = moles of component / total moles</pre>
+            <h3>Limiting reagent</h3>
+            <p>The reactant that is used up first decides how much product forms. Convert every reactant to moles, divide by its coefficient, and the smallest value is the limiting reagent.</p>
+            <h3>Practice question</h3>
+            <p>How many moles are in 36 g of water (H₂O = 18 g/mol)?</p>
+            <details><summary>Show answer</summary>n = 36 / 18 = <b>2 mol</b></details>
+          </section>
+
+          <section class="chapter" id="ch2" data-subj="chemistry" hidden>
+            <h2>Structure of Atom</h2>
+            <p class="meta">7 minute read.</p>
+            <div class="react" data-ch="ch2"></div>
+            <h3>Quantum numbers</h3>
+            <ul>
+              <li>Principal (n) gives the shell and its size.</li>
+              <li>Azimuthal (l) gives the subshell shape, from 0 to n − 1.</li>
+              <li>Magnetic (mₗ) gives the orbital orientation, from −l to +l.</li>
+              <li>Spin (mₛ) is +½ or −½.</li>
+            </ul>
+            <h3>Filling rules</h3>
+            <p>Electrons fill the lowest <b>energy</b> orbital first (Aufbau), no two electrons share all four quantum numbers (Pauli), and orbitals of equal energy fill singly before pairing (Hund).</p>
+            <h3>Bohr radius and energy</h3>
+            <pre>rₙ = 52.9 pm × n² / Z
+Eₙ = −13.6 eV × Z² / n²</pre>
+            <h3>Practice question</h3>
+            <p>What is the maximum number of electrons in the n = 3 shell?</p>
+            <details><summary>Show answer</summary>2n² = 2 × 9 = <b>18</b></details>
+          </section>
+
+          <!-- ======== MATHS ======== -->
+          <section class="chapter" id="ma1" data-subj="maths" hidden>
+            <h2>Sets and Relations</h2>
+            <p class="meta">5 minute read.</p>
+            <div class="react" data-ch="ma1"></div>
+            <h3>Set operations</h3>
+            <p>The union A ∪ B holds elements in either set, and the intersection A ∩ B holds elements in both. The complement A′ holds everything in the universal set that is not in A.</p>
+            <h3>Useful results</h3>
+            <pre>n(A ∪ B) = n(A) + n(B) − n(A ∩ B)
+n(P(A)) = 2ⁿ   for a set with n elements
+(A ∪ B)′ = A′ ∩ B′</pre>
+            <h3>Relations</h3>
+            <p>A relation from A to B is any subset of A × B. It is a function when every element of A has exactly one image in B.</p>
+            <h3>Practice question</h3>
+            <p>If n(A) = 20, n(B) = 15 and n(A ∩ B) = 8, find n(A ∪ B).</p>
+            <details><summary>Show answer</summary>20 + 15 − 8 = <b>27</b></details>
+          </section>
+
+          <section class="chapter" id="ma2" data-subj="maths" hidden>
+            <h2>Trigonometric Functions</h2>
+            <p class="meta">6 minute read.</p>
+            <div class="react" data-ch="ma2"></div>
+            <h3>Core identities</h3>
+            <pre>sin²x + cos²x = 1
+1 + tan²x = sec²x
+sin(A + B) = sinA cosB + cosA sinB
+cos(A + B) = cosA cosB − sinA sinB</pre>
+            <h3>Quick values</h3>
+            <p>sin 30° = ½, sin 45° = 1/√2, sin 60° = √3/2. The cosine values run in the reverse order.</p>
+            <h3>Radian measure</h3>
+            <p>π radians equal 180°. An arc of length l on a circle of radius r subtends an angle l/r radians.</p>
+            <h3>Practice question</h3>
+            <p>Find sin 75° using the sum formula.</p>
+            <details><summary>Show answer</summary>sin(45° + 30°) = (1/√2)(√3/2) + (1/√2)(½) = <b>(√3 + 1)/(2√2)</b></details>
+          </section>
+
+        </main>
+      </div>
+    </section>
+
+    <!-- ================= PRACTICE ================= -->
+    <section class="view" data-view="practice" hidden>
+      <div class="page">
+        <h2>Practice quiz</h2>
+        <p class="lead">Five quick questions from the chapters. Choose an answer for each, then check your score.</p>
+        <form id="quiz"></form>
+        <div class="quiz-actions">
+          <button type="button" id="quizCheck">Check answers</button>
+          <button type="button" id="quizReset" class="ghost">Reset</button>
+          <span id="quizScore" role="status"></span>
+        </div>
+        <div class="ad" role="complementary" aria-label="Advertisement">
+          <span class="ad-tag">Ad</span>
+          <div class="ad-body"><b>BrightPath Test Series</b><span>Full-length mock tests with rank analysis.</span></div>
+          <span class="ad-btn">Try free</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= DOUBTS & DISCUSSION ================= -->
+    <section class="view" data-view="doubts" hidden>
+      <section id="doubts" class="doubts" aria-label="Doubts and discussion">
+        <div class="doubts-head">
+          <h2>Doubts &amp; Discussion</h2>
+          <p>Ask a question or compare answers with your study partner.</p>
+        </div>
+        <div id="join">
+          <div class="row">
+            <label class="field"><span>Your name</span>
+              <input id="nick" maxlength="20" autocomplete="off" placeholder="e.g. Aman">
+            </label>
+            <label class="field grow"><span>Group code</span>
+              <input id="phrase" type="password" autocomplete="off" placeholder="At least 8 characters">
+            </label>
+            <button id="joinBtn" type="button">Join group</button>
+          </div>
+          <p id="joinErr" class="err" role="alert"></p>
+        </div>
+        <div id="chat" hidden>
+          <div class="tools">
+            <label class="check"><input type="checkbox" id="blurToggle" checked> Blur messages until tapped</label>
+            <button id="clearBtn" type="button" class="ghost">Clear all</button>
+          </div>
+          <div id="log" aria-live="polite"></div>
+          <form id="form" autocomplete="off">
+            <input id="msg" maxlength="500" placeholder="Type your doubt or answer" autocomplete="off" aria-label="Message">
+            <button type="submit">Send</button>
+          </form>
+        </div>
+      </section>
+    </section>
+
+    <!-- ================= ABOUT ================= -->
+    <section class="view" data-view="about" hidden>
+      <div class="page">
+        <h2>About StudyDesk</h2>
+        <p class="lead">StudyDesk is a small revision site for Class 11 students.</p>
+        <p>Every chapter has a short summary, the formulas you need, and one practice question with a worked answer. Notes are kept brief so a chapter can be revised in a single sitting.</p>
+        <h3>How to use it</h3>
         <ul>
-          <li>The slope of an x–t graph gives velocity.</li>
-          <li>The slope of a v–t graph gives acceleration.</li>
-          <li>The area under a v–t graph gives displacement.</li>
-          <li>For a projectile, the range is greatest at 45° to the horizon.</li>
+          <li>Pick a subject from the top bar and read one chapter.</li>
+          <li>Use the reaction buttons under a chapter title to mark how it went.</li>
+          <li>Take the practice quiz to test yourself.</li>
+          <li>Use Doubts to discuss a question with your study group.</li>
         </ul>
+        <p class="meta">Notes follow the NCERT Class 11 syllabus and are meant for quick revision, not as a replacement for the textbook.</p>
+      </div>
+    </section>
 
-        <h3>Practice question</h3>
-        <p>A ball is thrown upward at 20 m/s. Find the maximum height reached (g = 10 m/s²).</p>
-        <details><summary>Show answer</summary>H = u²/2g = 400/20 = <b>20 m</b></details>
-      </section>
-
-      <!-- ================= CHAPTER 2 ================= -->
-      <section class="chapter" id="ch2" hidden>
-        <h2>Laws of Motion</h2>
-        <p class="meta">6 minute read.</p>
-        <div class="react" data-ch="ch2"></div>
-
-        <h3>Newton's laws</h3>
-        <p>The first law introduces <b>inertia</b>: a body stays at rest or in uniform motion unless a net force acts on it. The second law links force to the rate of change of <b>momentum</b>, F = dp/dt. The third law pairs every action with an equal and opposite reaction.</p>
-
-        <h3>Friction</h3>
-        <p>Static <b>friction</b> adjusts itself up to a limiting value μₛN. Once sliding starts, kinetic friction μₖN acts, and it is usually smaller.</p>
-
-        <h3>Equilibrium</h3>
-        <p>A body is in <b>equilibrium</b> when the vector sum of all forces on it is zero. Draw the free-body diagram, then resolve the forces along two perpendicular axes.</p>
-
-        <h3>Practice question</h3>
-        <p>A 2 kg block rests on a rough surface with μₛ = 0.5. What is the maximum horizontal force before it slides? (g = 10 m/s²)</p>
-        <details><summary>Show answer</summary>F = μₛmg = 0.5 × 2 × 10 = <b>10 N</b></details>
-      </section>
-
-      <!-- ================= CHAPTER 3 ================= -->
-      <section class="chapter" id="ch3" hidden>
-        <h2>Work, Energy &amp; Gravitation</h2>
-        <p class="meta">7 minute read.</p>
-        <div class="react" data-ch="ch3"></div>
-
-        <h3>Work–energy theorem</h3>
-        <p>The net work done on a body equals the change in its kinetic <b>energy</b>. When only conservative forces act, total mechanical energy stays constant.</p>
-
-        <h3>Simple pendulum</h3>
-        <p>A <b>pendulum</b> converts potential energy into kinetic energy and back. For small angles the time period is T = 2π√(L/g), independent of mass. When the driving frequency matches the natural frequency, <b>resonance</b> occurs and the amplitude grows.</p>
-
-        <h3>Gravitation</h3>
-        <p>Newton's law of <b>gravity</b> states F = Gm₁m₂/r². A satellite in a circular <b>orbit</b> moves at v = √(GM/r), and the escape velocity from Earth is about 11.2 km/s.</p>
-
-        <h3>Practice question</h3>
-        <p>Find the time period of a pendulum of length 1 m (g = π² m/s²).</p>
-        <details><summary>Show answer</summary>T = 2π√(1/π²) = <b>2 s</b></details>
-      </section>
-    </main>
   </div>
 
-  <!-- ================= DOUBTS & DISCUSSION ================= -->
-  <section id="doubts" class="doubts" aria-label="Doubts and discussion">
-    <div class="doubts-head">
-      <h2>Doubts &amp; Discussion</h2>
-      <p>Ask a question or compare answers with your study partner.</p>
-    </div>
-
-    <div id="join">
-      <div class="row">
-        <label class="field"><span>Your name</span>
-          <input id="nick" maxlength="20" autocomplete="off" placeholder="e.g. Aman">
-        </label>
-        <label class="field grow"><span>Group code</span>
-          <input id="phrase" type="password" autocomplete="off" placeholder="At least 8 characters">
-        </label>
-        <button id="joinBtn" type="button">Join group</button>
-      </div>
-      <p id="joinErr" class="err" role="alert"></p>
-    </div>
-
-    <div id="chat" hidden>
-      <div class="tools">
-        <label class="check"><input type="checkbox" id="blurToggle" checked> Blur messages until tapped</label>
-        <button id="clearBtn" type="button" class="ghost">Clear all</button>
-      </div>
-      <div id="log" aria-live="polite"></div>
-      <form id="form" autocomplete="off">
-        <input id="msg" maxlength="500" placeholder="Type your doubt or answer" autocomplete="off" aria-label="Message">
-        <button type="submit">Send</button>
-      </form>
-    </div>
-  </section>
-
-  <footer class="foot">StudyDesk · Class 11 Physics revision notes</footer>
+  <footer class="foot">StudyDesk · Class 11 revision notes</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="script.js"></script>
