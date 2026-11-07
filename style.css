@@ -237,3 +237,10 @@ details[open] summary { margin-bottom: 6px; }
   html { scroll-behavior: auto; }
   * { transition: none !important; }
 }
+
+/* ---------- mock test setup ---------- */
+.setup { margin: 0 0 24px; padding: 20px 22px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; max-width: 70ch; }
+.setup .meta { margin: 12px 0 0; }
+.field select { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); min-width: 170px; }
+.field select:focus { background: var(--card); border-color: var(--brand); outline-offset: 0; }
+@media (max-width: 480px) { .field select { width: 100%; } }

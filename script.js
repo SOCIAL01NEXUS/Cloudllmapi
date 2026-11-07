@@ -235,29 +235,48 @@
     }
   }
 
-  /* ------------------- Mock quiz (NEET marking: +4 / -1 / 0) ------------------- */
-  const QUIZ = [
-    { s: 'physics', q: 'A ball is thrown upward at 20 m/s (g = 10 m/s²). Its maximum height is:', o: ['10 m', '20 m', '40 m', '5 m'], a: 1,
-      e: 'H = u²/2g = 400/20 = 20 m.' },
-    { s: 'physics', q: 'The length of a simple pendulum is made four times. Its time period becomes:', o: ['Half', 'Double', 'Four times', 'Unchanged'], a: 1,
-      e: 'T = 2π√(L/g) so T ∝ √L. Four times L gives two times T.' },
-    { s: 'physics', q: 'Resistors of 6 Ω and 3 Ω are in parallel across 6 V. The total current is:', o: ['1 A', '2 A', '3 A', '9 A'], a: 2,
-      e: 'R = 6×3/9 = 2 Ω, so I = 6/2 = 3 A.' },
-    { s: 'chemistry', q: 'The number of moles in 36 g of water is:', o: ['1', '3', '2', '0.5'], a: 2,
-      e: 'Molar mass of water is 18 g/mol, so 36/18 = 2 mol.' },
-    { s: 'chemistry', q: 'The maximum number of electrons in the n = 3 shell is:', o: ['8', '18', '32', '9'], a: 1,
-      e: '2n² = 2 × 9 = 18.' },
-    { s: 'chemistry', q: 'The bond order of the O₂ molecule is:', o: ['1', '2', '3', '2.5'], a: 1,
-      e: 'O₂ has 10 bonding and 6 antibonding electrons: (10 − 6)/2 = 2.' },
-    { s: 'biology', q: 'Krebs cycle enzymes are located in the:', o: ['Outer mitochondrial membrane', 'Inner mitochondrial membrane', 'Mitochondrial matrix', 'Intermembrane space'], a: 2,
-      e: 'The Krebs cycle runs in the mitochondrial matrix. The electron transport chain is on the inner membrane.' },
-    { s: 'biology', q: 'The primary CO₂ acceptor in C3 plants is:', o: ['PEP', 'RuBP', 'OAA', 'PGA'], a: 1,
-      e: 'RuBisCO attaches CO₂ to RuBP (ribulose-1,5-bisphosphate).' },
-    { s: 'biology', q: 'The phenotypic ratio of a dihybrid test cross (AaBb × aabb) is:', o: ['9:3:3:1', '1:1:1:1', '3:1', '1:2:1'], a: 1,
-      e: 'The tester produces only ab gametes, so offspring mirror the four gamete types of AaBb in equal numbers.' },
-    { s: 'biology', q: 'Semi-conservative replication of DNA was shown by:', o: ['Hershey and Chase', 'Meselson and Stahl', 'Griffith', 'Avery and MacLeod'], a: 1,
-      e: 'Meselson and Stahl used heavy nitrogen (¹⁵N) in E. coli.' },
-  ];
+  /* ------------------- Mock tests (NEET marking: +4 / -1 / 0) ------------------- */
+  // Questions live in bank-physics.js / bank-chemistry.js / bank-biology.js
+  // (window.QBANK.<subject> = [{t: topic, q, o: [4 options], a: answer index, e: explanation}]).
+  const BANK = window.QBANK || {};
+  let QUIZ = [];
+
+  function pickRandom(arr, n) {          // Fisher-Yates shuffle with crypto randomness
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = crypto.getRandomValues(new Uint32Array(1))[0] % (i + 1);
+      const tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a.slice(0, n);
+  }
+
+  function updateBankInfo() {
+    const parts = [];
+    let total = 0;
+    Object.keys(SUBJECTS).forEach((k) => {
+      const n = (BANK[k] || []).length;
+      total += n;
+      parts.push(SUBJECTS[k] + ' ' + n);
+    });
+    $('bankInfo').textContent = total
+      ? 'Question bank: ' + parts.join(' · ') + ' · ' + total + ' in total. Each test picks a fresh random set.'
+      : 'No questions loaded. Check that the bank-*.js files are uploaded next to index.html.';
+  }
+
+  function startQuiz() {
+    const subj = $('qSubject').value;
+    const want = Number($('qCount').value);
+    const pool = [];
+    (subj === 'all' ? Object.keys(SUBJECTS) : [subj]).forEach((k) => {
+      (BANK[k] || []).forEach((item) => pool.push(Object.assign({ s: k }, item)));
+    });
+    if (!pool.length) { updateBankInfo(); return; }
+    QUIZ = pickRandom(pool, Math.min(want, pool.length));
+    buildQuiz();
+    $('quizSetup').hidden = true;
+    $('quizRun').hidden = false;
+    window.scrollTo(0, 0);
+  }
 
   function buildQuiz() {
     const f = $('quiz');
@@ -268,7 +287,7 @@
       const lg = document.createElement('legend');
       const tag = document.createElement('span');
       tag.className = 'qtag ' + item.s;
-      tag.textContent = SUBJECTS[item.s];
+      tag.textContent = SUBJECTS[item.s] + (item.t ? ' · ' + item.t : '');
       lg.append(tag, document.createTextNode((i + 1) + '. ' + item.q));
       box.append(lg);
       item.o.forEach((opt, j) => {
@@ -284,9 +303,12 @@
     $('quizResult').hidden = true;
   }
 
+  $('quizStart').addEventListener('click', startQuiz);
+
   $('quizCheck').addEventListener('click', () => {
     let total = 0, right = 0, wrong = 0, skipped = 0;
-    const per = { physics: 0, chemistry: 0, biology: 0 };
+    const per = {}, cnt = {};
+    Object.keys(SUBJECTS).forEach((k) => { per[k] = 0; cnt[k] = 0; });
     QUIZ.forEach((item, i) => {
       const box = $('quiz').children[i];
       const sel = box.querySelector('input:checked');
@@ -296,7 +318,7 @@
       if (!sel) { skipped += 1; box.classList.add('skipped'); }
       else if (Number(sel.value) === item.a) { right += 1; pts = 4; box.classList.add('right'); }
       else { wrong += 1; pts = -1; box.classList.add('wrong'); }
-      total += pts; per[item.s] += pts;
+      total += pts; per[item.s] += pts; cnt[item.s] += 1;
       const ex = document.createElement('p');
       ex.className = 'expl';
       ex.textContent = 'Answer: ' + item.o[item.a] + '. ' + item.e;
@@ -307,12 +329,21 @@
     const big = document.createElement('b');
     big.textContent = total + ' / ' + (QUIZ.length * 4);
     const p = document.createElement('p');
-    p.textContent = right + ' correct, ' + wrong + ' wrong, ' + skipped + ' skipped. Physics ' + per.physics +
-      ', Chemistry ' + per.chemistry + ', Biology ' + per.biology + '.';
+    const bySubject = Object.keys(SUBJECTS).filter((k) => cnt[k]).map((k) => SUBJECTS[k] + ' ' + per[k] + '/' + (cnt[k] * 4));
+    p.textContent = right + ' correct, ' + wrong + ' wrong, ' + skipped + ' skipped. ' + bySubject.join(', ') + '.';
     r.append(big, p);
     r.hidden = false;
+    r.scrollIntoView({ block: 'nearest' });
   });
-  $('quizReset').addEventListener('click', () => { buildQuiz(); window.scrollTo(0, 0); });
+
+  $('quizReset').addEventListener('click', () => {      // back to the setup screen
+    QUIZ = [];
+    $('quiz').textContent = '';
+    $('quizRun').hidden = true;
+    $('quizResult').hidden = true;
+    $('quizSetup').hidden = false;
+    window.scrollTo(0, 0);
+  });
 
   /* ------------- Glossary terms: wrap words in the notes ------------- */
   function wrapTerms() {
@@ -491,7 +522,7 @@
 
   buildReactions();
   wrapTerms();
-  buildQuiz();
+  updateBankInfo();
   updateCountdown();
   setView('home');
 })();

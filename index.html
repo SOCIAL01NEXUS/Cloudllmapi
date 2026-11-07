@@ -327,14 +327,42 @@ Dihybrid test cross            1 : 1 : 1 : 1</pre>
     <!-- ================= MOCK QUIZ ================= -->
     <section class="view" data-view="practice" hidden>
       <div class="page">
-        <h2>NEET-style mock quiz</h2>
-        <p class="lead">Ten questions across all three subjects. Marking follows NEET: +4 for a correct answer, −1 for a wrong one, 0 if you skip.</p>
-        <form id="quiz"></form>
-        <div class="quiz-actions">
-          <button type="button" id="quizCheck" class="btn primary">Check answers</button>
-          <button type="button" id="quizReset" class="btn ghost">Reset</button>
+        <h2>NEET-style mock tests</h2>
+        <p class="lead">Pick a subject and the number of questions. Marking follows NEET: +4 for a correct answer, −1 for a wrong one, 0 if you skip.</p>
+
+        <div id="quizSetup" class="setup">
+          <div class="row">
+            <label class="field"><span>Subject</span>
+              <select id="qSubject">
+                <option value="all">All subjects</option>
+                <option value="physics">Physics</option>
+                <option value="chemistry">Chemistry</option>
+                <option value="biology">Biology</option>
+              </select>
+            </label>
+            <label class="field"><span>Number of questions</span>
+              <select id="qCount">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="45">45</option>
+                <option value="75">75</option>
+                <option value="9999">All available</option>
+              </select>
+            </label>
+            <button type="button" id="quizStart" class="btn primary">Start test</button>
+          </div>
+          <p id="bankInfo" class="meta"></p>
         </div>
-        <div id="quizResult" class="result" role="status" hidden></div>
+
+        <div id="quizRun" hidden>
+          <form id="quiz"></form>
+          <div class="quiz-actions">
+            <button type="button" id="quizCheck" class="btn primary">Check answers</button>
+            <button type="button" id="quizReset" class="btn ghost">New test</button>
+          </div>
+          <div id="quizResult" class="result" role="status" hidden></div>
+        </div>
+
         <a class="ad" href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener noreferrer">
           <span class="ad-tag">Ad</span>
           <b>Revise from the source</b>
@@ -399,6 +427,9 @@ Dihybrid test cross            1 : 1 : 1 : 1</pre>
   <footer class="foot">StudyDesk · NEET UG preparation notes</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="bank-physics.js"></script>
+  <script src="bank-chemistry.js"></script>
+  <script src="bank-biology.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

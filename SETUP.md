@@ -1,6 +1,17 @@
-# StudyDesk v4 (NEET) – Setup Guide
+# StudyDesk v4.1 (NEET) – Setup Guide
 
-## What changed in v4 (NEET edition)
+## What changed in v4.1 (build part 1 of 10)
+- Mock tests now draw from question banks: `bank-physics.js`, `bank-chemistry.js`, `bank-biology.js` (75 questions each, 225 in total, every one different). Upload ALL files in this ZIP; the quiz needs the three bank files next to `index.html`.
+- On the Mock quiz page choose subject (or all) and the number of questions. Every test is a fresh random set, scored with NEET marking, with an explanation for each answer.
+- More questions are added part by part by dropping in bigger `bank-*.js` files. The page code does not need to change.
+
+## What is the Group code? (Doubts page)
+- It is NOT a Supabase value and you do not create it anywhere. It is a secret phrase that you and your partner agree on yourselves, at least 8 characters. Example style: three or four unrelated words and a number.
+- Both of you open the site, go to **Doubts**, type your name and the SAME Group code, and press **Join group**. Same code = same private room. A different code = a different room, so nobody else can see your messages, glows or reactions.
+- Before it works you must paste your Supabase URL and anon key at the top of `script.js`, otherwise Join cannot connect.
+- Tell the code to your partner in person or on a call, not on a public page. Change it from time to time.
+
+## Earlier: v4 (NEET edition)
 - Subjects are now Physics (4 chapters), Chemistry (3) and Biology (3), with a NEET-style home page and a mock quiz that uses real NEET marking (+4 / -1 / 0).
 - Countdown on the home page: change `TARGET_DATE` at the top of `script.js` to your exam date (check the official NTA notice for the actual NEET UG date).
 - Ads are real links. Tapping one opens a site in a new tab. To change where an ad goes, edit the `href` of the `<a class="ad">` tags in `index.html`. Defaults: NCERT textbooks, NTA NEET UG, MCC counselling.
