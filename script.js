@@ -3,8 +3,8 @@
 (() => {
   
   const CONFIG = {
-    SUPABASE_URL: 'https://YOUR-PROJECT.supabase.co',
-    SUPABASE_ANON_KEY: 'YOUR-ANON-PUBLIC-KEY',
+    SUPABASE_URL: 'https://zptvnqfhmhrvbnxpbnja.supabase.co',
+    SUPABASE_ANON_KEY: 'sb_publishable_mjXOt1dvv--mW70w9MMSRQ_TQsSAJP4',
     PANIC_URL: 'https://www.pw.live/',
     PANIC_ON_BLUR: true,
     PANIC_ON_HIDDEN: true,
