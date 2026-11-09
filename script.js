@@ -5,7 +5,7 @@
   const CONFIG = {
     SUPABASE_URL: 'https://zptvnqfhmhrvbnxpbnja.supabase.co',
     SUPABASE_ANON_KEY: 'sb_publishable_mjXOt1dvv--mW70w9MMSRQ_TQsSAJP4',
-    GROUP_CODE: 'neet-bio-rank1-sikar-2027',',
+    GROUP_CODE: 'neet-bio-rank1-sikar-2027',
     PANIC_URL: 'https://www.pw.live/',
     PANIC_ON_BLUR: true,
     PANIC_ON_HIDDEN: true,
