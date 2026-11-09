@@ -1,7 +1,3 @@
-/* StudyDesk – NEET UG preparation portal
-   Ink navy + deep teal brand. Subject colours: Physics blue, Chemistry rust, Biology green.
-   Amber is reserved for the private glow signals. No gradients, no purple.
-   System fonts only (the CSP blocks external fonts). */
 :root {
   --bg: #f3f5f8;
   --card: #ffffff;
@@ -34,7 +30,6 @@ a { color: inherit; text-decoration: none; }
 .skip:focus { left: 8px; }
 :focus-visible { outline: 3px solid #7fb4c8; outline-offset: 2px; }
 
-/* ---------- buttons ---------- */
 button { cursor: pointer; }
 .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; border: 1px solid transparent; border-radius: 10px; font-weight: 600; font-size: .95rem; transition: background .15s, border-color .15s, color .15s; }
 .btn.primary { background: var(--brand); color: #fff; }
@@ -45,7 +40,6 @@ button { cursor: pointer; }
 .btn.ghost:hover { background: var(--bg); color: var(--ink); }
 .btn.small { padding: 5px 12px; font-size: .8rem; font-weight: 500; }
 
-/* ---------- top bar ---------- */
 .top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 16px; height: 64px; padding: 0 24px; background: var(--card); border-bottom: 1px solid var(--line); }
 .brand { display: flex; align-items: center; gap: 12px; padding: 0; background: transparent; border: 0; color: var(--ink); text-align: left; }
 .mark { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: var(--ink); color: #fff; font-size: .85rem; font-weight: 800; letter-spacing: .02em; }
@@ -60,7 +54,6 @@ button { cursor: pointer; }
 #search { width: min(210px, 22vw); padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); font-size: .88rem; }
 #search:focus { background: var(--card); border-color: var(--brand); }
 
-/* ---------- home ---------- */
 .home, .page { max-width: 1080px; margin: 0 auto; padding: 28px 24px 0; }
 .hero { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 32px; align-items: center; padding: 40px 44px; background: var(--ink); color: #fff; border-radius: 18px; }
 .hero h2 { margin: 0 0 12px; font-size: 2.15rem; line-height: 1.15; letter-spacing: -.025em; max-width: 18ch; }
@@ -89,7 +82,6 @@ button { cursor: pointer; }
 .tip h3 { margin: 0 0 4px; font-size: 1rem; }
 .tip p { margin: 0; color: var(--muted); }
 
-/* ---------- ads ---------- */
 .adrow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .ad { position: relative; display: grid; align-content: start; gap: 6px; padding: 16px 18px; background: #fffbea; border: 1px solid #f0e2a8; border-radius: 12px; font-size: .88rem; transition: box-shadow .15s, border-color .15s; }
 .ad:hover { border-color: #e0c860; box-shadow: var(--shadow); }
@@ -100,7 +92,6 @@ button { cursor: pointer; }
 .ad.small { margin-top: 20px; }
 .page > .ad { margin-top: 24px; max-width: 70ch; }
 
-/* ---------- study layout ---------- */
 .view[data-view="study"] { --subj: var(--brand); }
 .view[data-view="study"][data-subj="physics"]   { --subj: var(--phy);  --subj-soft: var(--phy-soft); }
 .view[data-view="study"][data-subj="chemistry"] { --subj: var(--chem); --subj-soft: var(--chem-soft); }
@@ -131,7 +122,6 @@ details { margin: 0 0 1em; background: var(--subj-soft); border: 1px solid var(-
 summary { cursor: pointer; font-weight: 700; color: var(--subj); }
 details[open] summary { margin-bottom: 6px; }
 
-/* ---------- glossary terms ---------- */
 .kw { border-bottom: 1.5px dotted var(--subj); cursor: pointer; border-radius: 3px; transition: background .15s; }
 .kw:hover { background: var(--subj-soft); }
 .kw.tap { background: var(--subj-soft); }
@@ -143,7 +133,6 @@ details[open] summary { margin-bottom: 6px; }
   100% { background: transparent; box-shadow: 0 0 0 0 rgba(245,179,1,0); }
 }
 
-/* ---------- reactions ---------- */
 .react { margin: 18px 0 0; padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-family: var(--sans); font-size: .85rem; }
 .react .btns { display: flex; flex-wrap: wrap; gap: 8px; }
 .react button { padding: 5px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--ink); transition: border-color .15s, color .15s, background .15s; }
@@ -154,13 +143,11 @@ details[open] summary { margin-bottom: 6px; }
 .chip.glow { animation: chipglow 4s ease-out; }
 @keyframes chipglow { 0% { box-shadow: 0 0 14px 5px rgba(245,179,1,.9); background: var(--glow-soft); } 100% { box-shadow: none; background: var(--subj-soft); } }
 
-/* ---------- generic page, about ---------- */
 .page h2 { margin: 0 0 6px; font-size: 1.8rem; letter-spacing: -.02em; }
 .page h3 { margin: 1.6em 0 .4em; font-size: 1.05rem; color: var(--brand-dark); }
 .page p, .page li { max-width: 70ch; line-height: 1.7; }
 .lead { color: var(--muted); font-size: 1.05rem; margin: 0 0 1.2em; }
 
-/* ---------- mock quiz ---------- */
 .qbox { margin: 0 0 14px; padding: 16px 20px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
 .qbox legend { padding: 0 6px; font-weight: 650; max-width: 62ch; }
 .qtag { display: inline-block; margin-right: 8px; padding: 1px 9px; border-radius: 999px; font-size: .72rem; font-weight: 700; vertical-align: 1px; }
@@ -170,6 +157,21 @@ details[open] summary { margin-bottom: 6px; }
 .qbox.right { border-color: #5aa27a; background: #f3faf5; }
 .qbox.wrong { border-color: #d4a29c; background: #fdf6f5; }
 .qbox.skipped { border-color: #cbd3dc; }
+.qbox.glow { animation: qglow var(--glow-ms, 6s) ease-out; }
+@keyframes qglow {
+  0%   { background: var(--glow-soft); box-shadow: 0 0 0 0 rgba(245,179,1,0); }
+  8%   { background: var(--glow-soft); box-shadow: 0 0 16px 6px rgba(245,179,1,.85); }
+  60%  { background: var(--glow-soft); box-shadow: 0 0 10px 4px rgba(245,179,1,.5); }
+  100% { background: var(--card); box-shadow: 0 0 0 0 rgba(245,179,1,0); }
+}
+.pact { margin: 0 0 18px; padding: 14px 18px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+.pact h3 { margin: 0 0 8px; font-size: .95rem; }
+.pact ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.pact li { padding: 8px 12px; border-radius: 8px; background: var(--bg); font-size: .92rem; }
+.pact li small { display: block; color: var(--muted); font-size: .75rem; }
+.pact li.glow { animation: qglow var(--glow-ms, 6s) ease-out; }
+.mainnav button.glow { animation: navglow 4s ease-out; }
+@keyframes navglow { 0% { box-shadow: 0 0 14px 5px rgba(245,179,1,.9); background: var(--glow-soft); } 100% { box-shadow: none; background: transparent; }
 .opt { display: block; padding: 5px 0; cursor: pointer; }
 .expl { margin: 8px 0 0; padding: 8px 12px; background: var(--bg); border-radius: 8px; color: var(--muted); font-size: .88rem; }
 .quiz-actions { display: flex; gap: 12px; margin: 8px 0 18px; }
@@ -177,7 +179,6 @@ details[open] summary { margin-bottom: 6px; }
 .result b { font-size: 1.6rem; letter-spacing: -.02em; }
 .result p { margin: 6px 0 0; color: #b9c6d6; font-size: .92rem; }
 
-/* ---------- doubts & discussion ---------- */
 .doubts { max-width: 1032px; margin: 32px auto 0; padding: 28px 32px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
 .doubts-head h2 { margin: 0; font-size: 1.25rem; letter-spacing: -.01em; }
 .doubts-head p { margin: 4px 0 18px; color: var(--muted); font-size: .92rem; }
@@ -201,7 +202,6 @@ details[open] summary { margin-bottom: 6px; }
 
 .foot { max-width: 1080px; margin: 0 auto; padding: 32px 24px 44px; color: var(--muted); font-size: .8rem; }
 
-/* ---------- tablet / mobile ---------- */
 @media (max-width: 900px) {
   .brand-sub { display: none; }
   .hero { grid-template-columns: minmax(0, 1fr); padding: 28px 24px; }
@@ -238,9 +238,16 @@ details[open] summary { margin-bottom: 6px; }
   * { transition: none !important; }
 }
 
-/* ---------- mock test setup ---------- */
 .setup { margin: 0 0 24px; padding: 20px 22px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; max-width: 70ch; }
 .setup .meta { margin: 12px 0 0; }
 .field select { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); min-width: 170px; }
 .field select:focus { background: var(--card); border-color: var(--brand); outline-offset: 0; }
 @media (max-width: 480px) { .field select { width: 100%; } }
+
+.kw { border-bottom: 1px dotted rgba(14, 27, 44, .32); }
+.kw:hover { border-bottom-color: var(--subj); }
+.nohint .kw { border-bottom-color: transparent; }
+.gloss { position: absolute; z-index: 40; width: max-content; max-width: min(320px, calc(100vw - 16px)); padding: 10px 14px; background: var(--ink); color: #fff; border-radius: 10px; box-shadow: 0 6px 24px rgba(14,27,44,.25); font-family: var(--sans); font-size: .86rem; line-height: 1.45; }
+.recent { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 14px; font-family: var(--sans); font-size: .78rem; }
+.recent-label { color: var(--muted); margin-right: 4px; }
+.rchip { padding: 2px 10px; background: var(--subj-soft); color: var(--subj); border-radius: 999px; font-weight: 600; }

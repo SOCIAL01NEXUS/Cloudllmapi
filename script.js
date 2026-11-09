@@ -1,46 +1,26 @@
-/* =====================================================================
- * StudyDesk – RAM-only study portal with private signals (Supabase Realtime)
- *
- *  Features
- *   1. Glossary terms: tap a term -> it GLOWS on the other person's screen.
- *   2. Topic reactions: pick a reaction on a chapter -> the other person sees it.
- *   3. "Doubts & Discussion": normal-looking chat with extra safety
- *      (privacy blur, auto-vanish, idle lock, clear button).
- *
- *  Safety (unchanged + extended)
- *   - No localStorage / sessionStorage / cookies / IndexedDB. Supabase auth
- *     is forced into an in-memory adapter.
- *   - Everything sent (messages, glows, reactions) is end-to-end encrypted
- *     with AES-GCM; key derived from the shared group code.
- *   - Broadcast only: nothing is stored on the server.
- *   - Panic (blur / tab hidden / minimise / idle / Ctrl+Shift+X): wipe DOM,
- *     purge RAM, close sockets, location.replace() to PANIC_URL.
- * ===================================================================== */
 'use strict';
 
 (() => {
-  /* ------------------------- CONFIG ------------------------- */
+  
   const CONFIG = {
-    SUPABASE_URL: 'https://YOUR-PROJECT.supabase.co',   // <-- replace
-    SUPABASE_ANON_KEY: 'YOUR-ANON-PUBLIC-KEY',          // <-- replace (anon key is public by design)
+    SUPABASE_URL: 'https://YOUR-PROJECT.supabase.co',
+    SUPABASE_ANON_KEY: 'YOUR-ANON-PUBLIC-KEY',
     PANIC_URL: 'https://www.pw.live/',
     PANIC_ON_BLUR: true,
     PANIC_ON_HIDDEN: true,
 
-    // Your private vocabulary. Every word here must appear in the notes text;
-    // it gets wrapped as a tappable glossary term. Only YOU TWO know what each means.
-    // Add/remove words freely (lowercase). Edit the notes in index.html to include them.
     GLOW_WORDS: [
-      'velocity', 'acceleration', 'inertia', 'momentum', 'friction',
-      'equilibrium', 'energy', 'pendulum', 'resonance', 'gravity', 'orbit', 'horizon',
-      'mitochondria', 'ribosomes', 'chlorophyll', 'enzyme', 'genotype', 'chromosomes',
+      'fine', 'tired', 'sleep', 'hurt', 'pain', 'sad', 'cry', 'tears',
+      'angry', 'happy', 'fear', 'heart', 'food', 'eat', 'fever', 'alone',
+      'together', 'home', 'miss', 'busy', 'wait', 'safe', 'danger', 'stress',
+      'strain', 'pressure', 'relax', 'dream', 'morning', 'night', 'late', 'early',
+      'parents', 'mother', 'father', 'sister',
     ],
 
-    // Countdown on the home page. Set YOUR exam date (YYYY-MM-DD). Check the
-    // official NTA notice for the real NEET UG date and update this line.
+    UNDERLINE_TERMS: true,
+
     TARGET_DATE: '2027-05-02',
 
-    // Reactions shown under each chapter title (id is sent, label is shown)
     REACTIONS: [
       { id: 'ok', label: '✓ Got it' },
       { id: 'q',  label: '? Doubt' },
@@ -48,20 +28,21 @@
       { id: 'rv', label: '↻ Revise' },
     ],
 
-    GLOW_MS: 6000,               // how long a glow lasts
-    VANISH_MS: 10 * 60 * 1000,   // doubts disappear after 10 minutes
-    IDLE_MS: 3 * 60 * 1000,      // no activity for 3 minutes -> panic
+    GLOW_MS: 6000,
+    VANISH_MS: 10 * 60 * 1000,
+    IDLE_MS: 3 * 60 * 1000,
     MAX_MESSAGES_IN_RAM: 100,
   };
 
-  /* ------------------ VOLATILE STATE (RAM only) ------------------ */
+  
   let sb = null, channel = null, cryptoKey = null;
   let nick = '';
   let armed = false, dead = false;
   let idleTimer = null, sweepTimer = null;
-  const myId = crypto.getRandomValues(new Uint32Array(2)).join('-'); // per-page id
-  let msgs = [];                 // {el, ts}
-  let reactions = {};            // { ch1: { name: reactionId } }
+  const myId = crypto.getRandomValues(new Uint32Array(2)).join('-');
+  let msgs = [];
+  let reactions = {};
+  let recent = [];
 
   const $ = (id) => document.getElementById(id);
   const enc = new TextEncoder();
@@ -69,7 +50,6 @@
   const wordSet = new Set(CONFIG.GLOW_WORDS.map((w) => w.toLowerCase()));
   const rxIds = new Set(CONFIG.REACTIONS.map((r) => r.id));
 
-  // In-memory storage adapter (replaces localStorage for Supabase auth)
   const mem = new Map();
   const memoryStorage = {
     getItem: (k) => (mem.has(k) ? mem.get(k) : null),
@@ -77,19 +57,16 @@
     removeItem: (k) => { mem.delete(k); },
   };
 
-  /* ------------------------- PANIC SYSTEM ------------------------- */
+  
   function panic() {
     if (dead) return;
     dead = true;
-    // 1) instant DOM destruction
     try { document.documentElement.innerHTML = ''; } catch (_) {}
-    // 2) memory purge + close sockets
     try { clearTimeout(idleTimer); clearInterval(sweepTimer); } catch (_) {}
-    try { msgs = []; reactions = {}; cryptoKey = null; nick = ''; mem.clear(); } catch (_) {}
+    try { msgs = []; reactions = {}; recent = []; cryptoKey = null; nick = ''; mem.clear(); } catch (_) {}
     try { if (channel && sb) sb.removeChannel(channel); } catch (_) {}
     try { if (sb) sb.realtime.disconnect(); } catch (_) {}
     channel = null; sb = null;
-    // 3) redirect + overwrite current history entry
     window.location.replace(CONFIG.PANIC_URL);
   }
 
@@ -112,7 +89,7 @@
     sweepTimer = setInterval(sweep, 15000);
   }
 
-  /* ------------------------- CRYPTO ------------------------- */
+  
   const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
   const unb64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
   const hex = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -139,9 +116,7 @@
     } catch (_) { return null; }
   }
 
-  /* ------------------ STUDY UI: pages, chapters, search ------------------ */
-  // "Pages" are views inside this ONE document, so the Supabase socket and the
-  // RAM-only state survive navigation, and the URL / history never changes.
+  
   const SUBJECTS = { physics: 'Physics', chemistry: 'Chemistry', biology: 'Biology' };
   let curView = 'home';
 
@@ -151,7 +126,7 @@
     document.querySelectorAll('.view').forEach((s) => { s.hidden = s.dataset.view !== target; });
     document.querySelectorAll('#mainNav button').forEach((b) => b.classList.toggle('active', b.dataset.v === v));
     if (SUBJECTS[v]) {
-      document.querySelector('.view[data-view="study"]').dataset.subj = v;   // drives the subject colour
+      document.querySelector('.view[data-view="study"]').dataset.subj = v;
       buildSide(v);
     }
   }
@@ -190,7 +165,6 @@
     window.scrollTo(0, 0);
   }
 
-  // top nav, logo, home cards and buttons (anything with data-v)
   document.addEventListener('click', (e) => {
     const t = e.target.closest('[data-v]');
     if (t) showView(t.dataset.v);
@@ -203,7 +177,6 @@
     const li = e.target.closest('li');
     if (li && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); showChapter(li.dataset.ch); }
   });
-  // search: filters the sidebar; Enter opens the first matching chapter in any subject
   $('search').addEventListener('input', (e) => {
     const q = e.target.value.trim().toLowerCase();
     document.querySelectorAll('#chapterList li').forEach((li) => {
@@ -218,7 +191,7 @@
     if (hit) { showChapter(hit.id); window.scrollTo(0, 0); }
   });
 
-  /* ------------------------- Countdown ------------------------- */
+  
   function updateCountdown() {
     const target = new Date(CONFIG.TARGET_DATE + 'T00:00:00');
     const days = Math.ceil((target - new Date()) / 86400000);
@@ -235,13 +208,11 @@
     }
   }
 
-  /* ------------------- Mock tests (NEET marking: +4 / -1 / 0) ------------------- */
-  // Questions live in bank-physics.js / bank-chemistry.js / bank-biology.js
-  // (window.QBANK.<subject> = [{t: topic, q, o: [4 options], a: answer index, e: explanation}]).
+  
   const BANK = window.QBANK || {};
   let QUIZ = [];
 
-  function pickRandom(arr, n) {          // Fisher-Yates shuffle with crypto randomness
+  function pickRandom(arr, n) {
     const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) {
       const j = crypto.getRandomValues(new Uint32Array(1))[0] % (i + 1);
@@ -268,7 +239,7 @@
     const want = Number($('qCount').value);
     const pool = [];
     (subj === 'all' ? Object.keys(SUBJECTS) : [subj]).forEach((k) => {
-      (BANK[k] || []).forEach((item) => pool.push(Object.assign({ s: k }, item)));
+      (BANK[k] || []).forEach((item, idx) => pool.push(Object.assign({ s: k, id: k + ':' + idx }, item)));
     });
     if (!pool.length) { updateBankInfo(); return; }
     QUIZ = pickRandom(pool, Math.min(want, pool.length));
@@ -305,6 +276,46 @@
 
   $('quizStart').addEventListener('click', startQuiz);
 
+  function signalQuestion(el) {
+    const box = el.closest('.qbox');
+    if (!box) return;
+    const item = QUIZ[[...$('quiz').children].indexOf(box)];
+    if (item) sendEvent({ k: 'qa', q: item.id });
+  }
+  $('quiz').addEventListener('change', (e) => { if (e.target.type === 'radio') signalQuestion(e.target); });
+  $('quiz').addEventListener('click', (e) => { if (e.target.closest('legend')) signalQuestion(e.target); });
+
+  const pact = [];
+  function partnerAttempt(id) {
+    const m = /^(\w+):(\d+)$/.exec(id);
+    const item = m && BANK[m[1]] && BANK[m[1]][Number(m[2])];
+    if (!item || !SUBJECTS[m[1]]) return;
+    pact.unshift({ s: m[1], t: item.t, q: item.q });
+    if (pact.length > 5) pact.pop();
+    const ul = $('pactList');
+    ul.textContent = '';
+    pact.forEach((p, n) => {
+      const li = document.createElement('li');
+      if (n === 0) li.className = 'glow';
+      const sm = document.createElement('small');
+      sm.textContent = SUBJECTS[p.s] + (p.t ? ' · ' + p.t : '');
+      li.append(sm, document.createTextNode(p.q));
+      ul.append(li);
+    });
+    $('partnerAct').hidden = false;
+    document.documentElement.style.setProperty('--glow-ms', CONFIG.GLOW_MS + 'ms');
+    const nav = document.querySelector('#mainNav [data-v="practice"]');
+    if (nav) { nav.classList.remove('glow'); void nav.offsetWidth; nav.classList.add('glow'); setTimeout(() => nav.classList.remove('glow'), 4000); }
+    const idx = QUIZ.findIndex((x) => x.id === id);
+    const box = idx > -1 && $('quiz').children[idx];
+    if (box) {
+      box.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      box.classList.remove('glow'); void box.offsetWidth; box.classList.add('glow');
+      setTimeout(() => box.classList.remove('glow'), CONFIG.GLOW_MS);
+    }
+  }
+
+
   $('quizCheck').addEventListener('click', () => {
     let total = 0, right = 0, wrong = 0, skipped = 0;
     const per = {}, cnt = {};
@@ -336,7 +347,7 @@
     r.scrollIntoView({ block: 'nearest' });
   });
 
-  $('quizReset').addEventListener('click', () => {      // back to the setup screen
+  $('quizReset').addEventListener('click', () => {
     QUIZ = [];
     $('quiz').textContent = '';
     $('quizRun').hidden = true;
@@ -345,7 +356,7 @@
     window.scrollTo(0, 0);
   });
 
-  /* ------------- Glossary terms: wrap words in the notes ------------- */
+  
   function wrapTerms() {
     const pattern = new RegExp('\\b(' + [...wordSet].join('|') + ')\\b', 'gi');
     const walker = document.createTreeWalker($('notes'), NodeFilter.SHOW_TEXT, {
@@ -374,33 +385,125 @@
       node.replaceWith(frag);
     });
   }
-  // Also wrap <b> terms that are in the list (they're inside <b>, still allowed)
+
+  const GLOSS = {
+    fine: "Fine adjustment: a screw or knob that moves a stage or pointer in very small steps, for precise measurement or focusing.",
+    tired: "Fatigue: a material or muscle that is stressed again and again loses strength, or loses its ability to produce force.",
+    sleep: "Sleep: a recurring state of reduced activity and awareness. The sleep–wake cycle is controlled by the hypothalamus and by melatonin.",
+    hurt: "Hurt: tissue damage detected by nociceptors. In physics, the damage depends on the force, which is impulse divided by the stopping time.",
+    pain: "Pain: the sensation produced when nociceptors (pain receptors) are stimulated by damage or by harmful stimuli.",
+    sad: "Low mood: mood is influenced by neurotransmitters such as serotonin and dopamine.",
+    cry: "Cry: in biology, crying releases tears from the lacrimal glands. In physics, a high-pitched cry has a high frequency.",
+    tears: "Tears: fluid from the lacrimal glands that keeps the eye moist and contains lysozyme, an enzyme that kills bacteria.",
+    angry: "Anger: a strong emotion that triggers adrenaline release, preparing the body for fight or flight.",
+    happy: "Positive mood: linked with dopamine, serotonin and endorphins in the brain.",
+    fear: "Fear: an alarm response that activates the sympathetic nervous system and adrenaline release.",
+    heart: "Heart: a four-chambered muscular pump. At rest it beats about 72 times a minute and pumps roughly 5 litres of blood per minute.",
+    food: "Food: material that supplies energy and raw materials. Food energy is measured in kilocalories (1 kcal = 4184 J).",
+    eat: "Eat: to take in food. Some cells also \"eat\" by phagocytosis, engulfing particles such as bacteria.",
+    fever: "Fever: body temperature raised above about 38 °C, usually because the hypothalamus resets its set point during infection.",
+    alone: "Alone: a single, isolated entity. A lone pair is a pair of valence electrons that is not shared in a bond.",
+    together: "Together: acting as one unit, for example atoms held together by bonds, or bodies moving together after a perfectly inelastic collision.",
+    home: "Home: the starting or equilibrium position. A restoring force pulls a displaced system back to its home (mean) position.",
+    miss: "Miss: falling short of a target. For a projectile, small errors in angle or speed change the range, R = u² sin2θ / g.",
+    busy: "Busy junction: a point carrying a large flow. At any junction, current in equals current out (Kirchhoff's junction rule).",
+    wait: "Wait: allow time for a process to finish, for example until a system reaches equilibrium or a titration reaches its end point.",
+    safe: "Safe: within limits that avoid damage. A fuse, a safe working load or a factor of safety keeps a system below failure.",
+    danger: "Danger: risk of harm, such as high voltage, concentrated acids or strong bases. Follow the safety rules.",
+    stress: "Stress: in physics, restoring force per unit area (N/m²). In biology, a stressor activates the hypothalamus and releases cortisol.",
+    strain: "Strain: the fractional change in dimension under stress. It is a ratio, so it has no unit.",
+    pressure: "Pressure: force per unit area, measured in pascal (N/m²). Blood pressure is the force of blood on the vessel walls.",
+    relax: "Relax: return to a lower-tension state. Muscles relax when stimulation stops, and a stretched spring relaxes when the load is removed.",
+    dream: "Dream: vivid imagery that occurs mostly during REM (rapid eye movement) sleep.",
+    morning: "Morning: the early part of the day. Morning light raises photosynthesis, opens stomata and suppresses melatonin.",
+    night: "Night: the dark period. Melatonin peaks at night, and CAM plants open their stomata at night.",
+    late: "Late: toward the end of a stage, as in late anaphase, when sister chromatids reach the poles.",
+    early: "Early: toward the start of a stage, as in early prophase, when chromatin begins to condense.",
+    parents: "Parents: the two individuals whose gametes combine. Offspring receive one allele of each gene from each parent.",
+    mother: "Mother: the female parent. Mitochondrial DNA comes almost entirely from the mother. A mother cell is the cell that divides.",
+    father: "Father: the male parent. Gregor Mendel is called the father of genetics.",
+    sister: "Sister chromatids: the two identical copies of a chromosome, joined at the centromere after replication.",
+  };
+
+  
+  let glossTimer = null;
+  function hideGloss() {
+    const g = $('gloss');
+    if (g) g.hidden = true;
+    clearTimeout(glossTimer);
+  }
+  function showGloss(kw) {
+    const text = GLOSS[kw.dataset.w];
+    if (!text) return;
+    let g = $('gloss');
+    if (!g) {
+      g = document.createElement('div');
+      g.id = 'gloss';
+      g.className = 'gloss';
+      g.setAttribute('role', 'tooltip');
+      document.body.append(g);
+    }
+    g.textContent = text;
+    g.hidden = false;
+    const r = kw.getBoundingClientRect();
+    const w = Math.min(g.offsetWidth, window.innerWidth - 16);
+    const left = Math.max(8, Math.min(r.left + window.scrollX, window.scrollX + window.innerWidth - w - 8));
+    g.style.left = left + 'px';
+    g.style.top = (r.bottom + window.scrollY + 8) + 'px';
+    clearTimeout(glossTimer);
+    glossTimer = setTimeout(hideGloss, 8000);
+  }
+  document.addEventListener('click', (e) => { if (!e.target.closest('.kw')) hideGloss(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideGloss(); });
+
+  function renderRecent() {
+    const box = $('recent');
+    box.textContent = '';
+    if (!recent.length) { box.hidden = true; return; }
+    const lab = document.createElement('span');
+    lab.className = 'recent-label';
+    lab.textContent = 'Recently viewed terms';
+    box.append(lab);
+    recent.forEach((w) => {
+      const c = document.createElement('span');
+      c.className = 'rchip';
+      c.textContent = w;
+      box.append(c);
+    });
+    box.hidden = false;
+  }
+  function pushRecent(w) {
+    recent.push(w);
+    if (recent.length > 8) recent.shift();
+    renderRecent();
+  }
 
   $('notes').addEventListener('click', (e) => {
     const kw = e.target.closest('.kw');
     if (!kw) return;
     kw.classList.add('tap');
     setTimeout(() => kw.classList.remove('tap'), 200);
-    sendEvent({ k: 'glow', w: kw.dataset.w });     // does nothing until joined
+    showGloss(kw);
+    sendEvent({ k: 'glow', w: kw.dataset.w });
   });
 
   function glowWord(w) {
     if (!wordSet.has(w)) return;
+    pushRecent(w);
     const spans = [...document.querySelectorAll('.kw[data-w="' + w + '"]')];
     if (!spans.length) return;
-    // jump to the chapter that contains it so the glow is actually visible
     const chap = spans[0].closest('.chapter');
     if (chap) showChapter(chap.id);
     spans[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
     document.documentElement.style.setProperty('--glow-ms', CONFIG.GLOW_MS + 'ms');
     spans.forEach((s) => {
-      s.classList.remove('glow'); void s.offsetWidth;   // restart animation
+      s.classList.remove('glow'); void s.offsetWidth;
       s.classList.add('glow');
       setTimeout(() => s.classList.remove('glow'), CONFIG.GLOW_MS);
     });
   }
 
-  /* ------------------------- Reactions ------------------------- */
+  
   function buildReactions() {
     document.querySelectorAll('.react').forEach((box) => {
       const btns = document.createElement('div');
@@ -433,7 +536,7 @@
     });
   }
 
-  /* ------------------------- Doubts chat ------------------------- */
+  
   function renderMsg(m, mine) {
     const log = $('log');
     const div = document.createElement('div');
@@ -442,7 +545,7 @@
     const small = document.createElement('small');
     small.textContent = m.n + ' · ' + new Date(m.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const body = document.createElement('span');
-    body.textContent = m.t;                         // textContent => no XSS
+    body.textContent = m.t;
     div.append(small, body);
     log.append(div);
     msgs.push({ el: div, ts: m.ts });
@@ -450,7 +553,7 @@
     log.scrollTop = log.scrollHeight;
   }
 
-  function sweep() {       // auto-vanish old doubts
+  function sweep() {
     const cutoff = Date.now() - CONFIG.VANISH_MS;
     msgs = msgs.filter((x) => (x.ts < cutoff ? (x.el.remove(), false) : true));
   }
@@ -460,7 +563,7 @@
   });
   $('clearBtn').addEventListener('click', () => { msgs.forEach((x) => x.el.remove()); msgs = []; });
 
-  /* ------------------------- Event bus ------------------------- */
+  
   async function sendEvent(obj) {
     if (!channel || !cryptoKey) return;
     obj.n = nick; obj.i = myId; obj.ts = Date.now();
@@ -476,14 +579,16 @@
     if (e.k === 'msg' && typeof e.t === 'string') {
       renderMsg({ n: name, t: e.t.slice(0, 500), ts: Number(e.ts) || Date.now() }, mine);
     } else if (e.k === 'glow' && typeof e.w === 'string') {
-      if (!mine) glowWord(e.w);                    // glow only on the OTHER person's screen
+      if (!mine) glowWord(e.w);
+    } else if (e.k === 'qa' && typeof e.q === 'string') {
+      if (!mine) partnerAttempt(e.q);
     } else if (e.k === 'react' && rxIds.has(e.r) && document.getElementById(e.ch)) {
       (reactions[e.ch] = reactions[e.ch] || {})[name] = e.r;
       renderReactions(e.ch, mine ? null : name);
     }
   }
 
-  /* ------------------------- Join ------------------------- */
+  
   async function join() {
     const phrase = $('phrase').value;
     nick = $('nick').value.trim() || 'Guest';
@@ -508,7 +613,7 @@
     arm();
   }
 
-  /* ------------------------- Wiring ------------------------- */
+  
   $('joinBtn').addEventListener('click', join);
   $('phrase').addEventListener('keydown', (e) => { if (e.key === 'Enter') join(); });
   $('form').addEventListener('submit', (e) => {
@@ -517,9 +622,10 @@
     if (t) { $('msg').value = ''; sendEvent({ k: 'msg', t }); }
   });
   document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'x') panic();   // manual panic
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'x') panic();
   });
 
+  if (!CONFIG.UNDERLINE_TERMS) document.body.classList.add('nohint');
   buildReactions();
   wrapTerms();
   updateBankInfo();

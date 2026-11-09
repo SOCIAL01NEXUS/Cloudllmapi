@@ -35,8 +35,7 @@
 
   <div id="app">
 
-    <!-- ================= HOME ================= -->
-    <section class="view" data-view="home">
+        <section class="view" data-view="home">
       <div class="home">
 
         <div class="hero">
@@ -65,18 +64,18 @@
         <div class="cards">
           <button type="button" class="subj phy" data-v="physics">
             <b>Physics</b><span class="sub">45 questions · 180 marks</span>
-            <em>Kinematics, Laws of Motion, Work and Energy, Current Electricity</em>
-            <i>4 chapters</i>
+            <em>Motion, forces, energy and gravitation, current electricity, oscillations and waves, matter and heat</em>
+            <i>6 chapters</i>
           </button>
           <button type="button" class="subj chem" data-v="chemistry">
             <b>Chemistry</b><span class="sub">45 questions · 180 marks</span>
-            <em>Mole concept, Atomic structure, Chemical bonding</em>
-            <i>3 chapters</i>
+            <em>Mole concept, atomic structure, bonding, thermodynamics and equilibrium, organic basics</em>
+            <i>5 chapters</i>
           </button>
           <button type="button" class="subj bio" data-v="biology">
             <b>Biology</b><span class="sub">90 questions · 360 marks</span>
-            <em>Cell, Photosynthesis, Principles of Inheritance</em>
-            <i>3 chapters</i>
+            <em>Cell, photosynthesis, inheritance, cell cycle, circulation and digestion, neural control</em>
+            <i>6 chapters</i>
           </button>
         </div>
 
@@ -109,8 +108,7 @@
       </div>
     </section>
 
-    <!-- ================= STUDY (physics / chemistry / biology) ================= -->
-    <section class="view" data-view="study" hidden>
+        <section class="view" data-view="study" hidden>
       <div class="layout">
         <nav class="side" aria-label="Chapters">
           <h2 id="sideTitle">Physics</h2>
@@ -124,104 +122,248 @@
 
         <main class="notes" id="notes">
           <p class="crumb" id="crumb"></p>
+          <p class="recent" id="recent" hidden></p>
 
-          <!-- ======== PHYSICS ======== -->
-          <section class="chapter" id="ph1" data-subj="physics" hidden>
+                    <section class="chapter" id="ph1" data-subj="physics" hidden>
             <h2>Motion in a Straight Line</h2>
-            <p class="meta">5 minute read. Tap any underlined term for a quick recap.</p>
+            <p class="meta">8 minute read. Tap a key term for a quick recap.</p>
             <div class="react" data-ch="ph1"></div>
             <h3>Key definitions</h3>
-            <p><b>Displacement</b> is the shortest vector from the initial to the final position. <b>Velocity</b> is the rate of change of displacement, and <b>acceleration</b> is the rate of change of velocity.</p>
+            <p>Distance is the total path length and is never negative. Displacement is the shortest vector from the initial to the final position. Speed is distance divided by time, while velocity is displacement divided by time, so velocity can be negative. Acceleration is the rate of change of velocity. Two cars moving together at the same velocity have zero velocity relative to each other.</p>
             <h3>Equations of uniformly accelerated motion</h3>
             <pre>v = u + at
 s = ut + ½at²
-v² = u² + 2as</pre>
-            <h3>Points to remember</h3>
+v² = u² + 2as
+s(nth second) = u + a(2n − 1)/2</pre>
+            <h3>Reading graphs</h3>
             <ul>
               <li>The slope of an x–t graph gives velocity.</li>
               <li>The slope of a v–t graph gives acceleration.</li>
               <li>The area under a v–t graph gives displacement.</li>
-              <li>For a projectile, the range is greatest at 45° to the horizon.</li>
+              <li>A straight line on an x–t graph means constant velocity; a curve means changing velocity.</li>
             </ul>
-            <h3>Practice question</h3>
-            <p>A ball is thrown upward at 20 m/s. Find the maximum height reached (g = 10 m/s²).</p>
+            <h3>Free fall</h3>
+            <p>Near the Earth's surface every freely falling body has the same acceleration, g ≈ 9.8 m/s² downward, whatever its mass, when air resistance is ignored. A ball thrown vertically upward slows down, stops for an instant at the top, and returns home with the same speed it left with. In free-fall experiments, a stopwatch with fine resolution reduces the timing error.</p>
+            <pre>Time to reach the top:   t = u / g
+Maximum height:          H = u² / 2g
+Total time of flight:    T = 2u / g</pre>
+            <h3>Projectile motion</h3>
+            <p>A projectile has constant horizontal velocity and a vertical acceleration of g. The two motions are independent. If the angle or the speed is slightly off, the ball will miss the target, because the range depends on the square of the speed.</p>
+            <pre>Time of flight:   T = 2u sinθ / g
+Maximum height:   H = u² sin²θ / 2g
+Horizontal range: R = u² sin2θ / g</pre>
+            <ul>
+              <li>For a given speed, the range is greatest at 45° to the horizon.</li>
+              <li>Angles θ and (90° − θ) give the same range.</li>
+              <li>At the highest point the vertical velocity is zero but the horizontal velocity is unchanged.</li>
+            </ul>
+            <h3>Practice questions</h3>
+            <p>1. A ball is thrown upward at 20 m/s (g = 10 m/s²). Find the maximum height reached.</p>
             <details><summary>Show answer</summary>H = u²/2g = 400/20 = <b>20 m</b></details>
+            <p>2. A stone is thrown at 20 m/s at 30° to the horizontal (g = 10 m/s²). Find its time of flight.</p>
+            <details><summary>Show answer</summary>T = 2u sinθ/g = 2 × 20 × 0.5/10 = <b>2 s</b></details>
           </section>
 
           <section class="chapter" id="ph2" data-subj="physics" hidden>
             <h2>Laws of Motion</h2>
-            <p class="meta">6 minute read.</p>
+            <p class="meta">9 minute read.</p>
             <div class="react" data-ch="ph2"></div>
             <h3>Newton's laws</h3>
-            <p>The first law introduces <b>inertia</b>: a body stays at rest or in uniform motion unless a net force acts on it. The second law links force to the rate of change of <b>momentum</b>, F = dp/dt. The third law pairs every action with an equal and opposite reaction.</p>
+            <p>The first law introduces inertia: a body left alone, with no net force on it, keeps its state of rest or of uniform motion. The second law links force to the rate of change of momentum, F = dp/dt, which for constant mass becomes F = ma. The third law pairs every action with an equal and opposite reaction, and the two forces act on different bodies.</p>
+            <h3>Impulse and safety</h3>
+            <p>Impulse is force multiplied by the time it acts, and it equals the change in momentum: F Δt = Δp. A hard landing can hurt because the stopping time is very short, so the average force is very large for the same change in momentum. Airbags, helmets and crumple zones keep people safe by lengthening the stopping time.</p>
+            <pre>Impulse   J = F Δt = Δp = m(v − u)
+Recoil    m₁v₁ + m₂v₂ = 0   (system initially at rest)</pre>
             <h3>Friction</h3>
-            <p>Static <b>friction</b> adjusts itself up to a limiting value μₛN. Once sliding starts, kinetic friction μₖN acts, and it is usually smaller.</p>
-            <h3>Equilibrium</h3>
-            <p>A body is in <b>equilibrium</b> when the vector sum of all forces on it is zero. Draw the free-body diagram, then resolve the forces along two perpendicular axes.</p>
-            <h3>Practice question</h3>
-            <p>A 2 kg block rests on a rough surface with μₛ = 0.5. What is the maximum horizontal force before it slides? (g = 10 m/s²)</p>
+            <p>Static friction adjusts itself up to a limiting value μₛN. Once sliding starts, kinetic friction μₖN acts, and it is usually smaller. Friction depends on the nature of the two surfaces and on the normal force, not on the area of contact. When two blocks are pushed together, the contact force between them depends on how the push is shared.</p>
+            <h3>Incline and lift problems</h3>
+            <ul>
+              <li>On a smooth incline of angle θ, the acceleration is g sinθ.</li>
+              <li>With friction on an incline, a = g(sinθ − μ cosθ) while sliding down.</li>
+              <li>In a lift accelerating upward, the apparent weight is m(g + a); downward, it is m(g − a).</li>
+              <li>In free fall, the apparent weight is zero.</li>
+            </ul>
+            <h3>Circular motion in daily life</h3>
+            <p>On a roller coaster, riders feel pushed into the seat as the track curves, because circular motion needs a centripetal acceleration v²/r. Whether a rider feels fear or is happy, the physics is the same: the net force points towards the centre of the curve.</p>
+            <h3>Free-body diagrams</h3>
+            <p>A body is in equilibrium when the vector sum of all forces on it is zero. Draw the body, mark every force acting on it, resolve the forces along two perpendicular axes, and write Newton's second law along each axis.</p>
+            <h3>Practice questions</h3>
+            <p>1. A 2 kg block rests on a rough surface with μₛ = 0.5. What is the maximum horizontal force before it slides? (g = 10 m/s²)</p>
             <details><summary>Show answer</summary>F = μₛmg = 0.5 × 2 × 10 = <b>10 N</b></details>
+            <p>2. A 60 kg person stands in a lift accelerating upward at 2 m/s² (g = 10 m/s²). Find the apparent weight.</p>
+            <details><summary>Show answer</summary>N = m(g + a) = 60 × 12 = <b>720 N</b></details>
           </section>
 
           <section class="chapter" id="ph3" data-subj="physics" hidden>
             <h2>Work, Energy and Gravitation</h2>
-            <p class="meta">7 minute read.</p>
+            <p class="meta">10 minute read.</p>
             <div class="react" data-ch="ph3"></div>
-            <h3>Work–energy theorem</h3>
-            <p>The net work done on a body equals the change in its kinetic <b>energy</b>. When only conservative forces act, total mechanical energy stays constant.</p>
-            <h3>Simple pendulum</h3>
-            <p>A <b>pendulum</b> converts potential energy into kinetic energy and back. For small angles the time period is T = 2π√(L/g), independent of mass. When the driving frequency matches the natural frequency, <b>resonance</b> occurs and the amplitude grows.</p>
+            <h3>Work and the work–energy theorem</h3>
+            <pre>W = F s cosθ
+KE = ½mv²        PE = mgh        U(spring) = ½kx²
+W(net) = ΔKE</pre>
+            <p>When only conservative forces act, total mechanical energy stays constant. Gravity and the spring force are conservative; friction and air drag are not. The work done by a force perpendicular to the displacement, such as the centripetal force, is zero.</p>
+            <p>A person holding a heavy bag at rest may feel tired, but no work is done in the physics sense because the displacement is zero.</p>
+            <h3>Power and the human body</h3>
+            <p>Power is the rate of doing work, P = W/t, measured in watt. The heart does work against blood pressure on every beat, and its average power is about 1 to 1.5 W. An adult needs to eat food worth about 2000 kcal a day, and since 1 kcal = 4184 J, that is about 8.4 MJ.</p>
+            <ul>
+              <li>1 horsepower = 746 W.</li>
+              <li>1 kilowatt-hour = 3.6 × 10⁶ J.</li>
+            </ul>
+            <h3>Collisions</h3>
+            <p>Momentum is conserved in every collision. In an elastic collision kinetic energy is also conserved. In a perfectly inelastic collision the bodies stick and move together after impact, losing the maximum kinetic energy.</p>
             <h3>Gravitation</h3>
-            <p>Newton's law of <b>gravity</b> states F = Gm₁m₂/r². A satellite in a circular <b>orbit</b> moves at v = √(GM/r), and the escape velocity from Earth is about 11.2 km/s.</p>
-            <h3>Practice question</h3>
-            <p>Find the time period of a pendulum of length 1 m (g = π² m/s²).</p>
+            <pre>F = G m₁m₂ / r²        G = 6.67 × 10⁻¹¹ N m² kg⁻²
+g at height h:   g′ = g R² / (R + h)²
+Orbital speed:   v = √(GM/r)
+Escape speed:    v = √(2gR) ≈ 11.2 km/s</pre>
+            <ul>
+              <li>Kepler's second law: equal areas are swept in equal times (conservation of angular momentum).</li>
+              <li>Kepler's third law: T² ∝ a³.</li>
+              <li>A geostationary satellite has a period of 24 hours and orbits over the equator.</li>
+            </ul>
+            <h3>Practice questions</h3>
+            <p>1. A 1 kg object falls from rest through 20 m (g = 10 m/s²). Find its speed on reaching the ground.</p>
+            <details><summary>Show answer</summary>v = √(2gh) = √400 = <b>20 m/s</b></details>
+            <p>2. Find the time period of a pendulum of length 1 m (g = π² m/s²).</p>
             <details><summary>Show answer</summary>T = 2π√(1/π²) = <b>2 s</b></details>
           </section>
 
           <section class="chapter" id="ph4" data-subj="physics" hidden>
             <h2>Current Electricity</h2>
-            <p class="meta">6 minute read.</p>
+            <p class="meta">9 minute read.</p>
             <div class="react" data-ch="ph4"></div>
             <h3>Ohm's law and resistivity</h3>
             <pre>V = IR
 R = ρL / A
 P = VI = I²R = V²/R</pre>
-            <p>Resistance rises with length and falls with cross-sectional area. For metals, resistivity increases with temperature.</p>
+            <p>Resistance rises with length and falls with cross-sectional area, so a fine wire has a higher resistance than a thick wire of the same length and material. For metals, resistivity increases with temperature. Drift velocity is only of the order of 10⁻⁴ m/s.</p>
             <h3>Combinations of resistors</h3>
-            <pre>Series:    R = R₁ + R₂ + …        (same current)
-Parallel:  1/R = 1/R₁ + 1/R₂ + …  (same voltage)</pre>
+            <pre>Series:    R = R₁ + R₂ + …            (same current)
+Parallel:  1/R = 1/R₁ + 1/R₂ + …      (same voltage)</pre>
+            <p>Resistors connected together end to end are in series. In parallel, the combined resistance is always less than the smallest resistor.</p>
             <h3>Kirchhoff's rules</h3>
             <ul>
-              <li>Junction rule: the sum of currents entering a junction equals the sum leaving it (charge conservation).</li>
-              <li>Loop rule: the algebraic sum of potential changes around a closed loop is zero (energy conservation).</li>
+              <li>Junction rule: a junction is like a busy crossroads, because whatever current flows in must flow out. This is conservation of charge.</li>
+              <li>Loop rule: the algebraic sum of potential changes around a closed loop is zero. This is conservation of energy.</li>
             </ul>
-            <h3>Practice question</h3>
-            <p>Resistors of 6 Ω and 3 Ω are connected in parallel across a 6 V battery. Find the total current drawn.</p>
+            <h3>Cells and measuring instruments</h3>
+            <pre>Terminal voltage:  V = ε − Ir
+Current from cell: I = ε / (R + r)</pre>
+            <p>A potentiometer compares emfs by balance, so it draws no current from the cell being measured. A Wheatstone bridge is balanced when P/Q = R/S.</p>
+            <h3>Electrical safety</h3>
+            <p>A fuse keeps a circuit safe by melting when the current exceeds its rated value. A current of about 10 mA through the body can hurt, and larger currents are a danger to life, particularly with wet skin, which has low resistance. Appliances are earthed so that a fault current flows to the ground instead of through a person.</p>
+            <h3>Practice questions</h3>
+            <p>1. Resistors of 6 Ω and 3 Ω are connected in parallel across a 6 V battery. Find the total current drawn.</p>
             <details><summary>Show answer</summary>R = (6 × 3)/(6 + 3) = 2 Ω, so I = 6/2 = <b>3 A</b></details>
+            <p>2. A bulb is rated 100 W at 220 V. Find the current it draws.</p>
+            <details><summary>Show answer</summary>I = P/V = 100/220 ≈ <b>0.45 A</b></details>
           </section>
 
-          <!-- ======== CHEMISTRY ======== -->
-          <section class="chapter" id="cm1" data-subj="chemistry" hidden>
+          <section class="chapter" id="ph5" data-subj="physics" hidden>
+            <h2>Oscillations and Waves</h2>
+            <p class="meta">10 minute read.</p>
+            <div class="react" data-ch="ph5"></div>
+            <h3>Simple harmonic motion</h3>
+            <p>In SHM the restoring force is proportional to the displacement and always pulls the particle back home to the mean position: F = −kx, so a = −ω²x. At the mean position the speed is maximum and the acceleration is zero. At the extreme positions the speed is zero and the acceleration is maximum.</p>
+            <pre>x = A sin(ωt + φ)         ω = 2π/T = 2πf
+v = ω√(A² − x²)           v(max) = ωA
+Total energy  E = ½mω²A²</pre>
+            <h3>Pendulum and spring</h3>
+            <pre>Simple pendulum:  T = 2π√(L/g)      (independent of mass)
+Spring–mass:      T = 2π√(m/k)</pre>
+            <p>When the driving frequency matches the natural frequency, resonance occurs and the amplitude grows. Tuning a radio to a station is an example, and fine adjustment of the dial brings it exactly to the station's frequency.</p>
+            <h3>Waves</h3>
+            <p>Waves carry energy without carrying matter. In a transverse wave the particles move at right angles to the direction of travel; in a longitudinal wave they move along it. Sound in air is longitudinal.</p>
+            <pre>v = fλ
+Sound in a gas:   v = √(γP/ρ)</pre>
+            <ul>
+              <li>Pitch depends on frequency. The cry of a baby has a high pitch because its frequency is high.</li>
+              <li>Loudness depends on amplitude, and quality (timbre) on the waveform.</li>
+              <li>Sound often travels farther at night, when cooler air near the ground bends the waves back towards the listener.</li>
+              <li>Beats: two close frequencies f₁ and f₂ give a beat frequency |f₁ − f₂|.</li>
+            </ul>
+            <h3>Doppler effect</h3>
+            <p>The apparent frequency rises when the source and listener approach each other, and falls when they move apart.</p>
+            <h3>Practice questions</h3>
+            <p>1. A sound has frequency 500 Hz and wavelength 0.68 m. Find its speed.</p>
+            <details><summary>Show answer</summary>v = fλ = 500 × 0.68 = <b>340 m/s</b></details>
+            <p>2. A 0.1 kg mass hangs on a spring of constant 40 N/m. Find the time period.</p>
+            <details><summary>Show answer</summary>T = 2π√(0.1/40) = 2π × 0.05 ≈ <b>0.31 s</b></details>
+          </section>
+
+          <section class="chapter" id="ph6" data-subj="physics" hidden>
+            <h2>Properties of Matter and Heat</h2>
+            <p class="meta">11 minute read.</p>
+            <div class="react" data-ch="ph6"></div>
+            <h3>Stress, strain and elasticity</h3>
+            <pre>Stress = F / A          (N/m²)
+Strain = ΔL / L         (no unit)
+Young's modulus  Y = stress / strain</pre>
+            <p>Within the elastic limit, stress is proportional to strain (Hooke's law). Remove the load and let the wire relax back to its original length, provided the elastic limit was not crossed.</p>
+            <h3>Elastic fatigue and safety</h3>
+            <p>A wire bent back and forth many times becomes tired and eventually snaps; this is elastic fatigue. Engineers use a safe working load that is well below the breaking stress, divided by a factor of safety.</p>
+            <h3>Fluids</h3>
+            <pre>Pressure          P = F / A
+Hydrostatic       P = P₀ + ρgh
+Pascal's law:     pressure applied to a confined fluid is transmitted undiminished
+Bernoulli:        P + ½ρv² + ρgh = constant</pre>
+            <p>Blood pressure is measured at heart level, so that the reading does not change with the height of the arm. Surface tension makes a liquid surface behave like a stretched film, and water rises higher in a fine capillary tube, by h = 2T cosθ / (ρgr).</p>
+            <h3>Heat and temperature</h3>
+            <pre>Q = mcΔT            (specific heat)
+Q = mL              (latent heat)
+ΔU = Q − W          (first law of thermodynamics)</pre>
+            <p>A clinical thermometer reads from about 35 °C to 42 °C. Normal body temperature is about 37 °C, and a fever is a temperature above about 38 °C. Heat flows by conduction, convection and radiation.</p>
+            <h3>Practice questions</h3>
+            <p>1. A force of 100 N stretches a wire of cross-section 1 mm². Find the stress.</p>
+            <details><summary>Show answer</summary>Stress = F/A = 100 / 10⁻⁶ = <b>10⁸ N/m²</b></details>
+            <p>2. How much heat is needed to raise 2 kg of water by 10 °C? (c = 4200 J/kg °C)</p>
+            <details><summary>Show answer</summary>Q = mcΔT = 2 × 4200 × 10 = <b>84 000 J</b></details>
+          </section>
+
+                    <section class="chapter" id="cm1" data-subj="chemistry" hidden>
             <h2>Some Basic Concepts of Chemistry</h2>
-            <p class="meta">6 minute read.</p>
+            <p class="meta">9 minute read. Tap a key term for a quick recap.</p>
             <div class="react" data-ch="cm1"></div>
+            <h3>Laws of chemical combination</h3>
+            <ul>
+              <li>Conservation of mass: mass is neither created nor destroyed in a reaction.</li>
+              <li>Definite proportions: a compound always contains the same elements in the same ratio by mass.</li>
+              <li>Multiple proportions: when two elements form more than one compound, the masses of one that combine with a fixed mass of the other are in a small whole-number ratio.</li>
+              <li>Gay-Lussac's law and Avogadro's law relate volumes of gases to the number of molecules.</li>
+            </ul>
             <h3>The mole</h3>
-            <p>One mole contains 6.022 × 10²³ particles. The molar mass in grams per mole equals the atomic or molecular mass in u. The number of moles is mass divided by molar mass.</p>
+            <p>One mole contains 6.022 × 10²³ particles. The molar mass in grams per mole equals the atomic or molecular mass in u. The number of moles is mass divided by molar mass, and one mole of an ideal gas occupies 22.4 L at 0 °C and 1 atm. A food label lists the percentage composition by mass, which is the same idea applied to a mixture.</p>
             <h3>Concentration terms</h3>
             <pre>Molarity       M = moles of solute / litres of solution
 Molality       m = moles of solute / kg of solvent
-Mole fraction  x = moles of component / total moles</pre>
-            <h3>Limiting reagent</h3>
-            <p>The reactant that is used up first decides how much product forms. Convert every reactant to moles, divide by its coefficient, and the smallest value is the limiting reagent.</p>
-            <h3>Practice question</h3>
-            <p>How many moles are in 36 g of water (H₂O = 18 g/mol)?</p>
+Mole fraction  x = moles of component / total moles
+Mass percent   = (mass of solute / mass of solution) × 100</pre>
+            <p>A fine powder dissolves faster than a coarse lump because it has a larger surface area. When you mix two solutions together, add one slowly and stir.</p>
+            <h3>Empirical and molecular formulae</h3>
+            <p>The empirical formula is the simplest whole-number ratio of atoms. The molecular formula is a whole-number multiple of it: molecular formula = n × empirical formula, where n = molar mass / empirical formula mass.</p>
+            <h3>Limiting reagent and titration</h3>
+            <p>The reactant that is used up first decides how much product forms. Convert every reactant to moles, divide by its coefficient, and the smallest value is the limiting reagent. In a titration, add the titrant drop by drop near the end point and wait for the colour to settle before reading the burette.</p>
+            <h3>Laboratory safety</h3>
+            <p>Never eat or drink in the laboratory, and always wear goggles and a coat. These simple rules keep you safe from splashes and from accidental swallowing of chemicals.</p>
+            <h3>Practice questions</h3>
+            <p>1. How many moles are in 36 g of water (H₂O = 18 g/mol)?</p>
             <details><summary>Show answer</summary>n = 36 / 18 = <b>2 mol</b></details>
+            <p>2. 4 g of NaOH (40 g/mol) is dissolved to make 500 mL of solution. Find the molarity.</p>
+            <details><summary>Show answer</summary>Moles = 0.1; M = 0.1 / 0.5 = <b>0.2 M</b></details>
           </section>
 
           <section class="chapter" id="cm2" data-subj="chemistry" hidden>
             <h2>Structure of Atom</h2>
-            <p class="meta">7 minute read.</p>
+            <p class="meta">10 minute read.</p>
             <div class="react" data-ch="cm2"></div>
+            <h3>Atomic models</h3>
+            <p>Early models began with Dalton's indivisible atom and Thomson's plum-pudding model. Rutherford's gold-foil experiment showed a small, dense, positive nucleus: most alpha particles passed straight through, a few were deflected, and very few bounced back. Bohr then proposed fixed circular orbits with quantised energy.</p>
+            <h3>Bohr's model of hydrogen</h3>
+            <pre>rₙ = 52.9 pm × n² / Z
+Eₙ = −13.6 eV × Z² / n²
+ΔE = hν = E₂ − E₁</pre>
+            <p>An excited electron falls back home to the ground state and emits a photon whose energy equals the gap between the two levels. An isolated hydrogen atom alone has a single electron, which is why Bohr's model works best for H and for H-like ions such as He⁺.</p>
             <h3>Quantum numbers</h3>
             <ul>
               <li>Principal (n) gives the shell and its size.</li>
@@ -230,105 +372,295 @@ Mole fraction  x = moles of component / total moles</pre>
               <li>Spin (mₛ) is +½ or −½.</li>
             </ul>
             <h3>Filling rules</h3>
-            <p>Electrons fill the lowest <b>energy</b> orbital first (Aufbau), no two electrons share all four quantum numbers (Pauli), and orbitals of equal energy fill singly before pairing (Hund).</p>
-            <h3>Bohr radius and energy</h3>
-            <pre>rₙ = 52.9 pm × n² / Z
-Eₙ = −13.6 eV × Z² / n²</pre>
-            <h3>Practice question</h3>
-            <p>What is the maximum number of electrons in the n = 3 shell?</p>
+            <p>Electrons fill the lowest energy orbital first (Aufbau), no two electrons share all four quantum numbers (Pauli), and orbitals of equal energy fill singly before pairing (Hund). Half-filled and fully filled subshells are extra stable, so chromium is 3d⁵4s¹ and copper is 3d¹⁰4s¹.</p>
+            <h3>Dual nature and uncertainty</h3>
+            <pre>de Broglie:   λ = h / mv
+Heisenberg:   Δx · Δp ≥ h / 4π
+Radial nodes = n − l − 1       Angular nodes = l</pre>
+            <h3>Practice questions</h3>
+            <p>1. What is the maximum number of electrons in the n = 3 shell?</p>
             <details><summary>Show answer</summary>2n² = 2 × 9 = <b>18</b></details>
+            <p>2. Find the energy of the electron in the n = 2 level of hydrogen.</p>
+            <details><summary>Show answer</summary>E = −13.6/4 = <b>−3.4 eV</b></details>
           </section>
 
           <section class="chapter" id="cm3" data-subj="chemistry" hidden>
             <h2>Chemical Bonding</h2>
-            <p class="meta">7 minute read.</p>
+            <p class="meta">11 minute read.</p>
             <div class="react" data-ch="cm3"></div>
-            <h3>Types of bonds</h3>
-            <p>An ionic bond forms by transfer of electrons, a covalent bond by sharing of electrons, and a coordinate bond when one atom donates both electrons of the shared pair.</p>
-            <h3>Hybridisation and shape</h3>
-            <pre>sp   linear            180°      e.g. BeCl₂, CO₂
-sp²  trigonal planar   120°      e.g. BF₃
-sp³  tetrahedral       109.5°    e.g. CH₄</pre>
+            <h3>Why atoms bond</h3>
+            <p>Atoms are held together by bonds because the bonded arrangement has a lower energy than the separate atoms. An ionic bond forms by transfer of electrons, a covalent bond by sharing of electrons, and a coordinate bond when one atom donates both electrons of the shared pair. Noble gases exist alone as single atoms because their outer shells are already full.</p>
+            <h3>Hybridisation and shape (VSEPR)</h3>
+            <pre>sp    linear              180°      BeCl₂, CO₂
+sp²   trigonal planar     120°      BF₃, C₂H₄
+sp³   tetrahedral         109.5°    CH₄
+sp³d  trigonal bipyramid            PCl₅
+sp³d² octahedral                    SF₆</pre>
             <p>Lone pairs squeeze bond angles, so NH₃ (about 107°) and H₂O (about 104.5°) are smaller than 109.5°.</p>
-            <h3>Bond order (molecular orbital theory)</h3>
+            <h3>Molecular orbital theory</h3>
             <pre>Bond order = (Nb − Na) / 2</pre>
-            <p>A higher bond order means a shorter, stronger bond. A bond order of zero means the molecule does not exist.</p>
-            <h3>Practice question</h3>
-            <p>N₂ has 10 electrons in bonding orbitals and 4 in antibonding orbitals. Find its bond order.</p>
+            <p>A higher bond order means a shorter, stronger bond. O₂ has two unpaired electrons, so it is paramagnetic, while N₂ is diamagnetic with a bond order of 3.</p>
+            <h3>Intermolecular forces</h3>
+            <ul>
+              <li>Hydrogen bonding is strongest in compounds of F, O and N bonded to hydrogen, which explains the high boiling point of water and HF.</li>
+              <li>Dipole–dipole and London dispersion forces act between neutral molecules.</li>
+              <li>Dipole moment is a vector; symmetrical molecules such as CO₂ and BF₃ are non-polar overall.</li>
+            </ul>
+            <p>Hydrofluoric acid can hurt badly because it penetrates the skin, and it is a serious danger, so it needs special handling.</p>
+            <h3>Practice questions</h3>
+            <p>1. N₂ has 10 electrons in bonding orbitals and 4 in antibonding orbitals. Find its bond order.</p>
             <details><summary>Show answer</summary>(10 − 4) / 2 = <b>3</b></details>
+            <p>2. What is the hybridisation of carbon in CO₂?</p>
+            <details><summary>Show answer</summary>Two sigma bonds and no lone pair give <b>sp</b>.</details>
           </section>
 
-          <!-- ======== BIOLOGY ======== -->
-          <section class="chapter" id="bi1" data-subj="biology" hidden>
+          <section class="chapter" id="cm4" data-subj="chemistry" hidden>
+            <h2>Thermodynamics and Equilibrium</h2>
+            <p class="meta">12 minute read.</p>
+            <div class="react" data-ch="cm4"></div>
+            <h3>First law and enthalpy</h3>
+            <pre>ΔU = q + w
+H = U + pV
+ΔH = ΔU + Δn(g)RT</pre>
+            <p>Hess's law says the enthalpy change of a reaction is the same whether it takes place in one step or in several steps. Standard enthalpy of formation of an element in its standard state is zero.</p>
+            <h3>Entropy and Gibbs energy</h3>
+            <pre>ΔG = ΔH − TΔS
+ΔG° = −RT ln K</pre>
+            <p>A process is spontaneous when ΔG is negative, at equilibrium when ΔG is zero, and non-spontaneous when ΔG is positive. The entropy of the universe increases in every spontaneous process.</p>
+            <h3>Chemical equilibrium</h3>
+            <pre>For aA + bB ⇌ cC + dD:
+Kc = [C]ᶜ[D]ᵈ / [A]ᵃ[B]ᵇ
+Kp = Kc (RT)^Δn</pre>
+            <p>A catalyst speeds up both the forward and the backward reaction equally, so it does not change K. After a disturbance, wait for the system to relax to a new equilibrium.</p>
+            <h3>Le Chatelier's principle</h3>
+            <p>A system at equilibrium that is put under stress by a change in concentration, temperature or pressure shifts in the direction that reduces the effect. Raising the pressure favours the side with fewer gas moles; raising the temperature favours the endothermic direction.</p>
+            <h3>Ionic equilibrium</h3>
+            <pre>pH = −log[H⁺]        pH + pOH = 14 (at 25 °C)
+Kw = [H⁺][OH⁻] = 10⁻¹⁴</pre>
+            <p>A buffer contains a weak acid and its conjugate base (or a weak base and its conjugate acid) and resists a change in pH on adding small amounts of acid or base.</p>
+            <h3>Practice questions</h3>
+            <p>1. Find the pH of 0.001 M HCl.</p>
+            <details><summary>Show answer</summary>[H⁺] = 10⁻³ M, so pH = <b>3</b></details>
+            <p>2. ΔH = −40 kJ and ΔS = −100 J/K at 300 K. Find ΔG and say whether the reaction is spontaneous.</p>
+            <details><summary>Show answer</summary>ΔG = −40 000 − 300(−100) = −10 000 J = <b>−10 kJ</b>, so it is spontaneous.</details>
+          </section>
+
+          <section class="chapter" id="cm5" data-subj="chemistry" hidden>
+            <h2>Organic Chemistry: Basic Principles</h2>
+            <p class="meta">12 minute read.</p>
+            <div class="react" data-ch="cm5"></div>
+            <h3>Why carbon is special</h3>
+            <p>Carbon is at the heart of organic chemistry because it is tetravalent, forms strong bonds with itself (catenation) and bonds with H, O, N and halogens. Food is mostly organic: carbohydrates, proteins and fats are all carbon compounds.</p>
+            <h3>Hybridisation and bonds</h3>
+            <pre>C–C (sp³)   single bond     1 sigma
+C=C (sp²)   double bond     1 sigma + 1 pi
+C≡C (sp)    triple bond     1 sigma + 2 pi
+Ethane has 7 sigma bonds</pre>
+            <h3>Functional groups</h3>
+            <pre>–OH      alcohol           –CHO     aldehyde
+–CO–     ketone            –COOH    carboxylic acid
+–NH₂     amine             –X       halide</pre>
+            <p>General formulae: alkanes CₙH₂ₙ₊₂, alkenes CₙH₂ₙ and alkynes CₙH₂ₙ₋₂. Aromatic compounds such as benzene follow Hückel's rule (4n + 2 pi electrons).</p>
+            <h3>Electronic effects and stability</h3>
+            <ul>
+              <li>The inductive effect is the permanent polarisation of a sigma bond. –NO₂ and halogens show −I; alkyl groups show +I.</li>
+              <li>Carbocation stability order: tertiary &gt; secondary &gt; primary &gt; methyl.</li>
+              <li>Markovnikov's rule: in the addition of HX to an unsymmetrical alkene, the hydrogen adds to the carbon that already has more hydrogens.</li>
+            </ul>
+            <h3>Isomerism and purification</h3>
+            <p>Structural isomers differ in the arrangement of atoms (C₄H₁₀ has 2). A carbon bonded to four different groups is chiral. In crystallisation, the liquid left after the crystals form is called the mother liquor.</p>
+            <h3>Organic chemistry in daily life</h3>
+            <p>Aspirin relieves pain and paracetamol reduces fever. Tear gas contains lachrymators, compounds that make the eyes produce tears.</p>
+            <h3>Practice questions</h3>
+            <p>1. How many sigma bonds are there in ethane (C₂H₆)?</p>
+            <details><summary>Show answer</summary>6 C–H + 1 C–C = <b>7</b></details>
+            <p>2. Which is the most stable carbocation: primary, secondary or tertiary?</p>
+            <details><summary>Show answer</summary><b>Tertiary</b>, because of three +I alkyl groups and hyperconjugation.</details>
+          </section>
+
+                    <section class="chapter" id="bi1" data-subj="biology" hidden>
             <h2>Cell: The Unit of Life</h2>
-            <p class="meta">7 minute read.</p>
+            <p class="meta">10 minute read. Tap a key term for a quick recap.</p>
             <div class="react" data-ch="bi1"></div>
             <h3>Cell theory</h3>
             <p>Schleiden and Schwann proposed that all organisms are made of cells. Virchow added that new cells arise only from pre-existing cells (<i>omnis cellula e cellula</i>).</p>
             <h3>Prokaryotic and eukaryotic cells</h3>
             <ul>
-              <li>Prokaryotes have no membrane-bound nucleus or organelles, and their <b>ribosomes</b> are 70S.</li>
+              <li>Prokaryotes have no membrane-bound nucleus or organelles, and their ribosomes are 70S.</li>
               <li>Eukaryotes have a true nucleus and organelles, and their cytoplasmic ribosomes are 80S.</li>
               <li>The cell wall of bacteria contains peptidoglycan, that of plants contains cellulose, and that of fungi contains chitin.</li>
             </ul>
+            <h3>Membrane</h3>
+            <p>The fluid mosaic model of Singer and Nicolson describes the plasma membrane as a phospholipid bilayer with proteins floating in it. Molecules cross by simple diffusion, facilitated diffusion, active transport or endocytosis.</p>
             <h3>Key organelles</h3>
-            <p><b>Mitochondria</b> have a double membrane, their own circular DNA and 70S ribosomes, and they are the site of aerobic respiration. The Golgi apparatus packages and modifies proteins, and lysosomes hold hydrolytic enzymes.</p>
-            <h3>Practice question</h3>
-            <p>Which type of ribosomes is found inside mitochondria?</p>
+            <p>Mitochondria have a double membrane, their own circular DNA and 70S ribosomes, and they are the site of aerobic respiration. Mitochondrial DNA is inherited almost entirely from the mother. The cardiac muscle cells of the heart are packed with mitochondria because they need a constant supply of ATP.</p>
+            <ul>
+              <li>The Golgi apparatus packages and modifies proteins.</li>
+              <li>Lysosomes hold hydrolytic enzymes and are called suicide bags.</li>
+              <li>Rough ER carries ribosomes for protein synthesis; smooth ER makes lipids and steroids.</li>
+              <li>Amoeba takes in food through food vacuoles, and white blood cells eat bacteria by phagocytosis.</li>
+              <li>Microtubules and microfilaments together form the cytoskeleton.</li>
+            </ul>
+            <h3>Practice questions</h3>
+            <p>1. Which type of ribosomes is found inside mitochondria?</p>
             <details><summary>Show answer</summary><b>70S</b> ribosomes, similar to those of prokaryotes.</details>
+            <p>2. Which organelles are known as suicide bags?</p>
+            <details><summary>Show answer</summary><b>Lysosomes</b>.</details>
           </section>
 
           <section class="chapter" id="bi2" data-subj="biology" hidden>
             <h2>Photosynthesis in Higher Plants</h2>
-            <p class="meta">8 minute read.</p>
+            <p class="meta">11 minute read.</p>
             <div class="react" data-ch="bi2"></div>
+            <h3>Why it matters</h3>
+            <p>Photosynthesis makes the food for almost all life on Earth and releases the oxygen we breathe. The oxygen comes from the splitting of water, not from carbon dioxide.</p>
             <h3>Where it happens</h3>
-            <p>The light reactions occur in the thylakoid membranes of the grana, where <b>chlorophyll</b> a is the main pigment. The Calvin cycle occurs in the stroma.</p>
+            <p>The light reactions occur in the thylakoid membranes of the grana, where chlorophyll a is the main pigment. The Calvin cycle occurs in the stroma. Chlorophyll absorbs mainly blue and red light.</p>
+            <h3>Light reactions</h3>
+            <ul>
+              <li>Photosystem II splits water, releasing O₂, protons and electrons.</li>
+              <li>Electrons pass along a transport chain to photosystem I, and ATP is made by photophosphorylation.</li>
+              <li>NADP⁺ is reduced to NADPH at the end of the chain.</li>
+            </ul>
             <h3>Calvin cycle (C3 pathway)</h3>
-            <p>The <b>enzyme</b> RuBisCO fixes CO₂ onto RuBP, a 5-carbon sugar, to form two molecules of 3-phosphoglyceric acid (PGA). PGA is reduced using ATP and NADPH, and RuBP is regenerated.</p>
+            <p>The enzyme RuBisCO fixes CO₂ onto RuBP, a 5-carbon sugar, to form two molecules of 3-phosphoglyceric acid (PGA). PGA is reduced using ATP and NADPH, and RuBP is regenerated.</p>
             <pre>For one glucose (6 CO₂ fixed):
 18 ATP and 12 NADPH are used</pre>
-            <h3>C4 plants</h3>
+            <h3>C4 and CAM plants</h3>
             <ul>
-              <li>The first stable product is oxaloacetic acid (a 4-carbon compound), made by PEP carboxylase in mesophyll cells.</li>
-              <li>Kranz anatomy places the Calvin cycle in the bundle sheath cells.</li>
-              <li>Photorespiration is negligible, so C4 plants are efficient at high temperature and light.</li>
+              <li>In C4 plants the first stable product is oxaloacetic acid, made by PEP carboxylase in mesophyll cells. Kranz anatomy places the Calvin cycle in the bundle sheath cells.</li>
+              <li>Photorespiration is negligible in C4 plants, so they are efficient at high temperature and light.</li>
+              <li>CAM plants open their stomata at night to take in CO₂ and store it as malic acid.</li>
             </ul>
-            <h3>Practice question</h3>
-            <p>How many ATP molecules does the Calvin cycle use to make one glucose molecule?</p>
+            <h3>Factors affecting the rate</h3>
+            <p>Light, CO₂ concentration, temperature and water all limit the rate; the factor in shortest supply sets it (Blackman's law of limiting factors). Light in the morning raises the rate and opens the stomata. Some leaves fold at night, which are called sleep movements.</p>
+            <h3>Practice questions</h3>
+            <p>1. How many ATP molecules does the Calvin cycle use to make one glucose molecule?</p>
             <details><summary>Show answer</summary><b>18 ATP</b> (3 ATP per CO₂ fixed, for 6 CO₂).</details>
+            <p>2. What is the first stable product of CO₂ fixation in C4 plants?</p>
+            <details><summary>Show answer</summary><b>Oxaloacetic acid (OAA)</b>, a 4-carbon compound.</details>
           </section>
 
           <section class="chapter" id="bi3" data-subj="biology" hidden>
             <h2>Principles of Inheritance and Variation</h2>
-            <p class="meta">8 minute read.</p>
+            <p class="meta">11 minute read.</p>
             <div class="react" data-ch="bi3"></div>
             <h3>Mendel's laws</h3>
+            <p>Gregor Mendel is called the father of genetics. He worked on the garden pea and found that both parents contribute one allele for each gene to the offspring.</p>
             <ul>
               <li>Dominance: in a heterozygote, one allele (the dominant one) masks the other.</li>
               <li>Segregation: the two alleles of a gene separate during gamete formation.</li>
-              <li>Independent assortment: genes on different <b>chromosomes</b> assort independently.</li>
+              <li>Independent assortment: genes on different chromosomes assort independently.</li>
             </ul>
             <h3>Standard ratios</h3>
             <pre>Monohybrid cross   phenotype 3 : 1,  genotype 1 : 2 : 1
 Dihybrid cross     phenotype 9 : 3 : 3 : 1
 Test cross (Aa × aa)           1 : 1
 Dihybrid test cross            1 : 1 : 1 : 1</pre>
-            <p>The <b>genotype</b> is the genetic makeup, while the phenotype is the observable trait. Incomplete dominance gives a 1 : 2 : 1 phenotypic ratio, and codominance is seen in the AB blood group.</p>
-            <h3>Practice question</h3>
-            <p>In a cross Tt × Tt, what is the probability of a homozygous recessive offspring?</p>
+            <p>The genotype is the genetic makeup, while the phenotype is the observable trait. Incomplete dominance gives a 1 : 2 : 1 phenotypic ratio, and codominance is seen in the AB blood group.</p>
+            <h3>Linkage and sex determination</h3>
+            <ul>
+              <li>Genes close together on the same chromosome tend to be inherited together; Morgan showed this in <i>Drosophila</i>.</li>
+              <li>In humans, a male is XY and a female is XX. The mother always passes an X, so the father decides the sex of the child.</li>
+              <li>Colour blindness and haemophilia are X-linked recessive disorders.</li>
+            </ul>
+            <h3>Chromosomal disorders</h3>
+            <p>Down syndrome is trisomy of chromosome 21. Turner syndrome is 44 autosomes + XO, and Klinefelter syndrome is 44 autosomes + XXY.</p>
+            <h3>Practice questions</h3>
+            <p>1. In a cross Tt × Tt, what is the probability of a homozygous recessive offspring?</p>
             <details><summary>Show answer</summary>TT : Tt : tt = 1 : 2 : 1, so tt = <b>1/4</b>.</details>
+            <p>2. What is the F₂ phenotypic ratio of a dihybrid cross?</p>
+            <details><summary>Show answer</summary><b>9 : 3 : 3 : 1</b></details>
+          </section>
+
+          <section class="chapter" id="bi4" data-subj="biology" hidden>
+            <h2>Cell Cycle and Cell Division</h2>
+            <p class="meta">11 minute read.</p>
+            <div class="react" data-ch="bi4"></div>
+            <h3>Phases of the cell cycle</h3>
+            <p>Interphase has G₁ (growth), S (DNA synthesis) and G₂ (preparation). The M phase is the division itself. The cell that divides is called the mother cell, and it gives two daughter cells.</p>
+            <h3>Mitosis</h3>
+            <ul>
+              <li>Prophase: in early prophase the chromatin condenses into chromosomes and the centrioles move apart.</li>
+              <li>Metaphase: chromosomes align on the equator, attached to spindle fibres at their kinetochores.</li>
+              <li>Anaphase: by late anaphase the sister chromatids have separated and reached opposite poles.</li>
+              <li>Telophase: the nuclear envelope re-forms and the cell divides (cytokinesis).</li>
+            </ul>
+            <p>Sister chromatids are the two identical copies of a chromosome, joined at the centromere after replication.</p>
+            <h3>Meiosis</h3>
+            <p>Meiosis halves the chromosome number to form gametes. In zygotene, homologous chromosomes come together and pair (synapsis). Crossing over occurs in pachytene of prophase I and creates new combinations of alleles.</p>
+            <h3>Checkpoints</h3>
+            <p>Checkpoints make the cell wait until DNA is fully replicated and any damage is repaired. Stress such as DNA damage activates the protein p53, which halts the cycle. These checkpoints keep division safe, and cancer arises when they fail.</p>
+            <h3>Practice questions</h3>
+            <p>1. A cell has 2n = 46 chromosomes. How many chromosomes does each gamete have?</p>
+            <details><summary>Show answer</summary>Meiosis halves the number, so n = <b>23</b>.</details>
+            <p>2. In which phase does DNA replication occur?</p>
+            <details><summary>Show answer</summary>The <b>S phase</b> of interphase.</details>
+          </section>
+
+          <section class="chapter" id="bi5" data-subj="biology" hidden>
+            <h2>Human Circulation and Digestion</h2>
+            <p class="meta">12 minute read.</p>
+            <div class="react" data-ch="bi5"></div>
+            <h3>The heart</h3>
+            <p>The human heart is a four-chambered muscular pump with two atria and two ventricles. It beats about 72 times a minute, and the heart muscle must relax in diastole so that the chambers can fill. The SA node is the pacemaker.</p>
+            <pre>Cardiac output = stroke volume × heart rate
+              ≈ 70 mL × 72 per min ≈ 5 L per min</pre>
+            <h3>Blood pressure and vessels</h3>
+            <p>Normal blood pressure is about 120/80 mm Hg, where 120 is the systolic and 80 the diastolic value. Arteries carry blood away from the heart, veins return it, and fine capillaries allow exchange of gases and nutrients with the tissues.</p>
+            <h3>Blood and oxygen transport</h3>
+            <p>Most oxygen is carried by haemoglobin in the red blood cells. Anaemia can make a person feel tired because less oxygen reaches the tissues. Chest pain (angina) arises when the heart muscle receives too little blood.</p>
+            <h3>Digestion</h3>
+            <p>The food we eat is broken down by enzymes into small molecules that can be absorbed. Digestion begins in the mouth, where salivary amylase starts breaking down starch.</p>
+            <pre>Salivary amylase   starch → maltose        (mouth)
+Pepsin             proteins → peptides     (stomach)
+Trypsin, lipase    proteins, fats          (small intestine)</pre>
+            <p>Absorption takes place mainly through the villi of the small intestine, and the large intestine absorbs water.</p>
+            <h3>Practice questions</h3>
+            <p>1. A person's stroke volume is 70 mL and heart rate is 72 per minute. Find the cardiac output.</p>
+            <details><summary>Show answer</summary>70 × 72 = 5040 mL ≈ <b>5 L per minute</b></details>
+            <p>2. Which enzyme begins protein digestion in the stomach?</p>
+            <details><summary>Show answer</summary><b>Pepsin</b></details>
+          </section>
+
+          <section class="chapter" id="bi6" data-subj="biology" hidden>
+            <h2>Neural Control and Coordination</h2>
+            <p class="meta">12 minute read.</p>
+            <div class="react" data-ch="bi6"></div>
+            <h3>Neurons and impulses</h3>
+            <p>A neuron has dendrites, a cell body and an axon. An impulse is an electrical change that travels along the axon and crosses a synapse by neurotransmitters. At the neuromuscular junction the neurotransmitter is acetylcholine. A reflex arc is the fast, automatic pathway from receptor to effector.</p>
+            <h3>Pain and sensation</h3>
+            <p>When you hurt a finger, nociceptors in the skin send pain signals along sensory neurons to the brain. Pain protects the body by making it withdraw from harm.</p>
+            <h3>Mood and neurotransmitters</h3>
+            <p>Low levels of serotonin are linked with feeling sad, while dopamine and endorphins are linked with feeling happy. Many antidepressant drugs act by raising serotonin levels at synapses.</p>
+            <h3>Emergency response</h3>
+            <p>When a person is angry or in fear, the sympathetic nervous system and adrenaline raise the heart rate, widen the airways and send more blood to the muscles. This is the fight-or-flight response. The parasympathetic system does the opposite and helps the body relax.</p>
+            <h3>Tears and the eye</h3>
+            <p>The lacrimal glands make tears, which keep the eye moist and contain lysozyme, an enzyme that kills bacteria. Strong emotion can make a person cry, because it triggers the glands.</p>
+            <h3>Sleep and rhythms</h3>
+            <p>The hypothalamus controls the sleep–wake cycle. The pineal gland secretes melatonin at night, which promotes sleep, and most vivid dream imagery occurs during REM sleep. Cortisol peaks in the morning. Cortisol is also the main stress hormone, released when the body faces a threat.</p>
+            <h3>Temperature control</h3>
+            <p>The hypothalamus is the body's thermostat. During a fever, it raises the set point in response to chemicals called pyrogens released during infection.</p>
+            <h3>Practice questions</h3>
+            <p>1. Which neurotransmitter acts at the neuromuscular junction?</p>
+            <details><summary>Show answer</summary><b>Acetylcholine</b></details>
+            <p>2. Which hormone prepares the body for fight or flight?</p>
+            <details><summary>Show answer</summary><b>Adrenaline</b> (epinephrine), from the adrenal medulla.</details>
           </section>
 
         </main>
       </div>
     </section>
 
-    <!-- ================= MOCK QUIZ ================= -->
-    <section class="view" data-view="practice" hidden>
+        <section class="view" data-view="practice" hidden>
       <div class="page">
         <h2>NEET-style mock tests</h2>
         <p class="lead">Pick a subject and the number of questions. Marking follows NEET: +4 for a correct answer, −1 for a wrong one, 0 if you skip.</p>
+
+        <div id="partnerAct" class="pact" hidden>
+          <h3>Questions your study partner worked on</h3>
+          <ul id="pactList"></ul>
+        </div>
 
         <div id="quizSetup" class="setup">
           <div class="row">
@@ -372,8 +704,7 @@ Dihybrid test cross            1 : 1 : 1 : 1</pre>
       </div>
     </section>
 
-    <!-- ================= DOUBTS & DISCUSSION ================= -->
-    <section class="view" data-view="doubts" hidden>
+        <section class="view" data-view="doubts" hidden>
       <section id="doubts" class="doubts" aria-label="Doubts and discussion">
         <div class="doubts-head">
           <h2>Doubts &amp; Discussion</h2>
@@ -405,8 +736,7 @@ Dihybrid test cross            1 : 1 : 1 : 1</pre>
       </section>
     </section>
 
-    <!-- ================= ABOUT ================= -->
-    <section class="view" data-view="about" hidden>
+        <section class="view" data-view="about" hidden>
       <div class="page">
         <h2>About StudyDesk</h2>
         <p class="lead">StudyDesk is a revision site for students preparing for NEET UG.</p>
