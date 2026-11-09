@@ -3,8 +3,9 @@
 (() => {
   
   const CONFIG = {
-    SUPABASE_URL: 'https://zptvnqfhmhrvbnxpbnja.supabase.co',
-    SUPABASE_ANON_KEY: 'sb_publishable_mjXOt1dvv--mW70w9MMSRQ_TQsSAJP4',
+    SUPABASE_URL: 'https://YOUR-PROJECT.supabase.co',
+    SUPABASE_ANON_KEY: 'YOUR-ANON-PUBLIC-KEY',
+    GROUP_CODE: 'change-this-secret-phrase',
     PANIC_URL: 'https://www.pw.live/',
     PANIC_ON_BLUR: true,
     PANIC_ON_HIDDEN: true,
@@ -76,9 +77,11 @@
     idleTimer = setTimeout(panic, CONFIG.IDLE_MS);
   }
 
+  let armedAt = 0;
   function arm() {
     armed = true;
-    if (CONFIG.PANIC_ON_BLUR) window.addEventListener('blur', () => { if (armed) panic(); }, true);
+    armedAt = Date.now();
+    if (CONFIG.PANIC_ON_BLUR) window.addEventListener('blur', (e) => { if (armed && e.target === window && Date.now() - armedAt > 1500) panic(); });
     if (CONFIG.PANIC_ON_HIDDEN) {
       document.addEventListener('visibilitychange', () => { if (armed && document.hidden) panic(); }, true);
       window.addEventListener('pagehide', () => { if (armed) panic(); }, true);
@@ -86,7 +89,6 @@
     ['mousemove', 'keydown', 'touchstart', 'scroll', 'click'].forEach((ev) =>
       window.addEventListener(ev, resetIdle, { passive: true, capture: true }));
     resetIdle();
-    sweepTimer = setInterval(sweep, 15000);
   }
 
   
@@ -537,35 +539,11 @@
   }
 
   
-  function renderMsg(m, mine) {
-    const log = $('log');
-    const div = document.createElement('div');
-    div.className = 'm' + (mine ? ' me' : '') + ($('blurToggle').checked ? ' blurred' : '');
-    div.addEventListener('click', () => div.classList.toggle('show'));
-    const small = document.createElement('small');
-    small.textContent = m.n + ' · ' + new Date(m.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const body = document.createElement('span');
-    body.textContent = m.t;
-    div.append(small, body);
-    log.append(div);
-    msgs.push({ el: div, ts: m.ts });
-    while (msgs.length > CONFIG.MAX_MESSAGES_IN_RAM) msgs.shift().el.remove();
-    log.scrollTop = log.scrollHeight;
-  }
-
-  function sweep() {
-    const cutoff = Date.now() - CONFIG.VANISH_MS;
-    msgs = msgs.filter((x) => (x.ts < cutoff ? (x.el.remove(), false) : true));
-  }
-
-  $('blurToggle').addEventListener('change', (e) => {
-    msgs.forEach((x) => { x.el.classList.toggle('blurred', e.target.checked); x.el.classList.remove('show'); });
-  });
-  $('clearBtn').addEventListener('click', () => { msgs.forEach((x) => x.el.remove()); msgs = []; });
 
   
   async function sendEvent(obj) {
     if (!channel || !cryptoKey) return;
+    if (!armed) arm();
     obj.n = nick; obj.i = myId; obj.ts = Date.now();
     const c = await encrypt(obj);
     channel.send({ type: 'broadcast', event: 'e', payload: { c } });
@@ -575,10 +553,9 @@
     const e = await decrypt(c);
     if (!e || typeof e.n !== 'string' || typeof e.k !== 'string') return;
     const mine = e.i === myId;
+    if (!mine && !armed) arm();
     const name = e.n.slice(0, 20);
-    if (e.k === 'msg' && typeof e.t === 'string') {
-      renderMsg({ n: name, t: e.t.slice(0, 500), ts: Number(e.ts) || Date.now() }, mine);
-    } else if (e.k === 'glow' && typeof e.w === 'string') {
+    if (e.k === 'glow' && typeof e.w === 'string') {
       if (!mine) glowWord(e.w);
     } else if (e.k === 'qa' && typeof e.q === 'string') {
       if (!mine) partnerAttempt(e.q);
@@ -589,16 +566,14 @@
   }
 
   
-  async function join() {
-    const phrase = $('phrase').value;
-    nick = $('nick').value.trim() || 'Guest';
-    $('joinErr').textContent = '';
-    if (phrase.length < 8) { $('joinErr').textContent = 'Group code must be at least 8 characters.'; return; }
-    if (!window.supabase) { $('joinErr').textContent = 'Could not load the study group service.'; return; }
+  async function connect() {
+    const phrase = CONFIG.GROUP_CODE;
+    nick = 'Guest';
+    if (!phrase || phrase.length < 8 || phrase === 'change-this-secret-phrase') return;
+    if (!window.supabase || /YOUR-/.test(CONFIG.SUPABASE_URL)) return;
 
     cryptoKey = await deriveKey(phrase);
     const room = await roomIdFrom(phrase);
-    $('phrase').value = '';
 
     sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
       auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false, storage: memoryStorage },
@@ -607,20 +582,9 @@
     channel = sb.channel('sd-' + room, { config: { broadcast: { self: true } } })
       .on('broadcast', { event: 'e' }, (p) => onCipher(p.payload.c))
       .subscribe();
-
-    $('join').hidden = true;
-    $('chat').hidden = false;
-    arm();
   }
 
   
-  $('joinBtn').addEventListener('click', join);
-  $('phrase').addEventListener('keydown', (e) => { if (e.key === 'Enter') join(); });
-  $('form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const t = $('msg').value.trim();
-    if (t) { $('msg').value = ''; sendEvent({ k: 'msg', t }); }
-  });
   document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'x') panic();
   });
@@ -631,4 +595,5 @@
   updateBankInfo();
   updateCountdown();
   setView('home');
+  connect();
 })();

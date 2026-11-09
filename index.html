@@ -24,7 +24,6 @@
       <button type="button" data-v="chemistry">Chemistry</button>
       <button type="button" data-v="biology">Biology</button>
       <button type="button" data-v="practice">Mock quiz</button>
-      <button type="button" data-v="doubts">Doubts</button>
       <button type="button" data-v="about">About</button>
     </nav>
     <label class="search-wrap">
@@ -704,37 +703,6 @@ Trypsin, lipase    proteins, fats          (small intestine)</pre>
       </div>
     </section>
 
-        <section class="view" data-view="doubts" hidden>
-      <section id="doubts" class="doubts" aria-label="Doubts and discussion">
-        <div class="doubts-head">
-          <h2>Doubts &amp; Discussion</h2>
-          <p>Ask a question or compare answers with your study partner.</p>
-        </div>
-        <div id="join">
-          <div class="row">
-            <label class="field"><span>Your name</span>
-              <input id="nick" maxlength="20" autocomplete="off" placeholder="e.g. Aman">
-            </label>
-            <label class="field grow"><span>Group code</span>
-              <input id="phrase" type="password" autocomplete="off" placeholder="At least 8 characters">
-            </label>
-            <button id="joinBtn" type="button" class="btn primary">Join group</button>
-          </div>
-          <p id="joinErr" class="err" role="alert"></p>
-        </div>
-        <div id="chat" hidden>
-          <div class="tools">
-            <label class="check"><input type="checkbox" id="blurToggle" checked> Blur messages until tapped</label>
-            <button id="clearBtn" type="button" class="btn ghost small">Clear all</button>
-          </div>
-          <div id="log" aria-live="polite"></div>
-          <form id="form" autocomplete="off">
-            <input id="msg" maxlength="500" placeholder="Type your doubt or answer" autocomplete="off" aria-label="Message">
-            <button type="submit" class="btn primary">Send</button>
-          </form>
-        </div>
-      </section>
-    </section>
 
         <section class="view" data-view="about" hidden>
       <div class="page">
@@ -746,7 +714,6 @@ Trypsin, lipase    proteins, fats          (small intestine)</pre>
           <li>Pick a subject from the top bar and read one chapter at a time.</li>
           <li>Use the reaction buttons under a chapter title to mark how it went.</li>
           <li>Take the mock quiz to practise with NEET marking.</li>
-          <li>Use Doubts to discuss a question with your study group.</li>
         </ul>
         <p class="meta">Notes follow the NCERT syllabus and are meant for quick revision, not as a replacement for the textbooks or the official NTA syllabus.</p>
       </div>

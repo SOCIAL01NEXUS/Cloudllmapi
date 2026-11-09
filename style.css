@@ -251,3 +251,7 @@ details[open] summary { margin-bottom: 6px; }
 .recent { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 14px; font-family: var(--sans); font-size: .78rem; }
 .recent-label { color: var(--muted); margin-right: 4px; }
 .rchip { padding: 2px 10px; background: var(--subj-soft); color: var(--subj); border-radius: 999px; font-weight: 600; }
+
+.secret { -webkit-text-security: disc; text-security: disc; }
+
+.joined { margin: 0; padding: 12px 16px; background: var(--brand-soft, #e6f2ee); border-radius: 10px; color: var(--ink); }
