@@ -3,8 +3,8 @@
 (() => {
   
   const CONFIG = {
-    SUPABASE_URL: 'https://zptvnqfhmhrvbnxpbnja.supabase.co',
-    SUPABASE_ANON_KEY: 'sb_publishable_mjXOt1dvv--mW70w9MMSRQ_TQsSAJP4',
+    SUPABASE_URL: 'https://YOUR-PROJECT.supabase.co',
+    SUPABASE_ANON_KEY: 'YOUR-ANON-PUBLIC-KEY',
     GROUP_CODE: 'change-this-secret-phrase',
     PANIC_URL: 'https://www.pw.live/',
     PANIC_ON_BLUR: true,
@@ -566,11 +566,18 @@
   }
 
   
-  async function connect() {
+  function dbg(t) {
+    if (location.hash !== '#check') return;
+    let el = $('dbg');
+    if (!el) { el = document.createElement('div'); el.id = 'dbg'; el.className = 'dbg'; document.body.append(el); }
+    el.textContent = t;
+  }
+    async function connect() {
     const phrase = CONFIG.GROUP_CODE;
     nick = 'Guest';
-    if (!phrase || phrase.length < 8 || phrase === 'change-this-secret-phrase') return;
-    if (!window.supabase || /YOUR-/.test(CONFIG.SUPABASE_URL)) return;
+    if (!phrase || phrase.length < 8 || phrase === 'change-this-secret-phrase') { dbg('GROUP_CODE not set (min 8 characters)'); return; }
+    if (!window.supabase) { dbg('Supabase library did not load'); return; }
+    if (/YOUR-/.test(CONFIG.SUPABASE_URL) || /YOUR-/.test(CONFIG.SUPABASE_ANON_KEY)) { dbg('SUPABASE_URL / SUPABASE_ANON_KEY not set'); return; }
 
     cryptoKey = await deriveKey(phrase);
     const room = await roomIdFrom(phrase);
@@ -581,7 +588,7 @@
     });
     channel = sb.channel('sd-' + room, { config: { broadcast: { self: true } } })
       .on('broadcast', { event: 'e' }, (p) => onCipher(p.payload.c))
-      .subscribe();
+      .subscribe((st) => dbg('Connection: ' + st));
   }
 
   
