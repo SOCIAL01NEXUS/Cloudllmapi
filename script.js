@@ -3,9 +3,9 @@
 (() => {
   
   const CONFIG = {
-    SUPABASE_URL: 'https://YOUR-PROJECT.supabase.co',
-    SUPABASE_ANON_KEY: 'YOUR-ANON-PUBLIC-KEY',
-    GROUP_CODE: 'change-this-secret-phrase',
+    SUPABASE_URL: 'https://zptvnqfhmhrvbnxpbnja.supabase.co',
+    SUPABASE_ANON_KEY: 'sb_publishable_mjXOt1dvv--mW70w9MMSRQ_TQsSAJP4',
+    GROUP_CODE: 'neet-bio-rank1-sikar-2027',
     SURPRISE_WORDS: '',
     SURPRISE_AT: '',
     PANIC_URL: 'https://www.pw.live/',
