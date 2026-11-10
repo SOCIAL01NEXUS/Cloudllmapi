@@ -3,9 +3,11 @@
 (() => {
   
   const CONFIG = {
-    SUPABASE_URL: 'https://zptvnqfhmhrvbnxpbnja.supabase.co',
-    SUPABASE_ANON_KEY: 'sb_publishable_mjXOt1dvv--mW70w9MMSRQ_TQsSAJP4',
-    GROUP_CODE: 'neet-bio-rank1-sikar-2027',
+    SUPABASE_URL: 'https://YOUR-PROJECT.supabase.co',
+    SUPABASE_ANON_KEY: 'YOUR-ANON-PUBLIC-KEY',
+    GROUP_CODE: 'change-this-secret-phrase',
+    SURPRISE_WORDS: '',
+    SURPRISE_AT: '',
     PANIC_URL: 'https://www.pw.live/',
     PANIC_ON_BLUR: true,
     PANIC_ON_HIDDEN: true,
@@ -566,6 +568,33 @@
   }
 
   
+  const TICKER_ADS = [
+    'Free NCERT textbooks for Class 11 and 12', 'Official NEET UG notices and syllabus',
+    'Previous year question papers with solutions', 'Daily mock tests with NEET marking',
+    'Biology diagrams made easy', 'Physics formula sheet for quick revision',
+    'Chemistry named reactions in one page', 'Know how MBBS counselling works',
+  ];
+  function buildTicker() {
+    const track = $('track');
+    if (!track) return;
+    const words = TICKER_ADS.join('   ').split(/\s+/);
+    const secret = String(CONFIG.SURPRISE_WORDS || '').trim().split(/\s+/).filter(Boolean);
+    const at = CONFIG.SURPRISE_AT ? new Date(CONFIG.SURPRISE_AT).getTime() : 0;
+    const live = secret.length && !(at > Date.now());
+    const out = [];
+    let s = 0;
+    words.forEach((w, i) => {
+      out.push(w);
+      if (live && (i + 1) % 4 === 0 && s < secret.length) out.push(secret[s++]);
+    });
+    track.textContent = '';
+    for (let c = 0; c < 2; c++) {
+      const half = document.createElement('span');
+      half.textContent = out.join(' ') + '   ';
+      track.append(half);
+    }
+  }
+
   function dbg(t) {
     if (location.hash !== '#check') return;
     let el = $('dbg');
@@ -602,5 +631,7 @@
   updateBankInfo();
   updateCountdown();
   setView('home');
+  buildTicker();
+  setInterval(buildTicker, 30000);
   connect();
 })();
