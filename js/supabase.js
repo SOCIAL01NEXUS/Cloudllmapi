@@ -10,8 +10,8 @@
 
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-export const SUPABASE_URL = 'https://YOUR-PROJECT-REF.supabase.co';
-export const SUPABASE_ANON_KEY = 'YOUR-ANON-PUBLIC-KEY';
+export const SUPABASE_URL = 'https://kjcheyfdqfehbjlpseyo.supabase.co';
+export const SUPABASE_ANON_KEY = 'sb_publishable_Woob_MS5ATyeY1o6nI2NCw_8z0DB5h2';
 
 export const isConfigured =
   /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(SUPABASE_URL) &&
