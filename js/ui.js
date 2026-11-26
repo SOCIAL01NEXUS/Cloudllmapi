@@ -217,12 +217,16 @@ function renderHeader({ session, profile, page }) {
       </div></div></header>`;
 }
 
-function renderTabbar({ session, page }) {
+function renderTabbar({ session, profile, page }) {
   const host = $('#shell-tabbar');
   if (!host) return;
   if (!session) { host.remove(); return; }
   document.body.classList.add('has-tabbar');
-  host.outerHTML = `<nav class="tabbar" aria-label="Primary mobile">${NAV.map((n) =>
+  // Admins get one extra tab. (Real admin permission is still enforced by the database.)
+  const items = profile?.role === 'admin'
+    ? NAV.concat([{ page: 'admin', href: 'admin.html', label: 'Admin', icon: 'shield' }])
+    : NAV;
+  host.outerHTML = `<nav class="tabbar" aria-label="Primary mobile" style="grid-template-columns:repeat(${items.length},1fr)">${items.map((n) =>
     `<a href="${n.href}" ${n.page === page ? 'aria-current="page"' : ''}>${icon(n.icon, 22)}<span>${esc(n.label)}</span></a>`).join('')}</nav>`;
 }
 
@@ -278,7 +282,7 @@ export async function initShell() {
   }
 
   renderHeader({ session, profile, page });
-  renderTabbar({ session, page });
+  renderTabbar({ session, profile, page });
   setTheme(document.documentElement.getAttribute('data-theme') || 'light');
   $('#theme-toggle')?.addEventListener('click', () => setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
   $('#logout-btn')?.addEventListener('click', async () => {
