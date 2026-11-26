@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Log in · Study Buddy</title>
+<meta name="description" content="Log in to Study Buddy">
+<meta name="theme-color" content="#3730a3">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%233730a3'/%3E%3Cpath d='M7 10c3-1.500 6-1.500 9 1v11c-3-2.500-6-2.500-9-1zM25 10c-3-1.500-6-1.500-9 1v11c3-2.500 6-2.500 9-1z' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<script src="js/theme.js"></script>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/animations.css">
+</head>
+<body data-page="login" data-auth="guest">
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="shell-header"></div>
+<main id="main" class="page" tabindex="-1">
+<div class="container">
+<div class="auth-wrap"><div class="card auth-card anim-fade-up">
+  <h1>Welcome back</h1>
+  <p class="muted">Log in to continue your preparation.</p>
+  <div id="form-message" aria-live="polite"></div>
+  <form id="login-form" novalidate>
+    <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="email" maxlength="254" required><span class="error-text" id="email-error" role="alert"></span></div>
+    <div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" maxlength="72" required><span class="error-text" id="password-error" role="alert"></span></div>
+    <button id="login-btn" class="btn btn-primary btn-block" type="submit">Log in</button>
+    <p class="mt-sm center"><button id="forgot-btn" class="btn btn-ghost btn-sm" type="button">Forgot password?</button></p>
+  </form>
+  <form id="recovery-form" hidden novalidate>
+    <h2>Choose a new password</h2>
+    <div class="field"><label for="new-password">New password</label><input id="new-password" type="password" autocomplete="new-password" maxlength="72"><span class="hint">8+ characters, with a letter and a number.</span><span class="error-text" id="new-password-error" role="alert"></span></div>
+    <button id="recovery-btn" class="btn btn-primary btn-block" type="submit">Save password</button>
+  </form>
+  <p class="center muted mb-0 mt">New here? <a href="signup.html">Create an account</a></p>
+</div></div>
+</div>
+</main>
+<div id="shell-tabbar"></div>
+<script type="module" src="js/auth.js"></script>
+</body>
+</html>

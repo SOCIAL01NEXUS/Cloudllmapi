@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Study Assistant · Study Buddy</title>
+<meta name="description" content="Ask Physics, Chemistry or Biology doubts to the AI Study Assistant">
+<meta name="theme-color" content="#3730a3">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%233730a3'/%3E%3Cpath d='M7 10c3-1.500 6-1.500 9 1v11c-3-2.500-6-2.500-9-1zM25 10c-3-1.500-6-1.500-9 1v11c3-2.500 6-2.500 9-1z' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<script src="js/theme.js"></script>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/animations.css">
+</head>
+<body data-page="doubts" data-auth="required">
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="shell-header"></div>
+<main id="main" class="page" tabindex="-1">
+<div class="container">
+<div class="page-head"><h1>AI Study Assistant</h1></div>
+<div class="ai-banner" role="note"><span id="ai-i"></span><div><strong>This is an AI, not a human teacher.</strong><br>It can make mistakes. Check important facts with your NCERT or teacher. Your chats are private to you and you can delete them any time. Do not share personal information.</div></div>
+<div class="card mt">
+  <div class="row-between"><h2 class="mb-0">Your doubts</h2><button id="clear-chat" class="btn btn-danger btn-sm" type="button" hidden>Delete all chats</button></div>
+  <div id="chat" class="chat mt-sm" aria-live="polite" aria-label="Chat history"></div>
+  <hr class="divider">
+  <form id="ask-form" class="chat-form" novalidate>
+    <div><span class="label" id="subj-label">Subject</span><div class="chips mt-sm" id="subject-chips" role="group" aria-labelledby="subj-label"></div></div>
+    <div class="field mb-0"><label for="question">Your question</label>
+      <textarea id="question" maxlength="800" placeholder="e.g. Why does the SHM time period not depend on amplitude?"></textarea>
+      <div class="row-between"><span class="error-text" id="question-error" role="alert"></span><span class="counter" id="q-count">0/800</span></div></div>
+    <div class="row"><button id="ask-btn" class="btn btn-primary" type="submit">Ask AI Study Assistant</button><span class="hint">Ctrl + Enter to send</span></div>
+  </form>
+</div>
+<script type="module">import { icon } from './js/ui.js'; document.getElementById('ai-i').innerHTML = icon('sparkle', 22);</script>
+</div>
+</main>
+<div id="shell-tabbar"></div>
+<script type="module" src="js/doubts.js"></script>
+</body>
+</html>

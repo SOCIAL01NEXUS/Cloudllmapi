@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Study · Study Buddy</title>
+<meta name="description" content="Physics, Chemistry, Botany and Zoology chapters">
+<meta name="theme-color" content="#3730a3">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%233730a3'/%3E%3Cpath d='M7 10c3-1.500 6-1.500 9 1v11c-3-2.500-6-2.500-9-1zM25 10c-3-1.500-6-1.500-9 1v11c3-2.500 6-2.500 9-1z' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<script src="js/theme.js"></script>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/animations.css">
+</head>
+<body data-page="subjects" data-auth="required">
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="shell-header"></div>
+<main id="main" class="page" tabindex="-1">
+<div class="container">
+<div class="page-head"><h1>Study</h1><p>Choose a subject, open a unit and pick a chapter.</p></div>
+<div class="stack">
+  <div class="field mb-0"><label for="chapter-search">Search chapters</label><input id="chapter-search" type="search" maxlength="80" placeholder="e.g. Thermodynamics" autocomplete="off"></div>
+  <div class="chips" id="subject-filters" role="group" aria-label="Filter by subject"></div>
+</div>
+<div id="subjects-root" class="mt"></div>
+</div>
+</main>
+<div id="shell-tabbar"></div>
+<script type="module" src="js/subjects.js"></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign up · Study Buddy</title>
+<meta name="description" content="Create your free Study Buddy account">
+<meta name="theme-color" content="#3730a3">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%233730a3'/%3E%3Cpath d='M7 10c3-1.500 6-1.500 9 1v11c-3-2.500-6-2.500-9-1zM25 10c-3-1.500-6-1.500-9 1v11c3-2.500 6-2.500 9-1z' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<script src="js/theme.js"></script>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/animations.css">
+</head>
+<body data-page="signup" data-auth="guest">
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="shell-header"></div>
+<main id="main" class="page" tabindex="-1">
+<div class="container">
+<div class="auth-wrap"><div class="card auth-card anim-fade-up">
+  <h1>Create your account</h1>
+  <p class="muted">Free. Your data stays private to you.</p>
+  <div id="form-message" aria-live="polite"></div>
+  <form id="signup-form" novalidate>
+    <div class="field"><label for="full-name">Full name</label><input id="full-name" type="text" autocomplete="name" maxlength="80"><span class="error-text" id="full-name-error" role="alert"></span></div>
+    <div class="field"><label for="username">Username</label><input id="username" type="text" autocomplete="username" maxlength="20" autocapitalize="none" spellcheck="false"><span class="hint">Friends can find you by this when sending a study-partner request.</span><span class="error-text" id="username-error" role="alert"></span></div>
+    <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="email" maxlength="254"><span class="error-text" id="email-error" role="alert"></span></div>
+    <div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="new-password" maxlength="72"><span class="hint">8+ characters, with a letter and a number.</span><span class="error-text" id="password-error" role="alert"></span></div>
+    <div class="field"><label for="confirm">Confirm password</label><input id="confirm" type="password" autocomplete="new-password" maxlength="72"><span class="error-text" id="confirm-error" role="alert"></span></div>
+    <div class="field"><label class="check"><input id="agree" type="checkbox"><span>I understand that Study Buddy is a study tool, and that the AI Study Assistant is an AI, not a human teacher.</span></label><span class="error-text" id="agree-error" role="alert"></span></div>
+    <button id="signup-btn" class="btn btn-primary btn-block" type="submit">Create account</button>
+  </form>
+  <p class="center muted mb-0 mt">Already registered? <a href="login.html">Log in</a></p>
+</div></div>
+</div>
+</main>
+<div id="shell-tabbar"></div>
+<script type="module" src="js/auth.js"></script>
+</body>
+</html>
