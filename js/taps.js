@@ -9,7 +9,7 @@
    ========================================================================== */
 
 import { supabase, unwrap } from './supabase.js';
-import { $, $$, esc } from './ui.js';
+import { $, $$, esc, toast, friendlyError } from './ui.js';
 
 // [[word]] marks a tappable word inside an ordinary sentence.
 // The lower-case word is what is sent to the partner (it must match on both screens).
@@ -30,7 +30,7 @@ export async function getTapState() {
     const rows = unwrap(await supabase.rpc('my_word_taps'));
     const r = rows && rows[0];
     return { active: !!(r && r.mine && r.theirs), shareId: r?.share_id || null };
-  } catch { return { active: false, shareId: null }; }
+  } catch (err) { console.warn('my_word_taps failed (did you run SQL parts 9 and 10?)', err); return { active: false, shareId: null }; }
 }
 
 function paragraphHtml(text, active) {
@@ -82,7 +82,14 @@ export function startTaps(ctx, state) {
     b.classList.remove('sent');
     void b.offsetWidth; // restart the little animation
     b.classList.add('sent');
-    try { unwrap(await supabase.rpc('send_word_tap', { p_word: b.dataset.w })); } catch { /* stay quiet: it is only a word */ }
+    setTimeout(() => b.classList.remove('sent'), 1400);
+    try {
+      const sent = unwrap(await supabase.rpc('send_word_tap', { p_word: b.dataset.w }));
+      if (sent === false) toast('Word taps are switched off by one of you.', 'info');
+    } catch (err) {
+      console.warn('send_word_tap failed', err);
+      toast(friendlyError(err), 'error', 6000);
+    }
   });
 
   // 2) live delivery (Supabase Realtime), only rows addressed to me
