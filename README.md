@@ -23,9 +23,11 @@ study-buddy/
 │   ├── auth.js  subjects.js  chapter.js  quiz.js  checkin.js
 │   ├── progress.js  partner.js  doubts.js  admin.js  youtube.js
 ├── sql/
-│   ├── schema.sql        tables + Row Level Security + functions
-│   └── seed.sql          sample Physics / Chemistry / Botany / Zoology data
+│   ├── schema.sql        tables + Row Level Security + functions (one file)
+│   ├── seed.sql          sample Physics / Chemistry / Botany / Zoology data (one file)
+│   └── parts/            the same SQL split into 8 + 9 small files, run in order
 ├── supabase/functions/ai-assistant/index.ts    secure AI backend
+├── supabase/functions/pdf-to-quiz/index.ts     admin-only: PDF → test / DPP questions
 ├── assets/icons/  assets/images/
 └── README.md
 ```
@@ -51,6 +53,14 @@ study-buddy/
    * **Redirect URLs**: add the same URL with `**` at the end, for example `https://YOUR-USERNAME.github.io/YOUR-REPO/**`
    (Needed so confirmation and password-reset links return to your site.)
 
+### Slow phone or internet? Run the SQL in small parts
+`sql/parts/` has the same schema and seed split into small files. Each one runs on its own in a new SQL Editor query, **in this order**:
+
+1. `schema_01` to `schema_10` (part 10 sets permissions, so run it last of the schema parts)
+2. `seed_01` to `seed_09` (run each seed part only once; part 09 removes the temporary helpers, so run it last)
+
+Do not run `schema.sql` / `seed.sql` as well. They are the same code in one file, and are only there for people who prefer a single paste.
+
 ### Make yourself an admin
 Sign up on the website first, then run this once in the SQL Editor (use your e-mail):
 ```sql
@@ -58,19 +68,21 @@ update public.profiles set role = 'admin' where email = 'you@example.com';
 ```
 Admin rights can only be granted this way, never from the browser.
 
-### Turn on the AI Study Assistant
-The AI key must stay on the server, so the assistant runs as a Supabase Edge Function.
+### Turn on the AI Study Assistant (Gemini)
+The Gemini API key must stay on the server, so the assistant runs as a Supabase Edge Function.
 
+1. Get a free key at <https://aistudio.google.com/apikey>.
+2. Deploy the function (CLI):
 ```bash
-npm i -g supabase                       # or see Supabase CLI docs
+npm i -g supabase
 supabase login
 supabase link --project-ref YOUR-PROJECT-REF
-supabase secrets set ANTHROPIC_API_KEY=sk-ant-...        # your key, stored only in Supabase
+supabase secrets set GEMINI_API_KEY=your-gemini-key
 supabase secrets set ALLOWED_ORIGIN=https://YOUR-USERNAME.github.io
-# optional: supabase secrets set AI_MODEL=claude-haiku-5-5
+# optional: supabase secrets set GEMINI_MODEL=gemini-3.8-flash
 supabase functions deploy ai-assistant
 ```
-No CLI? In the dashboard open **Edge Functions → Deploy a new function**, name it `ai-assistant`, paste `index.ts`, and add the secrets under **Edge Functions → Secrets**.
+**No CLI (phone/tablet friendly):** in the Supabase dashboard open **Edge Functions → Deploy a new function**, name it exactly `ai-assistant`, paste the code from `supabase/functions/ai-assistant/index.ts`, deploy, then add `GEMINI_API_KEY` (and optionally `ALLOWED_ORIGIN`, `GEMINI_MODEL`) under **Edge Functions → Secrets**.
 
 Without this step everything else works; the Doubts page will show a friendly "not set up yet" message.
 
@@ -143,3 +155,16 @@ Then sign up two test students and confirm that neither can see the other's quiz
 * Tables you asked for: `profiles, subjects, units, chapters, lessons, lesson_progress, quizzes, questions, quiz_attempts, daily_goals, study_partner_shares, doubts`.
 
 Study Buddy is an independent study tool and is not affiliated with the NTA.
+
+
+## Weekly tests, DPP and PDF → quiz
+
+* Students: the **Tests** tab lists published weekly tests and DPPs. Weekly tests are timed as a whole (auto-submit), use +4/−1 marking and show answers only after finishing.
+* Admin: **Admin → Tests & DPP → Make from PDF**. Choose the PDF, title, type, subject, number of questions and total time. The PDF is read in the browser (pdf.js); the text goes to the `pdf-to-quiz` function, which asks Gemini for 4-option MCQs. Existing MCQs in the PDF are copied, notes get new questions. Scanned PDFs (no text) are sent as a file, up to about 6 MB.
+* The result opens in a **review screen**: fix any question or correct option, then save as **Draft** or tick **Published**. Students never see drafts (enforced by the database).
+* Setup: run SQL `schema_08_tests_dpp.sql`, `schema_09_word_taps.sql`, then `schema_10_privileges.sql` again; deploy a second edge function named exactly `pdf-to-quiz` (it uses the same `GEMINI_API_KEY` secret).
+* AI-made questions can contain mistakes. Always review before publishing.
+
+## Word taps (Home page)
+
+The Home note has words such as *always, together, heart, food, I am, you are, study time, low, high, ok, tired, hurt, love* (and more) written inside normal sentences. Once two people are accepted study partners and both keep **Allow word taps** on (Study Partner page), those words get a dotted underline. Tap one and it glows on the other person's screen, and the reverse. Only the two partners can read it (database rule), only the word is stored, it is deleted after 2 hours or when either person stops the partnership or switches taps off. Without a partner the note is plain text. To edit the words, change `NOTE_PARAGRAPHS` in `js/taps.js` (write `[[word]]` for a tappable word).
