@@ -17,7 +17,9 @@ const MARKS_WRONG = -1;
 const S = {
   quiz: null,
   questions: [],
-  opts: { perQ: 0, negative: false, instant: false },
+  opts: { perQ: 0, negative: false, instant: false, totalSec: 0 },
+  totalId: null,
+  totalDeadline: 0,
   idx: 0,
   answers: [], // selected index or null
   spent: [], // seconds per question
@@ -29,37 +31,53 @@ const S = {
 };
 
 const root = () => $('#quiz-root');
+const KIND_LABEL = { chapter: 'Chapter quiz', dpp: 'DPP', weekly_test: 'Weekly test' };
+const isTest = () => S.quiz && S.quiz.kind !== 'chapter';
+const backHref = () => (S.quiz.chapter_id ? `chapter.html?id=${S.quiz.chapter_id}#practice` : 'tests.html');
 
 /* ---------- setup screen ---------- */
 function renderSetup() {
+  finishing = false;
   const q = S.quiz;
   const n = S.questions.length;
   const defaultTimer = q.time_per_question_sec || 0;
+  const weekly = q.kind === 'weekly_test';
+  const tst = isTest();
   root().innerHTML = `
     <div class="card anim-fade-up" style="max-width:640px;margin-inline:auto">
-      <p class="small mb-0"><a href="chapter.html?id=${esc(q.chapter_id)}#practice">${icon('back', 16)} ${esc(q.chapters?.title || 'Chapter')}</a></p>
+      <p class="small mb-0"><a href="${esc(backHref())}">${icon('back', 16)} ${esc(q.chapter_id ? (q.chapters?.title || 'Chapter') : 'Tests & DPP')}</a></p>
       <h1 class="mt-sm">${esc(q.title)}</h1>
-      <p class="muted">${n} question${n === 1 ? '' : 's'}${q.is_pyq && q.pyq_year ? ` · Previous-year set (${esc(q.pyq_year)})` : ''}</p>
+      <p class="muted"><span class="badge">${esc(KIND_LABEL[q.kind] || 'Quiz')}</span> ${n} question${n === 1 ? '' : 's'}${q.is_pyq && q.pyq_year ? ` · Previous-year set (${esc(q.pyq_year)})` : ''}${q.test_date ? ` · ${esc(q.test_date)}` : ''}${!q.is_published ? ' · <strong>Draft (only admins can see this)</strong>' : ''}</p>
       <form id="setup-form" class="stack-sm" novalidate>
-        <div class="field">
+        ${weekly ? `<div class="notice info"><strong>Weekly test — exam rules</strong><p class="mb-0">${q.total_time_min ? `You have ${q.total_time_min} minutes in total; the test submits itself when time ends. ` : ''}Answers and explanations are shown after you finish. Negative marking (+4 / −1) is on.</p></div>` : ''}
+        ${!weekly && !tst ? `<div class="field">
           <label for="opt-timer">Timer per question</label>
           <select id="opt-timer">
             <option value="0" ${defaultTimer === 0 ? 'selected' : ''}>Off — take your time</option>
             ${[30, 45, 60, 90, 120].map((s) => `<option value="${s}" ${defaultTimer === s ? 'selected' : ''}>${s} seconds</option>`).join('')}
           </select>
           <span class="hint">With a timer on, you move forward only (like the real exam hall rhythm).</span>
-        </div>
-        <label class="check"><input type="checkbox" id="opt-neg" ${q.is_pyq ? 'checked' : ''}><span><strong>NEET-style negative marking</strong><br><span class="hint">+4 for a correct answer, −1 for a wrong one, 0 if skipped.</span></span></label>
-        <label class="check"><input type="checkbox" id="opt-instant"><span><strong>Instant feedback (practice mode)</strong><br><span class="hint">See the answer and explanation right after each question.</span></span></label>
+        </div>` : ''}
+        ${tst && !weekly ? `<div class="field">
+          <label for="opt-total">Total time</label>
+          <select id="opt-total">
+            <option value="0">Off — take your time</option>
+            ${[10, 15, 20, 30, 45, 60].map((m) => `<option value="${m}" ${q.total_time_min === m ? 'selected' : ''}>${m} minutes</option>`).join('')}
+          </select>
+          <span class="hint">The set submits itself when time ends.</span>
+        </div>` : ''}
+        ${weekly ? '' : `<label class="check"><input type="checkbox" id="opt-neg" ${q.is_pyq || tst ? 'checked' : ''}><span><strong>NEET-style negative marking</strong><br><span class="hint">+4 for a correct answer, −1 for a wrong one, 0 if skipped.</span></span></label>
+        <label class="check"><input type="checkbox" id="opt-instant"><span><strong>Instant feedback (practice mode)</strong><br><span class="hint">See the answer and explanation right after each question.</span></span></label>`}
         <button class="btn btn-primary btn-block mt-sm" type="submit" ${n ? '' : 'disabled'}>Start quiz</button>
       </form>
     </div>`;
   $('#setup-form').addEventListener('submit', (e) => {
     e.preventDefault();
     S.opts = {
-      perQ: Number($('#opt-timer').value) || 0,
-      negative: $('#opt-neg').checked,
-      instant: $('#opt-instant').checked,
+      perQ: $('#opt-timer') ? Number($('#opt-timer').value) || 0 : 0,
+      negative: weekly ? true : $('#opt-neg').checked,
+      instant: weekly ? false : $('#opt-instant').checked,
+      totalSec: weekly ? (q.total_time_min || 0) * 60 : ($('#opt-total') ? (Number($('#opt-total').value) || 0) * 60 : 0),
     };
     startQuiz();
   });
@@ -71,10 +89,23 @@ function startQuiz() {
   S.answers = Array(S.questions.length).fill(null);
   S.spent = Array(S.questions.length).fill(0);
   S.startedAt = Date.now();
+  clearInterval(S.totalId);
+  if (S.opts.totalSec > 0) {
+    S.totalDeadline = Date.now() + S.opts.totalSec * 1000;
+    S.totalId = setInterval(totalTick, 500);
+  }
   renderQuestion();
 }
 
 function stopTimer() { clearInterval(S.timerId); S.timerId = null; }
+
+function totalTick() {
+  const left = Math.max(0, Math.ceil((S.totalDeadline - Date.now()) / 1000));
+  const t = $('#ttimer-text');
+  if (t) t.textContent = formatDuration(left);
+  $('#ttimer')?.classList.toggle('low', left <= 60);
+  if (left <= 0) { clearInterval(S.totalId); bankTime(); toast('Time is up — your test was submitted.', 'info', 5000); finish(); }
+}
 
 function bankTime() {
   S.spent[S.idx] = (S.spent[S.idx] || 0) + (Date.now() - S.qStart) / 1000;
@@ -95,6 +126,7 @@ function renderQuestion() {
     <div class="card" style="max-width:760px;margin-inline:auto">
       <div class="quiz-top">
         <span>Question ${S.idx + 1} / ${total}</span>
+        ${S.opts.totalSec > 0 ? `<span class="timer" id="ttimer" role="timer" aria-live="off" title="Time left in the test">${icon('clock', 16)}<span id="ttimer-text">${formatDuration(S.opts.totalSec)}</span></span>` : ''}
         ${timed ? `<span class="timer" id="timer" role="timer" aria-live="off">${icon('clock', 16)}<span id="timer-text">${S.opts.perQ}s</span></span>` : ''}
       </div>
       ${progressBar(((S.idx) / total) * 100, 'Quiz progress', 'indigo')}
@@ -126,6 +158,7 @@ function renderQuestion() {
   $$('#palette button').forEach((b) => b.addEventListener('click', () => go(Number(b.dataset.go))));
 
   if (sel !== null && S.opts.instant) showFeedback();
+  if (S.opts.totalSec > 0) totalTick();
 
   if (timed) {
     S.deadline = Date.now() + S.opts.perQ * 1000;
@@ -202,8 +235,12 @@ function scoreLocal() {
   };
 }
 
+let finishing = false;
 async function finish() {
+  if (finishing) return;
+  finishing = true;
   stopTimer();
+  clearInterval(S.totalId);
   const totalSeconds = Math.round((Date.now() - S.startedAt) / 1000);
   root().innerHTML = `<div class="card" style="max-width:640px;margin-inline:auto">${skeletonLines(5)}<p class="muted center">Marking your answers…</p></div>`;
 
@@ -260,12 +297,12 @@ function renderResult(r, saved) {
         <div class="card-title">${icon('revision', 22)}<h2>Weak topics & revision plan</h2></div>
         ${weak.length ? `
           <ul class="point-list">${weak.map(([t, n]) => `<li><strong>${esc(t)}</strong> — ${n} mistake${n === 1 ? '' : 's'}</li>`).join('')}</ul>
-          <p class="mt-sm">Suggested next steps:</p>
+          ${chapterId ? `<p class="mt-sm">Suggested next steps:</p>
           <div class="row">
             <a class="btn btn-primary btn-sm" href="chapter.html?id=${esc(chapterId)}#overview">Re-read important points</a>
             <a class="btn btn-secondary btn-sm" href="chapter.html?id=${esc(chapterId)}#flashcards">Revise flashcards</a>
             <a class="btn btn-secondary btn-sm" href="chapter.html?id=${esc(chapterId)}#videos">Rewatch the lesson</a>
-          </div>`
+          </div>` : '<p class="mt-sm hint">Revise these topics from the matching chapters in Study.</p>'}`
           : notice('success', '<strong>No incorrect answers.</strong><p>Nothing to revise from this attempt. Try a harder or timed set next.</p>')}
       </div>
 
@@ -277,7 +314,7 @@ function renderResult(r, saved) {
 
       <div class="row">
         <button class="btn btn-primary" id="retry-btn" type="button">Try again</button>
-        <a class="btn btn-secondary" href="chapter.html?id=${esc(chapterId)}#practice">Back to chapter</a>
+        <a class="btn btn-secondary" href="${esc(backHref())}">${chapterId ? 'Back to chapter' : 'Back to Tests'}</a>
         <a class="btn btn-ghost" href="progress.html">My progress</a>
       </div>
     </div>`;
@@ -316,7 +353,7 @@ async function main() {
 
   try {
     const [qz, qs] = await Promise.all([
-      supabase.from('quizzes').select('id, title, chapter_id, is_pyq, pyq_year, time_per_question_sec, chapters(title)').eq('id', id).maybeSingle(),
+      supabase.from('quizzes').select('id, title, chapter_id, kind, test_date, total_time_min, is_published, is_pyq, pyq_year, time_per_question_sec, chapters(title)').eq('id', id).maybeSingle(),
       supabase.from('questions').select('id, topic, question_text, options, correct_index, explanation, sort_order').eq('quiz_id', id).order('sort_order').order('id'),
     ]);
     S.quiz = unwrap(qz);

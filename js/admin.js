@@ -11,11 +11,13 @@
 import { supabase, unwrap } from './supabase.js';
 import { initShell, $, $$, esc, icon, toast, friendlyError, emptyState, skeletonLines, confirmBox, notice, clampNum } from './ui.js';
 import { extractYouTubeId } from './youtube.js';
+import { renderTestsAdmin } from './testsadmin.js';
 
 const TABS = [
   { id: 'analytics', label: 'Analytics' },
   { id: 'content', label: 'Syllabus & lessons' },
   { id: 'quizzes', label: 'Quizzes & questions' },
+  { id: 'tests', label: 'Tests & DPP' },
 ];
 const CATEGORIES = ['Physics', 'Chemistry', 'Biology'];
 const slugify = (s) => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
@@ -393,6 +395,7 @@ function activate(id) {
   if (id === 'analytics') renderAnalytics();
   if (id === 'content') renderContent();
   if (id === 'quizzes') renderQuizzes();
+  if (id === 'tests') renderTestsAdmin($('#panel-tests'));
 }
 
 async function main() {

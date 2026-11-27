@@ -194,6 +194,7 @@ function setTheme(theme) {
 const NAV = [
   { page: 'dashboard', href: 'dashboard.html', label: 'Home', icon: 'home' },
   { page: 'subjects', href: 'subjects.html', label: 'Study', icon: 'book' },
+  { page: 'tests', href: 'tests.html', label: 'Tests', icon: 'quiz' },
   { page: 'checkin', href: 'daily-checkin.html', label: 'Check-in', icon: 'calendar' },
   { page: 'progress', href: 'progress.html', label: 'Progress', icon: 'chart' },
   { page: 'doubts', href: 'doubts.html', label: 'Doubts', icon: 'chat' },
@@ -226,7 +227,7 @@ function renderTabbar({ session, profile, page }) {
   const items = profile?.role === 'admin'
     ? NAV.concat([{ page: 'admin', href: 'admin.html', label: 'Admin', icon: 'shield' }])
     : NAV;
-  host.outerHTML = `<nav class="tabbar" aria-label="Primary mobile" style="grid-template-columns:repeat(${items.length},1fr)">${items.map((n) =>
+  host.outerHTML = `<nav class="tabbar${items.length > 6 ? ' dense' : ''}" aria-label="Primary mobile" style="grid-template-columns:repeat(${items.length},1fr)">${items.map((n) =>
     `<a href="${n.href}" ${n.page === page ? 'aria-current="page"' : ''}>${icon(n.icon, 22)}<span>${esc(n.label)}</span></a>`).join('')}</nav>`;
 }
 

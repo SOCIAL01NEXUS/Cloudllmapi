@@ -6,6 +6,7 @@
 import { supabase, unwrap, localDateStr } from './supabase.js';
 import { initShell, $, esc, icon, subjectIconName, progressBar, emptyState, skeletonCards, friendlyError, notice, formatDate, formatDuration } from './ui.js';
 import { renderPartner } from './partner.js';
+import { getTapState, noteCardHtml, startTaps } from './taps.js';
 
 const page = document.body.dataset.page;
 
@@ -33,14 +34,15 @@ async function initDashboard(ctx) {
   const root = $('#dash-root');
   root.innerHTML = skeletonCards(3);
   try {
-    const d = await loadCore();
+    const [d, tapState] = await Promise.all([loadCore(), getTapState()]);
     const totalCh = d.subjects.reduce((a, s) => a + s.total_chapters, 0);
     const doneCh = d.subjects.reduce((a, s) => a + s.done_chapters, 0);
     const avg = d.attempts.length ? Math.round(d.attempts.reduce((a, r) => a + Number(r.accuracy), 0) / d.attempts.length) : 0;
     const resume = d.recent.find((r) => !r.completed) || d.recent[0];
 
     root.innerHTML = `
-      <div class="grid grid-4 stagger">
+      ${noteCardHtml(tapState.active)}
+      <div class="grid grid-4 stagger mt">
         <div class="card stat amber" style="--i:0"><span class="stat-label">${icon('streak', 18)} Streak</span><span class="stat-value">${d.streak}<span class="muted" style="font-size:1rem"> days</span></span></div>
         <div class="card stat teal" style="--i:1"><span class="stat-label">${icon('calendar', 18)} Today's target</span><span class="stat-value">${d.todayPct}%</span></div>
         <div class="card stat indigo" style="--i:2"><span class="stat-label">${icon('book', 18)} Chapters done</span><span class="stat-value">${doneCh}<span class="muted" style="font-size:1rem"> / ${totalCh}</span></span></div>
@@ -68,6 +70,7 @@ async function initDashboard(ctx) {
             <div style="flex:1"><h3 class="mb-0">${esc(s.name)}</h3><span class="muted small">${s.done_chapters} of ${s.total_chapters} chapters</span></div></div>
           <div class="mt-sm">${progressBar(s.total_chapters ? (s.done_chapters / s.total_chapters) * 100 : 0, `${s.name} progress`)}</div>
         </a>`).join('') || emptyState({ icon: 'book', title: 'No subjects yet', text: 'Run sql/seed.sql in Supabase to load the sample syllabus.' })}</div>`;
+    startTaps(ctx, tapState);
   } catch (err) {
     root.innerHTML = notice('danger', `<strong>Could not load your dashboard.</strong><p>${esc(friendlyError(err))}</p>`);
   }
@@ -101,7 +104,7 @@ async function initProgress() {
         </div>
         <div class="card">
           <div class="card-title">${icon('revision', 22)}<h2>Topics to revise</h2></div>
-          ${weak.length ? `<ul class="point-list">${weak.map((w) => `<li><strong>${esc(w.topic)}</strong> <span class="muted">· ${esc(w.chapter_title)} — ${w.wrong_count} mistake${w.wrong_count === 1 ? '' : 's'}</span><br><a class="small" href="chapter.html?id=${encodeURIComponent(w.chapter_id)}#flashcards">Revise flashcards</a></li>`).join('')}</ul>`
+          ${weak.length ? `<ul class="point-list">${weak.map((w) => `<li><strong>${esc(w.topic)}</strong> <span class="muted">· ${esc(w.chapter_title)} — ${w.wrong_count} mistake${w.wrong_count === 1 ? '' : 's'}</span>${w.chapter_id ? `<br><a class="small" href="chapter.html?id=${encodeURIComponent(w.chapter_id)}#flashcards">Revise flashcards</a>` : ''}</li>`).join('')}</ul>`
             : emptyState({ icon: 'revision', title: 'Nothing to revise', text: 'Topics you get wrong in quizzes will be collected here for revision.' })}
         </div>
       </div>

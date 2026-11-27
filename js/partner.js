@@ -107,6 +107,9 @@ async function renderAccepted(root, pair) {
         <button class="btn btn-danger btn-sm" id="stop-btn" type="button">Stop sharing &amp; end partnership</button>
       </div>
     </form>
+    <hr class="divider">
+    <h3>Word taps</h3>
+    <label class="check"><input type="checkbox" id="taps-on" checked><span><strong>Allow word taps on the Home page</strong><br><span class="hint">Some words in the Home note can be tapped. When one of you taps a word, it glows on the other one's screen. Only the two of you can see it. It works only while both of you keep it on. Nothing is stored except the word, and it is deleted after 2 hours.</span></span></label>
     <hr class="divider">${PRIVACY_NOTE}
   </div>
   <div class="card mt-sm" id="partner-view"><div class="skeleton-line"></div></div>`;
@@ -122,6 +125,15 @@ async function renderAccepted(root, pair) {
     try { unwrap(await supabase.rpc('stop_partner_sharing', { p_id: pair.id })); toast('Sharing stopped.', 'success'); renderPartner(root); }
     catch (err) { toast(friendlyError(err), 'error'); }
   });
+
+  try {
+    const t = unwrap(await supabase.rpc('my_word_taps'))?.[0];
+    $('#taps-on').checked = t ? !!t.mine : true;
+    $('#taps-on').addEventListener('change', async (e) => {
+      try { unwrap(await supabase.rpc('set_word_taps', { p_id: pair.id, p_on: e.target.checked })); toast(e.target.checked ? 'Word taps are on.' : 'Word taps are off.', 'success'); }
+      catch (err) { e.target.checked = !e.target.checked; toast(friendlyError(err), 'error'); }
+    });
+  } catch { $('#taps-on').disabled = true; }
 
   // What the partner has chosen to share with me
   const view = $('#partner-view');
