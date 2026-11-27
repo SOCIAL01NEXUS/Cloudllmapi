@@ -67,11 +67,14 @@ export function startTaps(ctx, state) {
     });
   };
 
-  const onPing = (row) => {
+  // catchUp = first look after opening the page: only glow pings from the last few minutes.
+  // Later pings (live or polled) always glow, even if the phone's clock is wrong.
+  const onPing = (row, catchUp = false) => {
     if (!row || seen.has(row.id)) return;
     seen.add(row.id);
     const age = Date.now() - new Date(row.created_at || Date.now()).getTime();
-    if (age < RECENT_MS) glow(row.word, Math.max(3000, GLOW_MS - Math.max(age, 0)));
+    if (!catchUp) glow(row.word);
+    else if (age < RECENT_MS) glow(row.word, Math.max(3000, GLOW_MS - Math.max(age, 0)));
   };
 
   // 1) tapping a word sends it to my partner; tapping a glowing word just calms it down
@@ -102,13 +105,15 @@ export function startTaps(ctx, state) {
   } catch { /* the poll below still works */ }
 
   // 3) catch-up + gentle poll (works even if Realtime is not switched on)
+  let first = true;
   const poll = async () => {
     if (document.hidden) return;
     try {
-      const since = new Date(Date.now() - RECENT_MS).toISOString();
-      const rows = unwrap(await supabase.from('partner_pings').select('id, word, created_at').gte('created_at', since).order('created_at', { ascending: true }).limit(30));
-      (rows || []).forEach(onPing);
-    } catch { /* ignore */ }
+      // no phone-clock filter here: the database deletes old pings after 2 hours anyway
+      const rows = unwrap(await supabase.from('partner_pings').select('id, word, created_at').order('created_at', { ascending: false }).limit(15));
+      (rows || []).reverse().forEach((r) => onPing(r, first));
+      first = false;
+    } catch (err) { console.warn('partner_pings poll failed', err); }
   };
   poll();
   const pollId = setInterval(poll, 12000);

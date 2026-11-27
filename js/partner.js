@@ -110,6 +110,7 @@ async function renderAccepted(root, pair) {
     <hr class="divider">
     <h3>Word taps</h3>
     <label class="check"><input type="checkbox" id="taps-on" checked><span><strong>Allow word taps on the Home page</strong><br><span class="hint">Some words in the Home note can be tapped. When one of you taps a word, it glows on the other one's screen. Only the two of you can see it. It works only while both of you keep it on. Nothing is stored except the word, and it is deleted after 2 hours.</span></span></label>
+    <p class="small" id="taps-status" role="status" aria-live="polite">Checking word taps…</p>
     <hr class="divider">${PRIVACY_NOTE}
   </div>
   <div class="card mt-sm" id="partner-view"><div class="skeleton-line"></div></div>`;
@@ -126,14 +127,25 @@ async function renderAccepted(root, pair) {
     catch (err) { toast(friendlyError(err), 'error'); }
   });
 
-  try {
-    const t = unwrap(await supabase.rpc('my_word_taps'))?.[0];
-    $('#taps-on').checked = t ? !!t.mine : true;
-    $('#taps-on').addEventListener('change', async (e) => {
-      try { unwrap(await supabase.rpc('set_word_taps', { p_id: pair.id, p_on: e.target.checked })); toast(e.target.checked ? 'Word taps are on.' : 'Word taps are off.', 'success'); }
-      catch (err) { e.target.checked = !e.target.checked; toast(friendlyError(err), 'error'); }
-    });
-  } catch { $('#taps-on').disabled = true; }
+  const paintTaps = async () => {
+    const st = $('#taps-status');
+    try {
+      const t = unwrap(await supabase.rpc('my_word_taps'))?.[0];
+      if (!t) { st.textContent = 'Status: no accepted partner found for word taps.'; return; }
+      $('#taps-on').checked = !!t.mine;
+      st.textContent = t.mine && t.theirs ? 'Status: working. Open Home on both phones and tap a dotted word.'
+        : !t.mine ? 'Status: switched off by you.' : 'Status: your partner has switched word taps off.';
+    } catch (err) {
+      $('#taps-on').disabled = true;
+      st.textContent = 'Status: not set up. Run SQL parts schema_09_word_taps.sql and schema_10_privileges.sql in Supabase. (' + friendlyError(err) + ')';
+    }
+  };
+  $('#taps-on').addEventListener('change', async (e) => {
+    try { unwrap(await supabase.rpc('set_word_taps', { p_id: pair.id, p_on: e.target.checked })); toast(e.target.checked ? 'Word taps are on.' : 'Word taps are off.', 'success'); }
+    catch (err) { e.target.checked = !e.target.checked; toast(friendlyError(err), 'error'); }
+    paintTaps();
+  });
+  paintTaps();
 
   // What the partner has chosen to share with me
   const view = $('#partner-view');
