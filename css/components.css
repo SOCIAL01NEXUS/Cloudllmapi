@@ -296,3 +296,33 @@ dialog.modal[open] { animation: pop-in 0.25s ease both; }
 @media (min-width: 640px) {
   .target-row { grid-template-columns: 1.2fr 1fr 1.2fr; }
 }
+
+
+/* ---------- Home note + word taps ---------- */
+.note-card { background: linear-gradient(180deg, var(--surface), var(--surface-2)); }
+.note-text p { font-size: 1.06rem; line-height: 2.05; margin: 0 0 10px; color: var(--text); }
+.note-text p:last-child { margin-bottom: 0; }
+button.tw {
+  font: inherit; color: inherit; background: none; border: 0; margin: 0; cursor: pointer;
+  padding: 2px 3px; border-radius: 8px;
+  text-decoration: underline dotted var(--accent); text-decoration-thickness: 2px; text-underline-offset: 6px;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color .25s, box-shadow .25s;
+}
+button.tw:hover { background: var(--accent-soft); }
+button.tw.sent { animation: tw-sent .55s ease; }
+button.tw.glow {
+  background: var(--accent-soft);
+  text-decoration-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft), 0 0 22px 8px rgba(245, 158, 11, .55);
+  animation: tw-glow 1.4s ease-in-out infinite;
+}
+@keyframes tw-glow {
+  0%, 100% { box-shadow: 0 0 0 3px var(--accent-soft), 0 0 12px 3px rgba(245, 158, 11, .35); }
+  50% { box-shadow: 0 0 0 5px var(--accent-soft), 0 0 30px 12px rgba(245, 158, 11, .7); }
+}
+@keyframes tw-sent { 0% { transform: scale(1); } 40% { transform: scale(1.12); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  button.tw.glow { animation: none; }
+  button.tw.sent { animation: none; }
+}

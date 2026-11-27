@@ -169,6 +169,8 @@ code, .mono { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, mono
   color: var(--muted); text-decoration: none; font-size: 0.7rem; font-weight: 650;
   transition: color 0.2s;
 }
+.tabbar.dense a { font-size: 0.62rem; letter-spacing: -0.01em; }
+.tabbar.dense a svg { width: 20px; height: 20px; }
 .tabbar a[aria-current="page"] { color: var(--link); }
 .tabbar a[aria-current="page"] svg { transform: translateY(-1px) scale(1.08); }
 body.has-tabbar { padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom)); }
