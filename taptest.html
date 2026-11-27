@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Word taps check · Study Buddy</title>
+<style>body{font:16px/1.5 system-ui,sans-serif;margin:0;padding:16px;max-width:640px;margin-inline:auto;background:#f7f6f2;color:#1b1f3b}
+h1{font-size:1.3rem}button{font:inherit;padding:12px 16px;border-radius:12px;border:0;background:#3730a3;color:#fff;margin:4px 4px 4px 0}
+pre{background:#fff;border:1px solid #ddd;border-radius:12px;padding:12px;white-space:pre-wrap;word-break:break-word;min-height:120px}</style></head>
+<body>
+<h1>Word taps — check</h1>
+<p>Open this page on <b>both</b> phones (both logged in), press <b>Run check</b>, then send a screenshot of the result.</p>
+<button id="run">Run check</button> <button id="send">Send test tap ("ok")</button>
+<pre id="out">Press "Run check"…</pre>
+<script type="module">
+import { supabase, isConfigured, getSession } from './js/supabase.js';
+const out = document.getElementById('out');
+const log = (m) => { out.textContent += '\n' + m; };
+const errText = (e) => (e && (e.message || e.details || e.hint || JSON.stringify(e))) || String(e);
+let channel = null;
+document.getElementById('run').onclick = async () => {
+  out.textContent = 'Version: taps-check 1';
+  if (!isConfigured) { log('✗ js/supabase.js has no URL/key.'); return; }
+  const s = await getSession();
+  if (!s) { log('✗ Not logged in. Log in first.'); return; }
+  log('✓ Logged in as ' + (s.user.email || s.user.id));
+  const me = s.user.id;
+  const t = await supabase.rpc('my_word_taps');
+  if (t.error) { log('✗ my_word_taps failed: ' + errText(t.error) + '\n   → run SQL schema_09_word_taps.sql, then schema_10_privileges.sql'); }
+  else if (!t.data || !t.data.length) { log('✗ No ACCEPTED study partner for this account (request not accepted, or you are logged in with a different account than your partner expects).'); }
+  else { const r = t.data[0]; log('✓ Partner found. My switch: ' + r.mine + ' | Partner switch: ' + r.theirs + (r.mine && r.theirs ? '' : '\n   → both switches must be true (Study Partner page → Allow word taps)')); }
+  const p = await supabase.from('partner_pings').select('id, word, created_at').order('created_at', { ascending: false }).limit(5);
+  if (p.error) log('✗ Cannot read partner_pings: ' + errText(p.error) + '\n   → run schema_10_privileges.sql'); else log('✓ Can read partner_pings. Received so far: ' + (p.data.length ? p.data.map((x) => x.word).join(', ') : 'none'));
+  if (channel) supabase.removeChannel(channel);
+  channel = supabase.channel('taptest-' + me)
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'partner_pings', filter: 'receiver_id=eq.' + me }, (pl) => log('★ LIVE ping received: "' + pl.new.word + '"'))
+    .subscribe((st, err) => log('Realtime: ' + st + (err ? ' ' + errText(err) : '')));
+  log('Listening… ask your partner to press "Send test tap". Polling every 5 s too.');
+  const seen = new Set((p.data || []).map((x) => x.id));
+  clearInterval(window.__poll);
+  window.__poll = setInterval(async () => {
+    const q = await supabase.from('partner_pings').select('id, word').order('created_at', { ascending: false }).limit(5);
+    (q.data || []).forEach((x) => { if (!seen.has(x.id)) { seen.add(x.id); log('★ POLL ping received: "' + x.word + '"'); } });
+  }, 5000);
+};
+document.getElementById('send').onclick = async () => {
+  const r = await supabase.rpc('send_word_tap', { p_word: 'ok' });
+  log(r.error ? '✗ Send failed: ' + errText(r.error) : (r.data === false ? '✗ Not sent: word taps are switched off by one of you.' : '✓ Sent "ok" to your partner.'));
+};
+</script></body></html>
