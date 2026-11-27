@@ -310,7 +310,7 @@ button.tw {
   transition: background-color .25s, box-shadow .25s;
 }
 button.tw:hover { background: var(--accent-soft); }
-button.tw.sent { animation: tw-sent .55s ease; }
+button.tw.sent { animation: tw-sent .55s ease; background: var(--success-soft); text-decoration-color: var(--success); }
 button.tw.glow {
   background: var(--accent-soft);
   text-decoration-color: var(--accent);
