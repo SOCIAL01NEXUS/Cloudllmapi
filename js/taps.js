@@ -77,22 +77,27 @@ export function startTaps(ctx, state) {
     else if (age < RECENT_MS) glow(row.word, Math.max(3000, GLOW_MS - Math.max(age, 0)));
   };
 
-  // 1) tapping a word sends it to my partner; tapping a glowing word just calms it down
-  card.addEventListener('click', async (e) => {
+  // 1) ONE tap on a word sends it to my partner immediately (no waiting, no second tap needed)
+  const lastSent = new Map();
+  card.addEventListener('click', (e) => {
     const b = e.target.closest('.tw');
     if (!b) return;
-    b.classList.remove('glow');
-    b.classList.remove('sent');
+    const word = b.dataset.w;
+    b.classList.remove('glow', 'sent');
     void b.offsetWidth; // restart the little animation
     b.classList.add('sent');
     setTimeout(() => b.classList.remove('sent'), 1400);
-    try {
-      const sent = unwrap(await supabase.rpc('send_word_tap', { p_word: b.dataset.w }));
-      if (sent === false) toast('Word taps are switched off by one of you.', 'info');
-    } catch (err) {
+    // ignore an accidental double-fire of the same tap, but never a real second tap
+    const now = Date.now();
+    if (now - (lastSent.get(word) || 0) < 250) return;
+    lastSent.set(word, now);
+    supabase.rpc('send_word_tap', { p_word: word }).then((res) => {
+      if (res.error) throw res.error;
+      if (res.data === false) toast('Word taps are switched off by one of you.', 'info');
+    }).catch((err) => {
       console.warn('send_word_tap failed', err);
       toast(friendlyError(err), 'error', 6000);
-    }
+    });
   });
 
   // 2) live delivery (Supabase Realtime), only rows addressed to me
@@ -116,7 +121,7 @@ export function startTaps(ctx, state) {
     } catch (err) { console.warn('partner_pings poll failed', err); }
   };
   poll();
-  const pollId = setInterval(poll, 12000);
+  const pollId = setInterval(poll, 3000); // backup in case Realtime is slow or off
   document.addEventListener('visibilitychange', poll);
 
   const stop = () => {

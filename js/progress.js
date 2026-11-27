@@ -6,7 +6,7 @@
 import { supabase, unwrap, localDateStr } from './supabase.js';
 import { initShell, $, esc, icon, subjectIconName, progressBar, emptyState, skeletonCards, friendlyError, notice, formatDate, formatDuration } from './ui.js';
 import { renderPartner } from './partner.js';
-import { getTapState, noteCardHtml, startTaps, checkButtonHtml, wireCheck } from './taps.js';
+import { getTapState, noteCardHtml, startTaps } from './taps.js';
 
 const page = document.body.dataset.page;
 
@@ -41,7 +41,7 @@ async function initDashboard(ctx) {
     const resume = d.recent.find((r) => !r.completed) || d.recent[0];
 
     root.innerHTML = `
-      ${noteCardHtml(tapState.active)}${checkButtonHtml()}
+      ${noteCardHtml(tapState.active)}
       <div class="grid grid-4 stagger mt">
         <div class="card stat amber" style="--i:0"><span class="stat-label">${icon('streak', 18)} Streak</span><span class="stat-value">${d.streak}<span class="muted" style="font-size:1rem"> days</span></span></div>
         <div class="card stat teal" style="--i:1"><span class="stat-label">${icon('calendar', 18)} Today's target</span><span class="stat-value">${d.todayPct}%</span></div>
@@ -71,7 +71,6 @@ async function initDashboard(ctx) {
           <div class="mt-sm">${progressBar(s.total_chapters ? (s.done_chapters / s.total_chapters) * 100 : 0, `${s.name} progress`)}</div>
         </a>`).join('') || emptyState({ icon: 'book', title: 'No subjects yet', text: 'Run sql/seed.sql in Supabase to load the sample syllabus.' })}</div>`;
     startTaps(ctx, tapState);
-    wireCheck(ctx);
   } catch (err) {
     root.innerHTML = notice('danger', `<strong>Could not load your dashboard.</strong><p>${esc(friendlyError(err))}</p>`);
   }
