@@ -128,3 +128,65 @@ export function startTaps(ctx, state) {
   window.addEventListener('pagehide', stop, { once: true });
   return stop;
 }
+
+/* ---------- "Connection check" (tells you exactly why taps may not work) ---------- */
+export const checkButtonHtml = () => '<p class="small mt-sm" style="text-align:right"><button type="button" class="btn btn-ghost btn-sm" id="tap-check">Connection check</button></p>';
+
+const errText = (e) => (e && (e.message || e.details || e.hint)) || String(e);
+
+export function wireCheck(ctx) {
+  const btn = $('#tap-check');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const d = document.createElement('dialog');
+    d.className = 'modal';
+    d.setAttribute('aria-labelledby', 'tc-title');
+    d.innerHTML = `<div class="modal-body">
+      <h2 class="modal-title" id="tc-title">Connection check</h2>
+      <p class="hint">Do this on both phones, then screenshot the result.</p>
+      <div class="row"><button class="btn btn-primary btn-sm" id="tc-run" type="button">Run check</button>
+      <button class="btn btn-secondary btn-sm" id="tc-send" type="button">Send test tap</button></div>
+      <pre id="tc-out" style="white-space:pre-wrap;word-break:break-word;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:12px;min-height:100px;font-size:.85rem">Press "Run check"…</pre>
+      <div class="modal-actions"><button class="btn btn-secondary" id="tc-close" type="button">Close</button></div></div>`;
+    document.body.append(d);
+    const out = $('#tc-out', d);
+    const log = (m) => { out.textContent += `\n${m}`; };
+    let ch = null; let pollId = null;
+    const close = () => { clearInterval(pollId); try { if (ch) supabase.removeChannel(ch); } catch { /* ignore */ } d.close(); d.remove(); };
+    $('#tc-close', d).addEventListener('click', close);
+    d.addEventListener('cancel', () => { clearInterval(pollId); d.remove(); });
+
+    $('#tc-run', d).addEventListener('click', async () => {
+      out.textContent = 'Check v1';
+      const me = ctx.user?.id;
+      if (!me) { log('✗ Not logged in.'); return; }
+      log(`✓ Logged in as ${ctx.user.email || me}`);
+      const t = await supabase.rpc('my_word_taps');
+      if (t.error) log(`✗ my_word_taps failed: ${errText(t.error)}\n   → run SQL schema_09_word_taps.sql, then schema_10_privileges.sql`);
+      else if (!t.data?.length) log('✗ No ACCEPTED study partner on this account (request not accepted, or a different account).');
+      else {
+        const r = t.data[0];
+        log(`✓ Partner found. My switch: ${r.mine} | Partner switch: ${r.theirs}${r.mine && r.theirs ? '' : '\n   → both must be true (Study Partner → Allow word taps)'}`);
+      }
+      const p = await supabase.from('partner_pings').select('id, word').order('created_at', { ascending: false }).limit(5);
+      if (p.error) log(`✗ Cannot read partner_pings: ${errText(p.error)}\n   → run schema_10_privileges.sql`);
+      else log(`✓ Can read pings. Received so far: ${p.data.length ? p.data.map((x) => x.word).join(', ') : 'none'}`);
+      const seen = new Set((p.data || []).map((x) => x.id));
+      if (ch) supabase.removeChannel(ch);
+      ch = supabase.channel(`check-${me}`)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'partner_pings', filter: `receiver_id=eq.${me}` }, (pl) => log(`★ LIVE ping received: "${pl.new.word}"`))
+        .subscribe((st, err) => log(`Realtime: ${st}${err ? ` ${errText(err)}` : ''}`));
+      log('Listening… the other phone should press "Send test tap".');
+      clearInterval(pollId);
+      pollId = setInterval(async () => {
+        const q = await supabase.from('partner_pings').select('id, word').order('created_at', { ascending: false }).limit(5);
+        (q.data || []).forEach((x) => { if (!seen.has(x.id)) { seen.add(x.id); log(`★ POLL ping received: "${x.word}"`); } });
+      }, 5000);
+    });
+    $('#tc-send', d).addEventListener('click', async () => {
+      const r = await supabase.rpc('send_word_tap', { p_word: 'ok' });
+      log(r.error ? `✗ Send failed: ${errText(r.error)}` : (r.data === false ? '✗ Not sent: word taps are switched off by one of you.' : '✓ Sent "ok" to your partner.'));
+    });
+    d.showModal();
+  });
+}
