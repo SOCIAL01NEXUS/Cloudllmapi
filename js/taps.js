@@ -23,17 +23,19 @@ const GLOW_MS = 9000;
 /** Words are always tappable now (no partner needed). */
 export async function getTapState() { return { active: true }; }
 
+let wordIndex = 0; // unique number per word, same on every screen (the text is identical)
+
 function paragraphHtml(text, active) {
-  return esc(text).replace(/\[\[([^\]]+)\]\]/g, (_, w) => {
-    const word = w.trim();
-    const key = word.toLowerCase();
-    return active
-      ? `<button type="button" class="tw" data-w="${esc(key)}">${esc(word)}</button>`
-      : esc(word);
+  const plain = text.replace(/\[\[|\]\]/g, ''); // every word is tappable, not just the [[marked]] ones
+  if (!active) return esc(plain);
+  return plain.replace(/[A-Za-z0-9']+|[^A-Za-z0-9']+/g, (tok) => {
+    if (!/[A-Za-z0-9]/.test(tok)) return esc(tok); // spaces and punctuation stay plain
+    return `<button type="button" class="tw" data-i="${wordIndex++}">${esc(tok)}</button>`;
   });
 }
 
 export function noteCardHtml(active) {
+  wordIndex = 0;
   return `<section class="card note-card" id="note-card" aria-label="A note for today">
     <div class="note-text">${NOTE_PARAGRAPHS.map((p) => `<p>${paragraphHtml(p, active)}</p>`).join('')}</div>
   </section>`;
@@ -44,9 +46,8 @@ export function startTaps(ctx, state) {
   if (!card || !state?.active) return () => {};
 
   const timers = new Map();
-  const glow = (word, ms = GLOW_MS) => {
-    const key = String(word || '').toLowerCase();
-    $$('.tw', card).filter((b) => b.dataset.w === key).forEach((b) => {
+  const glow = (idx, ms = GLOW_MS) => {
+    $$('.tw', card).filter((b) => b.dataset.i === String(idx)).forEach((b) => {
       b.classList.add('glow');
       clearTimeout(timers.get(b));
       timers.set(b, setTimeout(() => b.classList.remove('glow'), ms));
@@ -58,7 +59,7 @@ export function startTaps(ctx, state) {
   const channel = supabase.channel('study-buddy-word-taps', { config: { broadcast: { self: false } } });
   channel.on('broadcast', { event: 'tap' }, ({ payload }) => {
     if (!payload || payload.from === me) return;
-    glow(payload.word);
+    glow(payload.i);
   }).subscribe();
 
   // ONE tap on a word = glow on the other screen
@@ -69,7 +70,7 @@ export function startTaps(ctx, state) {
     void b.offsetWidth;
     b.classList.add('sent');
     setTimeout(() => b.classList.remove('sent'), 1400);
-    channel.send({ type: 'broadcast', event: 'tap', payload: { word: b.dataset.w, from: me } })
+    channel.send({ type: 'broadcast', event: 'tap', payload: { i: b.dataset.i, word: b.textContent, from: me } })
       .catch((err) => console.warn('word tap send failed', err));
   });
 
