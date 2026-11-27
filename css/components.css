@@ -307,9 +307,12 @@ button.tw {
   padding: 2px 3px; border-radius: 8px;
   text-decoration: underline dotted var(--accent); text-decoration-thickness: 2px; text-underline-offset: 6px;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation; /* one tap = one click: no double-tap-zoom delay on phones */
+  -webkit-user-select: none; user-select: none;
+  min-height: 32px;
   transition: background-color .25s, box-shadow .25s;
 }
-button.tw:hover { background: var(--accent-soft); }
+@media (hover: hover) { button.tw:hover { background: var(--accent-soft); } }
 button.tw.sent { animation: tw-sent .55s ease; background: var(--success-soft); text-decoration-color: var(--success); }
 button.tw.glow {
   background: var(--accent-soft);
